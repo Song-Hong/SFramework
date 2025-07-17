@@ -18,7 +18,7 @@ namespace Song.Core.Extends.Excel
         /// <summary>
         /// Keys 值
         /// </summary>
-        public Dictionary<string,SheetData>.KeyCollection Keys => Datas.Keys;
+        public Dictionary<string, SheetData>.KeyCollection Keys => Datas.Keys;
 
         /// <summary>
         /// 快速存取值
@@ -33,6 +33,7 @@ namespace Song.Core.Extends.Excel
                 {
                     sheetData = data;
                 }
+
                 return sheetData;
             }
         }
@@ -42,7 +43,7 @@ namespace Song.Core.Extends.Excel
         /// </summary>
         public SongExcelData()
         {
-            Sheets().Add(new SheetData(new string[1,1]));
+            Sheets().Add(new SheetData(new string[1, 1]));
         }
 
         /// <summary>
@@ -50,7 +51,7 @@ namespace Song.Core.Extends.Excel
         /// </summary>
         /// <param name="sheet"></param>
         /// <param name="IsCover">是否覆盖</param>
-        public void Add(SheetData sheet, bool IsCover=false)
+        public void Add(SheetData sheet, bool IsCover = false)
         {
             if (Datas.ContainsKey(sheet.name) && !IsCover) return;
             else if (Datas.ContainsKey(sheet.name) && IsCover)
@@ -95,6 +96,7 @@ namespace Song.Core.Extends.Excel
             {
                 sheets.Add(item);
             }
+
             return sheets;
         }
 
@@ -106,6 +108,7 @@ namespace Song.Core.Extends.Excel
             => Datas.GetEnumerator();
 
         #region 运算符重载
+
         public static SongExcelData operator +(SongExcelData dataOne, SheetData ExtendData)
         {
             SongExcelData excelData = dataOne;
@@ -119,13 +122,14 @@ namespace Song.Core.Extends.Excel
             excelData.Remove(ExtendData.name);
             return excelData;
         }
+
         #endregion
     }
 
     /// <summary>
     /// 工作表
     /// </summary>
-    public class SheetData : IEnumerable
+    public class SheetData : IEnumerable<string>
     {
         /// <summary>
         /// 工作表名称
@@ -176,7 +180,10 @@ namespace Song.Core.Extends.Excel
         /// <param name="datas">数据</param>
         public void SetRow(int RowIndex = 0, params string[] datas)
         {
-            CheckArray(RowIndex, datas.Length);
+            if (RowIndex < 0)
+                throw new ArgumentException("行索引不能为负数", nameof(RowIndex));
+
+            CheckArray(RowIndex, datas.Length - 1);
             for (int i = 0; i < datas.Length; i++)
             {
                 Datas[RowIndex, i] = datas[i];
@@ -190,11 +197,15 @@ namespace Song.Core.Extends.Excel
         /// <param name="datas">数据</param>
         public void SetRow(int RowIndex = 0, params object[] datas)
         {
+            if (datas == null)
+                throw new ArgumentNullException(nameof(datas));
+
             List<string> newDatas = new List<string>();
             foreach (var item in datas)
             {
-                newDatas.Add(item.ToString());
+                newDatas.Add(item?.ToString() ?? string.Empty);
             }
+
             SetRow(RowIndex, newDatas.ToArray());
         }
 
@@ -205,7 +216,10 @@ namespace Song.Core.Extends.Excel
         /// <param name="datas">数据</param>
         public void SetCol(int ColIndex = 0, params string[] datas)
         {
-            CheckArray(datas.Length, ColIndex);
+            if (ColIndex < 0)
+                throw new ArgumentException("列索引不能为负数", nameof(ColIndex));
+
+            CheckArray(datas.Length - 1, ColIndex);
             for (int i = 0; i < datas.Length; i++)
             {
                 Datas[i, ColIndex] = datas[i];
@@ -219,39 +233,56 @@ namespace Song.Core.Extends.Excel
         /// <param name="datas">数据</param>
         public void SetCol(int ColIndex = 0, params object[] datas)
         {
+            if (datas == null)
+                throw new ArgumentNullException(nameof(datas));
+
             List<string> newDatas = new List<string>();
             foreach (var item in datas)
             {
-                newDatas.Add(item.ToString());
+                newDatas.Add(item?.ToString() ?? string.Empty);
             }
+
             SetCol(ColIndex, newDatas.ToArray());
         }
 
         /// <summary>
-        /// 检查列索引
+        /// 检查并调整数组大小
         /// </summary>
         /// <param name="RowIndex">行索引</param>
         /// <param name="ColIndex">列索引</param>
         public void CheckArray(int RowIndex = 0, int ColIndex = 0)
         {
+            if (RowIndex < 0 || ColIndex < 0)
+                throw new ArgumentException("索引不能为负数");
+
             if (Datas == null)
             {
                 Datas = new string[RowIndex + 1, ColIndex + 1];
             }
             else
             {
-                string[,] newdatas = Datas;
-                Datas = new string
-                    [(newdatas.GetLength(0) > RowIndex ? newdatas.GetLength(0) : RowIndex)+1,
-                    (newdatas.GetLength(1) > ColIndex ?
-                    newdatas.GetLength(1) : ColIndex)+1];
-                for (int i = 0; i < newdatas.GetLength(0); i++)
+                int currentRows = Datas.GetLength(0);
+                int currentCols = Datas.GetLength(1);
+
+                int newRows = Math.Max(currentRows, RowIndex + 1);
+                int newCols = Math.Max(currentCols, ColIndex + 1);
+
+                // 如果当前数组已经足够大，不需要重新分配
+                if (newRows <= currentRows && newCols <= currentCols)
+                    return;
+
+                string[,] newDatas = new string[newRows, newCols];
+
+                // 复制现有数据
+                for (int i = 0; i < currentRows; i++)
                 {
-                    for (int j = 0; j < newdatas.GetLength(1); j++)
+                    for (int j = 0; j < currentCols; j++)
                     {
-                        Datas[i, j] = newdatas[i, j];
+                        newDatas[i, j] = Datas[i, j];
                     }
                 }
+
+                Datas = newDatas;
             }
         }
 
@@ -261,8 +292,8 @@ namespace Song.Core.Extends.Excel
         /// <param name="RowIndex">行索引</param>
         /// <param name="ColIndex">列索引</param>
         /// <param name="value">值</param>
-        public void Set(int RowIndex, int ColIndex, object value) => Set(RowIndex, ColIndex, value.ToString());
-
+        public void Set(int RowIndex, int ColIndex, object value)
+            => Set(RowIndex, ColIndex, value?.ToString() ?? string.Empty);
 
         /// <summary>
         /// 设置数值
@@ -272,25 +303,29 @@ namespace Song.Core.Extends.Excel
         /// <param name="value">值</param>
         public void Set(int RowIndex, int ColIndex, string value)
         {
+            if (RowIndex < 0 || ColIndex < 0)
+                throw new ArgumentException("索引不能为负数");
+
             CheckArray(RowIndex, ColIndex);
             Datas[RowIndex, ColIndex] = value;
         }
 
         /// <summary> 
-        /// 获取 
+        /// 获取指定位置的值
         /// </summary> 
         /// <param name="RowIndex">行索引</param> 
         /// <param name="ColIndex">列索引</param> 
         /// <returns>数值</returns> 
-        public string Get(int RowIndex = 0, int ColIndex = 0) 
-        { 
-            if (Datas == null || RowIndex < 0 || ColIndex < 0 || RowIndex >= RowCount || ColIndex >= ColCount) 
+        public string Get(int RowIndex = 0, int ColIndex = 0)
+        {
+            if (Datas == null || RowIndex < 0 || ColIndex < 0 ||
+                RowIndex >= RowCount || ColIndex >= ColCount)
             {
-                return null; 
+                return null;
             }
-            return Datas[RowIndex, ColIndex]; 
-        }
 
+            return Datas[RowIndex, ColIndex];
+        }
 
         /// <summary>
         /// 获取表格
@@ -309,29 +344,44 @@ namespace Song.Core.Extends.Excel
         public int ColCount => Datas?.GetLength(1) ?? 0;
 
         /// <summary>
-        /// 遍历
+        /// 获取所有非空值的列表
         /// </summary>
-        /// <param name="IsShowNull">是否显示为空的数值</param>
-        public List<string> ForEach(bool IsShowNull = false)
+        /// <param name="IsShowNull">是否包含空值</param>
+        public List<string> GetAllValues(bool IsShowNull = false)
         {
-            List<string> datas = new List<string>();
+            List<string> values = new List<string>();
             for (int i = 0; i < RowCount; i++)
             {
                 for (int k = 0; k < ColCount; k++)
                 {
                     string value = Get(i, k);
                     if (!IsShowNull && value == null) continue;
-                    datas.Add(value);
+                    values.Add(value);
                 }
             }
-            return datas;
+
+            return values;
         }
 
         /// <summary>
-        /// 遍历
+        /// 泛型遍历器
         /// </summary>
-        /// <returns>二维数组</returns>
-        IEnumerator IEnumerable.GetEnumerator()
-            => Datas.GetEnumerator();
+        /// <returns>字符串迭代器</returns>
+        public IEnumerator<string> GetEnumerator()
+        {
+            for (int i = 0; i < RowCount; i++)
+            {
+                for (int j = 0; j < ColCount; j++)
+                {
+                    yield return Get(i, j);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 非泛型遍历器
+        /// </summary>
+        /// <returns>对象迭代器</returns>
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

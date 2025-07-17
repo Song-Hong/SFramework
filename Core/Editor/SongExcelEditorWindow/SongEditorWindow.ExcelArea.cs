@@ -1,5 +1,6 @@
 using System.IO;
 using Song.Core.Extends.Excel;
+using Song.Core.Tools;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -35,6 +36,11 @@ namespace SFramework.Core.Editor.SongExcelEditorWindow
         /// 当前选中的Sheet
         /// </summary>
         public SheetData NowSelectSheet;
+        
+        /// <summary>
+        /// 创建子表按钮
+        /// </summary>
+        public Button createSheetButton;
         
         /// <summary>
         /// 初始化Excel区域
@@ -93,7 +99,11 @@ namespace SFramework.Core.Editor.SongExcelEditorWindow
             //加载表格数据
             LoadExcel(0);
         }
-
+        
+        /// <summary>
+        /// 加载子表格
+        /// </summary>
+        /// <param name="count"></param>
         public void LoadExcel(int count)
         {
             if (MyExcelData == null) return;
@@ -101,6 +111,12 @@ namespace SFramework.Core.Editor.SongExcelEditorWindow
             Items.Clear();
             var sheet = MyExcelData.Sheets()[count];
             NowSelectSheet = sheet;
+
+            if (sheet.RowCount == 0 && sheet.ColCount == 0)
+            {
+                sheet.Set(0,0,"");
+            }
+            
             for (var i = 0; i < sheet.RowCount; i++)
             {
                 if (i == 0)
@@ -121,8 +137,40 @@ namespace SFramework.Core.Editor.SongExcelEditorWindow
                     CreateCellButton(i+","+k,rowRoot,sheet.Get(i,k));
                 }
             }
+            
+            //创建新增列按钮
+            CreateAddRowButton();
+            
+            //创建新增行按钮
+            CreateAddColButton();
+
+            //绑定新增子表按钮
+            CreateAddSheetButton();
         }
 
+        /// <summary>
+        /// 创建Sheet按钮
+        /// </summary>
+        public void CreateAddSheetButton()
+        {
+            if(createSheetButton!=null)return;
+            createSheetButton = new Button();
+            createSheetButton.AddToClassList("SheetItem");
+            createSheetButton.name = "addSheet";
+            createSheetButton.text = "+";
+            Bottom.Add(createSheetButton);
+            createSheetButton.clickable.clicked += () =>
+            {
+                var sheetData = new SheetData(new string[1,1])
+                {
+                    name = "Sheet"+MyExcelData.Sheets().Count+1
+                };
+                MyExcelData.Add(sheetData);
+                CreateSheetButton("Sheet"+MyExcelData.Sheets().Count,MyExcelData.Sheets().Count);
+                createSheetButton.BringToFront();
+            };
+        }
+        
         /// <summary>
         /// 创建Sheet按钮
         /// </summary>
@@ -171,17 +219,32 @@ namespace SFramework.Core.Editor.SongExcelEditorWindow
         /// 添加行按钮
         /// </summary>
         /// <param name="parent"></param>
-        public void AddRowButton(VisualElement parent)
+        public void CreateAddRowButton()
         {
             var button = new Button();
             button.AddToClassList("TitleCell");
             button.name = "addRow";
-            button.text = "addRow";
+            button.text = "+";
+            var parent = CreateCellLine((Items.childCount+1).ToString());
             parent.Add(button);
             button.clickable.clicked += () =>
             {
-                
+                var newLine = CreateCellLine((Items.childCount+1).ToString());
+                parent.BringToFront();
+                var i = NowSelectSheet.RowCount;
+                var colCount = NowSelectSheet.ColCount;
+                for (var k = 0; k < colCount; k++)
+                {
+                    if(k==0)
+                        CreateColButton((i+1).ToString(),newLine);
+                    CreateCellButton(i+","+k,newLine,"");
+                }
+                for (var k = 0; k < colCount; k++)
+                {
+                    NowSelectSheet.Set(i,k,"");
+                }
             };
+            button.BringToFront();
         }
 
         /// <summary>
@@ -202,9 +265,39 @@ namespace SFramework.Core.Editor.SongExcelEditorWindow
         /// 添加列按钮
         /// </summary>
         /// <param name="parent"></param>
-        public void AddColButton(VisualElement parent)
+        public void CreateAddColButton()
         {
-            
+            var button = new Button();
+            button.AddToClassList("TitleCell");
+            button.name = "addRow";
+            button.text = "+";
+            var parent = Items.Q<VisualElement>("0") ?? CreateCellLine("0");
+            parent.Add(button);
+            button.clickable.clicked += () =>
+            {
+                var colCount = NowSelectSheet.ColCount;
+                var rowCount = NowSelectSheet.RowCount;
+                var index = 0;
+                foreach (var visualElement in Items.Children())
+                {
+                    if (index == 0)
+                    {
+                        CreateRowButton(Index2ABC(colCount+1),visualElement);
+                        button.BringToFront();
+                        index++;
+                        continue;
+                    }
+                    if(index == colCount) continue;
+                    CreateCellButton((index-1)+","+visualElement.childCount,visualElement,"");
+                }
+                
+                for (var k = 0; k < rowCount; k++)
+                {
+                    NowSelectSheet.SetCol(colCount,"");
+                }
+                
+            };
+            button.BringToFront();
         }
         
         
