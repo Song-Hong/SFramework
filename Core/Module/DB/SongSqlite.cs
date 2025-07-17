@@ -1,9 +1,11 @@
-using Mono.Data.Sqlite;
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
+using Mono.Data.Sqlite;
 using UnityEngine;
 
-namespace Song.Core.Extends.DB
+namespace SFramework.Core.Extends.DB
 {
     /// <summary>
     /// Sqlite数据库操作类
@@ -256,16 +258,36 @@ namespace Song.Core.Extends.DB
                 return false;
             }
         }
-
+        
         /// <summary>
-        /// 开始事务
+        /// 执行事物
         /// </summary>
-        /// <returns>事务对象</returns>
-        public SqliteTransaction BeginTransaction()
+        /// <param name="queryString">多条sql语句</param>
+        /// <returns></returns>
+        public int TransactionExec(List<string>queryString)
         {
-            return _sqlConnection.BeginTransaction();
-        }
+            var effectrow = 0;
+            DbTransaction trans = _sqlConnection.BeginTransaction();
+            try
+            {
+                var dbCommand = _sqlConnection.CreateCommand();
 
+                for (int i = 0; i < queryString.Count; i++)
+                {
+                    dbCommand.CommandText = queryString[i];
+                    effectrow += dbCommand.ExecuteNonQuery();
+                }
+
+                trans.Commit();
+
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e);
+            }
+            return effectrow;
+        }
+        
         /// <summary>
         /// 检查连接状态
         /// </summary>

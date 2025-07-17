@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-namespace Song.Core.Editor
+namespace SFramework.Core.Editor.Util
 {
     public static class SongEditorUtil
     {

@@ -10,7 +10,7 @@ namespace SFramework.Core.Editor.SongExcelEditorWindow
     /// <summary>
     /// Excel界面
     /// </summary>
-    public partial class SongEditorWindow
+    public partial class SongExcelEditorWindow
     {
         /// <summary>
         /// 全部Itmes
@@ -48,7 +48,7 @@ namespace SFramework.Core.Editor.SongExcelEditorWindow
         public void InitExcelArea()
         {
             var fileName = Path.GetFileNameWithoutExtension(excelFilePath);
-            var songEditorWindow = GetWindow<SongEditorWindow>();
+            var songEditorWindow = GetWindow<SongExcelEditorWindow>();
             songEditorWindow.titleContent = new GUIContent(fileName);
 
             Items = rootVisualElement.Q<GroupBox>("Items");

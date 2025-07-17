@@ -7,14 +7,14 @@ using UnityEngine.UIElements;
 namespace SFramework.Core.Editor.SongExcelEditorWindow
 {
     /// <summary>
-    /// 
+    /// Excel编辑器
     /// </summary>
-    public partial class SongEditorWindow:EditorWindow
+    public partial class SongExcelEditorWindow:EditorWindow
     {
         [MenuItem("Song/Excel编辑器")]
         public static void ShowExcelEditor()
         {
-            var songEditorWindow = GetWindow<SongEditorWindow>();
+            var songEditorWindow = GetWindow<SongExcelEditorWindow>();
             songEditorWindow.titleContent = new GUIContent("Excel编辑器");
             songEditorWindow.Show();
         }
@@ -27,7 +27,7 @@ namespace SFramework.Core.Editor.SongExcelEditorWindow
         /// <summary>
         /// 初始化
         /// </summary>
-        private void CreateGUI()
+        public void CreateGUI()
         {
             rootVisualElement.Clear();
             //加载UI文件

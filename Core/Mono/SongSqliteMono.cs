@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using Mono.Data.Sqlite;
-using Song.Core.Extends.DB;
+using SFramework.Core.Extends.DB;
 using Song.Core.Module;
 using UnityEngine;
 
-namespace Song.Scripts.Core.Mono
+namespace SFramework.Core.Mono
 {
     /// <summary>
-    /// Song Sqlite 模块
+    /// Song 快捷连接 Sqlite
     /// </summary>
     public class SongSqliteMono:MonoSingleton<SongSqliteMono>
     {
@@ -41,24 +41,30 @@ namespace Song.Scripts.Core.Mono
             data.Close();
         }
         
-        // public List<T> ExecSql<T>(string sql)
-        // {
-        //     var data = DB.ExecuteQuery(sql);
-        //     var list = new List<T>();
-        //     while (data.Read())
-        //     {
-        //         
-        //     }
-        //     data.Close();
-        //     return list;
-        // }
-        
         /// <summary>
         /// 执行Sql语句,不返回结果
         /// </summary>
         public void ExecSqlNotQuery(string sql)
         {
             DB.ExecuteNonQuery(sql);
+        }
+
+        /// <summary>
+        /// 开启事物批量执行Sql语句
+        /// </summary>
+        /// <param name="sqls">全部sql语句</param>
+        public void TransactionExec(List<string> sqls)
+        {
+            DB.TransactionExec(sqls);
+        }
+
+        /// <summary>
+        /// 销毁时释放数据库连接
+        /// </summary>
+        private void OnDestroy()
+        {
+            Debug.Log("关闭并释放数据库连接");
+            DB.Dispose();
         }
     }
 }
