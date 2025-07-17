@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Song/Core/Editor/TaskManager/TaskManager.uss?fileID=7433441132597879392&amp;guid=c56e73c1c9dd9c2458e42640bf7cc539&amp;type=3#TaskManager" />
+    <ui:VisualElement name="Title" class="Title">
+        <ui:Button text="保存" display-tooltip-when-elided="true" name="Save" class="TitleButton" />
+    </ui:VisualElement>
+    <ui:ScrollView name="Content" mode="VerticalAndHorizontal" vertical-scroller-visibility="Hidden" class="Content">
+        <ui:GroupBox name="ContentArea" class="ContentArea" style="flex-shrink: 1; flex-grow: 1; flex-direction: row;">
+            <ui:VisualElement class="ContentPanel" style="align-items: center; justify-content: center; background-color: rgba(29, 29, 29, 0); border-left-color: rgba(255, 255, 255, 0); border-right-color: rgba(255, 255, 255, 0); border-top-color: rgba(255, 255, 255, 0); border-bottom-color: rgba(255, 255, 255, 0); height: 100px; max-height: 100px; width: 120px; max-width: 120px; min-width: 120px; margin-right: 0; margin-left: 0;">
+                <ui:Button text="+" display-tooltip-when-elided="true" name="AddContentPanel" class="ContentPanel" style="font-size: 60px; height: 100px; max-height: 100px; min-height: 100px; width: 100px; max-width: 100px; min-width: 100px;" />
+            </ui:VisualElement>
+        </ui:GroupBox>
+    </ui:ScrollView>
+    <ui:VisualElement name="Bottom" class="Bottom" style="flex-direction: row; margin-left: 10px; margin-bottom: 2px;">
+        <ui:Button text="+" display-tooltip-when-elided="true" name="AddItem" class="BottomItem" />
+    </ui:VisualElement>
+</ui:UXML>
