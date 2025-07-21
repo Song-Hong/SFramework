@@ -1,29 +1,20 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Net;
-using Song.Core.Module;
-using  Song.Core.Module.Server;
-using UnityEngine;
 using System.Threading;
+using SFramework.Core.Module.Config;
+using Song.Core.Module;
+using Song.Core.Module.Server;
+using UnityEngine;
 
-namespace Song.Core.Mono
+namespace SFramework.Core.Mono
 {
     /// <summary>
-    /// UDP服务
+    /// UDP 开箱即用
     /// </summary>
     public class SongUDPServerMono:MonoSingleton<SongUDPServerMono>
     {
-        public enum RunType
-        {
-            Thread,
-            Coroutine
-        }
-        
         [Header("IP")] public string ip;
         [Header("端口号")] public int port = 8888;
         [Header("打印消息日志")]public bool printLog = true;
-        [Header("运行类型")]public RunType runType = RunType.Thread;
         
         /// <summary>
         /// UDP服务器
@@ -41,39 +32,28 @@ namespace Song.Core.Mono
         
         public void Start()
         {
+            //当 IP 为空时 自动获取本地IP
+            if(string.IsNullOrWhiteSpace(ip))
+            {
+                ip = SongUDPServer.GetMainLocalIP();
+            }
+            
             var mainThread = SynchronizationContext.Current;
-
             try
             {
-                server = runType switch
+                server = SongUDPServer.Connect(ip, port, (ip,port,msg) =>
                 {
-                    RunType.Thread => SongUDPServer.Connect(ip, port, (ip,port,msg) =>
+                    if(printLog)
+                        Debug.Log($"接收到{ip}:{port}消息: {msg}");
+                    mainThread.Post(_ =>
                     {
-                        if(printLog)
-                            Debug.Log($"接收到{ip}:{port}消息: {msg}");
-                        mainThread.Post(_ =>
-                        {
-                            Received?.Invoke(msg);
-                        }, null);
-                        mainThread.Post(_ =>
-                        {
-                            ReceivedIPPort?.Invoke(ip,port,msg);
-                        }, null);
-                    }),
-                    RunType.Coroutine => SongUDPServerIEnumerator.Connect(this,ip, port, (ip, port, msg) =>
+                        Received?.Invoke(msg);
+                    }, null);
+                    mainThread.Post(_ =>
                     {
-                        if (printLog)
-                            Debug.Log($"接收到{ip}:{port}消息: {msg}");
-                        mainThread.Post(_ =>
-                        {
-                            Received?.Invoke(msg);
-                        }, null);
-                        mainThread.Post(_ =>
-                        {
-                            ReceivedIPPort?.Invoke(ip, port, msg);
-                        }, null);
-                    })
-                };
+                        ReceivedIPPort?.Invoke(ip,port,msg);
+                    }, null);
+                });
             }
             catch (Exception e)
             {
@@ -86,7 +66,7 @@ namespace Song.Core.Mono
         /// </summary>
         private void Reset()
         {
-            ip = SongTCPServer.GetMainLocalIP();
+            ip = SongUDPServer.GetMainLocalIP();
         }
 
         /// <summary>

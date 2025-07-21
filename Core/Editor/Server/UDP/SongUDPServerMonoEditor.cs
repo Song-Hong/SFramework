@@ -1,4 +1,6 @@
 ﻿using System;
+using SFramework.Core.Editor.SongConfig;
+using SFramework.Core.Mono;
 using Song.Core.Mono;
 using UnityEditor;
 using UnityEngine;
@@ -49,8 +51,24 @@ namespace SFramework.Core.Editor.Server
         {
             GUILayout.Label("快速创建UDP服务");
             base.OnInspectorGUI();
+            
+            if (server && Application.isPlaying && server.isActiveAndEnabled)
+            {
+                UDPTest();
+            }
+            
+            if(GUILayout.Button("生成配置文件"))
+            {
+                //生成配置文件
+                SongConfigEditor.ShowWindow();
+            }
+        }
 
-            if (!server || !Application.isPlaying || !server.isActiveAndEnabled) return;
+        /// <summary>
+        /// UDP测试工具
+        /// </summary>
+        public void UDPTest()
+        {
             GUILayout.Space(10);
 
             GUILayout.BeginVertical(background);
