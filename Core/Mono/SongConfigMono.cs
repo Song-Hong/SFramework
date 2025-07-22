@@ -41,9 +41,9 @@ namespace SFramework.Core.Mono
             {
                 var jsonContent = configDirPath switch
                 {
-                    DirPath.StreamingAssets => File.ReadAllText(Application.streamingAssetsPath + "/SongConfig.json"),
-                    DirPath.Resources => Resources.Load<TextAsset>("SongConfig").text,
-                    DirPath.PersistentDataPath => File.ReadAllText(Application.persistentDataPath + "/SongConfig.json"),
+                    DirPath.StreamingAssets => File.ReadAllText(Application.streamingAssetsPath + "/SFConfig/SongConfig.json"),
+                    DirPath.Resources => Resources.Load<TextAsset>("/SFConfig/SongConfig").text,
+                    DirPath.PersistentDataPath => File.ReadAllText(Application.persistentDataPath + "/SFConfig/SongConfig.json"),
                     _ => throw new ArgumentOutOfRangeException()
                 };
 

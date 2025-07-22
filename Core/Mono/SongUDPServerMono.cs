@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using SFramework.Core.Module.Config;
+using SFramework.Core.Support.UDP;
 using Song.Core.Module;
 using Song.Core.Module.Server;
 using UnityEngine;
@@ -54,6 +56,12 @@ namespace SFramework.Core.Mono
                         ReceivedIPPort?.Invoke(ip,port,msg);
                     }, null);
                 });
+
+                //获取并执行所有组件的初始化方法
+                foreach (var support in GetComponentsInChildren<ISongUDPSupport>())
+                {
+                    support.Init();
+                }
             }
             catch (Exception e)
             {

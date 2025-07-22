@@ -1,11 +1,9 @@
 ﻿using System;
-using SFramework.Core.Editor.SongConfig;
 using SFramework.Core.Mono;
-using Song.Core.Mono;
 using UnityEditor;
 using UnityEngine;
 
-namespace SFramework.Core.Editor.Server
+namespace SFramework.Core.Editor.Server.UDP
 {
 
     [CustomEditor(typeof(SongUDPServerMono))]
@@ -57,11 +55,11 @@ namespace SFramework.Core.Editor.Server
                 UDPTest();
             }
             
-            if(GUILayout.Button("生成配置文件"))
-            {
-                //生成配置文件
-                SongConfigEditor.ShowWindow();
-            }
+            // if(GUILayout.Button("生成配置文件"))
+            // {
+            //     //生成配置文件
+            //     SongConfigEditor.ShowWindow();
+            // }
         }
 
         /// <summary>

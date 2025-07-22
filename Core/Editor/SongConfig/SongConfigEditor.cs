@@ -27,7 +27,7 @@ namespace SFramework.Core.Editor.SongConfig
             {
                 if (directory != null) Directory.CreateDirectory(directory);
             }
-            outputPath+="/SongConfig.json";
+            outputPath+="/SFConfig/SongConfig.json";
 
             // 用于存储所有配置的字典
             var allConfigs = new Dictionary<string, object>();
