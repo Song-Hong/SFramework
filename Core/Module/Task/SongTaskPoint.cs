@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Song.Core.Module.Task
+namespace SFramework.Core.Module.Task
 {
     /// <summary>
     /// 任务点
     /// </summary>
-    public class TaskPoint : MonoBehaviour
+    public class SongTaskPoint : MonoBehaviour
     {
         /// <summary>
         /// 拥有者
         /// </summary>
-        [Header("拥有者")] public TaskList Owner;
+        [Header("拥有者")] public SongTaskList Owner;
         
         /// <summary>
         /// 任务介绍
@@ -28,12 +27,12 @@ namespace Song.Core.Module.Task
         /// <summary>
         /// 任务点执行类型
         /// </summary>
-        [Header("任务点执行类型")] public TaskPointType taskPointType;
+        [FormerlySerializedAs("taskPointType")] [Header("任务点执行类型")] public SongTaskPointType songTaskPointType;
 
         /// <summary>
         /// 任务点全部任务
         /// </summary>
-        [Header("任务点执行列表")] public List<TaskBase> tasks = new List<TaskBase>();
+        [Header("任务点执行列表")] public List<SongTaskBase> tasks = new List<SongTaskBase>();
         
         /// <summary>
         /// 当前任务执行索引
@@ -44,7 +43,7 @@ namespace Song.Core.Module.Task
         /// 初始化
         /// </summary>
         /// <param name="owner"></param>
-        public void Init(TaskList owner)
+        public void Init(SongTaskList owner)
         {
             this.Owner = owner;
         }
@@ -62,7 +61,7 @@ namespace Song.Core.Module.Task
                 taskBase.enabled = false;
             }
             
-            if(TaskPointType.Order == taskPointType)
+            if(SongTaskPointType.Order == songTaskPointType)
             {
                 //顺序执行
                 tasks[index].enabled = true;
@@ -80,7 +79,7 @@ namespace Song.Core.Module.Task
         /// 任务执行完毕
         /// </summary>
         /// <param name="task"></param>
-        public void TaskFinished(TaskBase task)
+        public void TaskFinished(SongTaskBase task)
         {
             //关闭当前任务
             task.enabled = false;
@@ -88,7 +87,7 @@ namespace Song.Core.Module.Task
             index++;
             
             //顺序执行
-            if(taskPointType == TaskPointType.Order)
+            if(songTaskPointType == SongTaskPointType.Order)
             {
                 if (index < tasks.Count)
                 {

@@ -1,9 +1,9 @@
-﻿namespace Song.Core.Module.Task
+﻿namespace SFramework.Core.Module.Task
 {
     /// <summary>
     /// 任务点执行类型
     /// </summary>
-    public enum TaskPointType
+    public enum SongTaskPointType
     {
         /// <summary>
         /// 顺序执行

@@ -1,23 +1,23 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Song.Core.Module.Task
+namespace SFramework.Core.Module.Task
 {
     /// <summary>
     /// 任务基类
     /// </summary>
-    public class TaskBase:MonoBehaviour
+    public abstract class SongTaskBase:MonoBehaviour
     {
         /// <summary>
         /// 拥有者任务点
         /// </summary>
-        public TaskPoint owner;
+        public SongTaskPoint owner;
 
         /// <summary>
         /// 初始化
         /// </summary>
         /// <param name="own">拥有者</param>
-        public void Init(TaskPoint own)
+        public void Init(SongTaskPoint own)
         {
             this.owner = own;
         }
@@ -32,13 +32,18 @@ namespace Song.Core.Module.Task
         /// </summary>
         private void Reset()
         {
-            var taskPoint = this.GetComponent<TaskPoint>();
+            var taskPoint = this.GetComponent<SongTaskPoint>();
             if (!taskPoint)
             {
-                taskPoint = this.gameObject.AddComponent<TaskPoint>();
+                taskPoint = this.gameObject.AddComponent<SongTaskPoint>();
             }
             owner = taskPoint;
             taskPoint.tasks.Add(this);
         }
+
+        /// <summary>
+        /// 任务开始
+        /// </summary>
+        public abstract void OnEnable();
     }
 }

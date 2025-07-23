@@ -1,28 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 
-namespace Song.Core.Module.Task
+namespace SFramework.Core.Module.Task
 {
     /// <summary>
     /// 任务列表
     /// </summary>
-    public class TaskList
+    public class SongTaskList
     {
         /// <summary>
         /// 任务列表
         /// </summary>
-        public List<TaskPoint> Tasks = new List<TaskPoint>();
+        public List<SongTaskPoint> Tasks = new List<SongTaskPoint>();
         
         /// <summary>
         /// 当前执行的任务
         /// </summary>
-        public TaskPoint CurrentTask;
+        public SongTaskPoint CurrentSongTask;
 
         /// <summary>
         /// 当准备切换下一个任务时
         /// </summary>
-        public event Action<TaskPoint> OnTaskPointChangedStart;
+        public event Action<SongTaskPoint> OnTaskPointChangedStart;
         
         /// <summary>
         /// 当任务切换时
@@ -42,11 +41,11 @@ namespace Song.Core.Module.Task
         /// <summary>
         /// 当前节点执行完毕
         /// </summary>
-        /// <param name="taskPoint">当前任务节点</param>
-        public void TaskPointFinished(TaskPoint taskPoint)
+        /// <param name="songTaskPoint">当前任务节点</param>
+        public void TaskPointFinished(SongTaskPoint songTaskPoint)
         {
             //关闭当前任务
-            taskPoint.gameObject.SetActive(false);
+            songTaskPoint.gameObject.SetActive(false);
             
             //计数器增加
             _index++;
@@ -54,10 +53,10 @@ namespace Song.Core.Module.Task
             {
                 //执行下一个任务
                 Tasks[_index].gameObject.SetActive(true);
-                CurrentTask = Tasks[_index]; // CurrentTask is updated here first.
+                CurrentSongTask = Tasks[_index]; // CurrentTask is updated here first.
                 
                 // Now fire the event after CurrentTask is updated
-                OnTaskPointChangedStart?.Invoke(taskPoint); // Invoked with the *just finished* taskPoint
+                OnTaskPointChangedStart?.Invoke(songTaskPoint); // Invoked with the *just finished* taskPoint
                 OnTaskPointChanged?.Invoke();
             }
             else
@@ -75,7 +74,7 @@ namespace Song.Core.Module.Task
             if(Tasks.Count > 0)
             {
                 Tasks[0].gameObject.SetActive(true);
-                CurrentTask = Tasks[0];
+                CurrentSongTask = Tasks[0];
             }
         }
 
@@ -83,12 +82,12 @@ namespace Song.Core.Module.Task
         /// <summary>
         /// 添加任务
         /// </summary>
-        /// <param name="taskPoint">任务点</param>
-        public void AddTask(TaskPoint taskPoint)
+        /// <param name="songTaskPoint">任务点</param>
+        public void AddTask(SongTaskPoint songTaskPoint)
         {
-            taskPoint.gameObject.SetActive(false);
-            taskPoint.Init(this);
-            Tasks.Add(taskPoint);
+            songTaskPoint.gameObject.SetActive(false);
+            songTaskPoint.Init(this);
+            Tasks.Add(songTaskPoint);
         }
         #endregion
     }
