@@ -36,12 +36,12 @@ namespace SFramework.Core.Module.Task
             {
                 taskList.AddTask(taskPoint);
             }
-            taskList.StartFristTask();
             taskList.OnAllTaskFinished += () =>
             {
                 Debug.Log("所有任务完成");
                 this.gameObject.SetActive(false);
             };
+            taskList.StartFristTask();
         }
     }
 }

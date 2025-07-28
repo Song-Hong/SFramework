@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace SFramework.Core.Module.Task
 {
@@ -49,8 +50,10 @@ namespace SFramework.Core.Module.Task
             
             //计数器增加
             _index++;
-            if(_index < Tasks.Count)
+            if(_index+1 < Tasks.Count)
             {
+                Debug.Log($"任务 {_index}/{Tasks.Count}");
+                
                 //执行下一个任务
                 Tasks[_index].gameObject.SetActive(true);
                 CurrentSongTask = Tasks[_index]; // CurrentTask is updated here first.

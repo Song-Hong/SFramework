@@ -60,12 +60,20 @@ namespace SFramework.Core.Module.Task
             {
                 taskBase.enabled = false;
             }
+
+            //当前任务点没有任务,任务点执行完毕
+            if (tasks.Count <= 0)
+            {
+                Owner.TaskPointFinished(this);
+                return;
+            }
             
+            //顺序执行
             if(SongTaskPointType.Order == songTaskPointType)
             {
-                //顺序执行
                 tasks[index].enabled = true;
             }
+            //并行执行
             else
             {
                 foreach (var taskBase in tasks)
