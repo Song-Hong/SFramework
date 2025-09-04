@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 
 namespace SFramework.Core.Module.Task
@@ -33,12 +34,13 @@ namespace SFramework.Core.Module.Task
         private void Reset()
         {
             var taskPoint = this.GetComponent<SongTaskPoint>();
-            if (!taskPoint)
-            {
-                taskPoint = this.gameObject.AddComponent<SongTaskPoint>();
-            }
+            // if (!taskPoint)
+            // {
+            //     taskPoint = this.gameObject.AddComponent<SongTaskPoint>();
+            // }
             owner = taskPoint;
-            taskPoint.tasks.Add(this);
+            taskPoint.tasks.Clear();
+            taskPoint.tasks = taskPoint.GetComponents<SongTaskBase>().ToList() ;
         }
 
         /// <summary>

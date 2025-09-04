@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>文件下载</title>
+</head>
+<body>
+<p>文件即将开始下载，如果没有下载点击下载按钮下载</p>
+<button onclick="downloadFile()">下载文件</button>
+<script>
+    function downloadFile() {
+        // 发送POST请求到服务器的文件下载接口
+        fetch('SERVERIP', {
+            method: 'POST',
+            body: "FILENAME"
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('网络响应不正常');
+                }
+                // 从响应头获取文件名
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = 'downloaded_file';
+                if (contentDisposition) {
+                    const match = contentDisposition.match(/filename="?([^"]+)"?/);
+                    if (match && match[1]) {
+                        filename = match[1];
+                    }
+                }
+                return Promise.all([response.blob(), Promise.resolve(filename)]);
+            })
+            .then(([blob, filename]) => {
+                // 创建下载链接
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                // 清理资源
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 0);
+            })
+            .catch(error => {
+                console.error('下载失败:', error);
+                alert('文件下载失败，请稍后重试');
+            });
+    }
+</script>
+</body>
+</html>

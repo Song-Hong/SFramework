@@ -52,8 +52,6 @@ namespace SFramework.Core.Module.Task
             _index++;
             if(_index+1 < Tasks.Count)
             {
-                Debug.Log($"任务 {_index}/{Tasks.Count}");
-                
                 //执行下一个任务
                 Tasks[_index].gameObject.SetActive(true);
                 CurrentSongTask = Tasks[_index]; // CurrentTask is updated here first.

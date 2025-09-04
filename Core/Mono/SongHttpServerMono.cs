@@ -4,6 +4,7 @@ using System.Net;
 using System.Text;
 using SFramework.Core.Module.Server.Http;
 using Song.Core.Module;
+using Song.Core.Support.HTTP;
 using UnityEngine;
 
 namespace SFramework.Core.Mono
@@ -44,6 +45,12 @@ namespace SFramework.Core.Mono
             }
             httpServer = SongHttpServer.Start(ip,port, HandleHttpRequest);
             Debug.Log($"Http服务器已启动，http://{ip}:{port}");
+            
+            //获取并执行所有组件的初始化方法
+            foreach (var support in GetComponentsInChildren<ISongHttpServerSupport>())
+            {
+                support.Init();
+            }
         }
         
         /// <summary>
@@ -59,36 +66,13 @@ namespace SFramework.Core.Mono
                 case "/":
                     SendTextResponse(response, "欢迎来到首页！");
                     break;
-
-                case "/api/getplayerinfo":
-                    string json = "{\"playerName\": \"Song\", \"level\": 99, \"health\": 100}";
-                    SendJsonResponse(response, json);
-                    break;
-
-                case "/posttest":
-                    if (request.HttpMethod == "POST")
-                    {
-                        string postBody = new StreamReader(request.InputStream, request.ContentEncoding).ReadToEnd();
-                        Debug.Log($"收到POST数据: {postBody}");
-                        SendTextResponse(response, $"服务器已收到您的POST数据: {postBody}");
-                    }
-                    else
-                    {
-                        SendTextResponse(response, "请使用POST方法访问此路径。", HttpStatusCode.MethodNotAllowed);
-                    }
-
-                    break;
-
-                default:
-                    SendTextResponse(response, "404 - 未找到页面", HttpStatusCode.NotFound);
-                    break;
             }
         }
         
         /// <summary>
         /// 发送文本响应
         /// </summary>
-        private void SendTextResponse(HttpListenerResponse response, string text,
+        public void SendTextResponse(HttpListenerResponse response, string text,
             HttpStatusCode statusCode = HttpStatusCode.OK)
         {
             response.StatusCode = (int)statusCode;
@@ -96,6 +80,7 @@ namespace SFramework.Core.Mono
             byte[] buffer = Encoding.UTF8.GetBytes(text);
             response.ContentLength64 = buffer.Length;
             response.OutputStream.Write(buffer, 0, buffer.Length);
+            response.Close();
         }
         
         /// <summary>
@@ -104,7 +89,7 @@ namespace SFramework.Core.Mono
         /// <param name="response"></param>
         /// <param name="json"></param>
         /// <param name="statusCode"></param>
-        private void SendJsonResponse(HttpListenerResponse response, string json,
+        public void SendJsonResponse(HttpListenerResponse response, string json,
             HttpStatusCode statusCode = HttpStatusCode.OK)
         {
             response.StatusCode = (int)statusCode;
@@ -112,6 +97,24 @@ namespace SFramework.Core.Mono
             byte[] buffer = Encoding.UTF8.GetBytes(json);
             response.ContentLength64 = buffer.Length;
             response.OutputStream.Write(buffer, 0, buffer.Length);
+            response.Close();
+        }
+        
+        /// <summary>
+        /// 发送文件响应
+        /// </summary>
+        /// <param name="response"></param>
+        /// <param name="filePath"></param>
+        /// <param name="statusCode"></param>
+        public void SendFileResponse(HttpListenerResponse response, string filePath,
+            HttpStatusCode statusCode = HttpStatusCode.OK)
+        {
+            response.StatusCode = (int)statusCode;
+            response.ContentType = "application/octet-stream";
+            byte[] buffer = File.ReadAllBytes(filePath);
+            response.ContentLength64 = buffer.Length;
+            response.OutputStream.Write(buffer, 0, buffer.Length);
+            response.Close();
         }
 
         /// <summary>
@@ -121,6 +124,14 @@ namespace SFramework.Core.Mono
         {
             Debug.Log($"Http服务器已关闭，http://{ip}:{port}");
             httpServer?.Stop();
+        }
+
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        private void Reset()
+        {
+            ip = SongHttpServer.GetMainLocalIP();
         }
     }
 }

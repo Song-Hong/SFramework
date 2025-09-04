@@ -3,7 +3,7 @@ using System.Collections;
 using SFramework.Core.Module.Task;
 using UnityEngine;
 
-namespace SFramework.Game.Tasks
+namespace SFramework.Example.Tasks
 {
     public class SongDebug:SongTaskBase
     {
