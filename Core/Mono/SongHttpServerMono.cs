@@ -64,8 +64,21 @@ namespace SFramework.Core.Mono
             switch (request.Url.AbsolutePath)
             {
                 case "/":
-                    SendTextResponse(response, "欢迎来到首页！");
+#if  UNITY_EDITOR
+                    var filePath = Application.dataPath+"/SFramework/Core/Config/index.html";
+                    if (File.Exists(filePath))
+                    {
+                        SendHtmlResponse(response, File.ReadAllText(filePath));
+                    }
+                    else
+                    {
+                        SendTextResponse(response, "http服务器已启动！");
+                    }
                     break;
+#else              
+                    SendTextResponse(response, "http服务器已启动！");
+                    break;
+#endif
             }
         }
         
@@ -74,14 +87,7 @@ namespace SFramework.Core.Mono
         /// </summary>
         public void SendTextResponse(HttpListenerResponse response, string text,
             HttpStatusCode statusCode = HttpStatusCode.OK)
-        {
-            response.StatusCode = (int)statusCode;
-            response.ContentType = "text/plain; charset=utf-8";
-            byte[] buffer = Encoding.UTF8.GetBytes(text);
-            response.ContentLength64 = buffer.Length;
-            response.OutputStream.Write(buffer, 0, buffer.Length);
-            response.Close();
-        }
+        =>SendResponse(response,"text/plain; charset=utf-8",Encoding.UTF8.GetBytes(text),statusCode);
         
         /// <summary>
         /// 发送Json响应
@@ -91,14 +97,7 @@ namespace SFramework.Core.Mono
         /// <param name="statusCode"></param>
         public void SendJsonResponse(HttpListenerResponse response, string json,
             HttpStatusCode statusCode = HttpStatusCode.OK)
-        {
-            response.StatusCode = (int)statusCode;
-            response.ContentType = "application/json; charset=utf-8";
-            byte[] buffer = Encoding.UTF8.GetBytes(json);
-            response.ContentLength64 = buffer.Length;
-            response.OutputStream.Write(buffer, 0, buffer.Length);
-            response.Close();
-        }
+        =>SendResponse(response,"application/json; charset=utf-8",Encoding.UTF8.GetBytes(json),statusCode);
         
         /// <summary>
         /// 发送文件响应
@@ -108,14 +107,35 @@ namespace SFramework.Core.Mono
         /// <param name="statusCode"></param>
         public void SendFileResponse(HttpListenerResponse response, string filePath,
             HttpStatusCode statusCode = HttpStatusCode.OK)
+        =>SendResponse(response,"application/octet-stream",File.ReadAllBytes(filePath),statusCode);
+        
+        /// <summary>
+        /// 发送Html响应
+        /// </summary>
+        /// <param name="response"></param>
+        /// <param name="html"></param>
+        /// <param name="statusCode"></param>
+        public void SendHtmlResponse(HttpListenerResponse response, string html,
+            HttpStatusCode statusCode = HttpStatusCode.OK)
+        =>SendResponse(response,"text/html",Encoding.UTF8.GetBytes(html),statusCode);
+        
+        /// <summary>
+        /// 返回请求
+        /// </summary>
+        /// <param name="response">响应</param>
+        /// <param name="contentType">内容类型</param>
+        /// <param name="buffer">数据</param>
+        /// <param name="statusCode">状态码</param>
+        public void SendResponse(HttpListenerResponse response,string contentType ,byte[] buffer,
+            HttpStatusCode statusCode = HttpStatusCode.OK)
         {
             response.StatusCode = (int)statusCode;
-            response.ContentType = "application/octet-stream";
-            byte[] buffer = File.ReadAllBytes(filePath);
+            response.ContentType = contentType;
             response.ContentLength64 = buffer.Length;
             response.OutputStream.Write(buffer, 0, buffer.Length);
             response.Close();
         }
+
 
         /// <summary>
         /// 断开连接
