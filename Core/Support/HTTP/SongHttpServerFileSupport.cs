@@ -1,15 +1,14 @@
 using System.IO;
 using System.Net;
 using SFramework.Core.Mono;
-using Song.Core.Tools;
 using UnityEngine;
 
-namespace Song.Core.Support.HTTP
+namespace SFramework.Core.Support.HTTP
 {
     /// <summary>
     /// HTTP 接口文件管理器
     /// </summary>
-    public class SongHttpServerFileManager : MonoBehaviour, ISongHttpServerSupport
+    public class SongHttpServerFileSupport : MonoBehaviour, ISongHttpServerSupport
     {
         /// <summary>
         /// 文件类型

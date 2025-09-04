@@ -3,8 +3,8 @@ using System.IO;
 using System.Net;
 using System.Text;
 using SFramework.Core.Module.Server.Http;
+using SFramework.Core.Support.HTTP;
 using Song.Core.Module;
-using Song.Core.Support.HTTP;
 using UnityEngine;
 
 namespace SFramework.Core.Mono
@@ -129,11 +129,18 @@ namespace SFramework.Core.Mono
         public void SendResponse(HttpListenerResponse response,string contentType ,byte[] buffer,
             HttpStatusCode statusCode = HttpStatusCode.OK)
         {
-            response.StatusCode = (int)statusCode;
-            response.ContentType = contentType;
-            response.ContentLength64 = buffer.Length;
-            response.OutputStream.Write(buffer, 0, buffer.Length);
-            response.Close();
+            try
+            {
+                response.StatusCode = (int)statusCode;
+                response.ContentType = contentType;
+                response.ContentLength64 = buffer.Length;
+                response.OutputStream.Write(buffer, 0, buffer.Length);
+                response.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
 

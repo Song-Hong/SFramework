@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Song.Core.Support.HTTP;
+using SFramework.Core.Support.HTTP;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.UIElements;
@@ -9,8 +9,8 @@ namespace SFramework.Core.Editor.Server.HTTP
     /// <summary>
     /// HTTP 接口文件管理器 编辑器样式
     /// </summary>
-    [CustomEditor(typeof(SongHttpServerFileManager))]
-    public class SongHttpServerFileManagerEditor:UnityEditor.Editor
+    [CustomEditor(typeof(SongHttpServerFileSupport))]
+    public class SongHttpServerFileSupportEditor:UnityEditor.Editor
     {
         /// <summary>
         /// 创建Inspector视图
@@ -19,7 +19,7 @@ namespace SFramework.Core.Editor.Server.HTTP
         public override VisualElement CreateInspectorGUI()
         {
             //获取目标对象
-            var songHttpServerFileManager = target as SongHttpServerFileManager;
+            var songHttpServerFileManager = target as SongHttpServerFileSupport;
 
             //根节点
             var root = new VisualElement();
@@ -56,7 +56,7 @@ namespace SFramework.Core.Editor.Server.HTTP
             //添加监听事件
             dropdownField.RegisterValueChangedCallback((evt) =>
             {
-                songHttpServerFileManager.fileType = (SongHttpServerFileManager.FileType)dropdownField.index;
+                songHttpServerFileManager.fileType = (SongHttpServerFileSupport.FileType)dropdownField.index;
                 
                 // 创建自定义路径输入框
                 CreateCustomDataPath(root,songHttpServerFileManager);
@@ -88,7 +88,7 @@ namespace SFramework.Core.Editor.Server.HTTP
         /// </summary>
         /// <param name="root">根节点</param>
         /// <param name="songHttpServerFileManager">文件管理器</param>
-        public void CreateCustomDataPath(VisualElement root,SongHttpServerFileManager songHttpServerFileManager)
+        public void CreateCustomDataPath(VisualElement root,SongHttpServerFileSupport songHttpServerFileManager)
         {
             //间隔
             var space = new VisualElement()
@@ -102,7 +102,7 @@ namespace SFramework.Core.Editor.Server.HTTP
             root.Add(space);
             
             //文件路径
-            if (songHttpServerFileManager.fileType == SongHttpServerFileManager.FileType.CustomDataPath)
+            if (songHttpServerFileManager.fileType == SongHttpServerFileSupport.FileType.CustomDataPath)
             {
                 var textField = new TextField()
                 {

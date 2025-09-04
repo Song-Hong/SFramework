@@ -1,6 +1,6 @@
 using SFramework.Core.Support.Core;
 
-namespace Song.Core.Support.HTTP
+namespace SFramework.Core.Support.HTTP
 {
     /// <summary>
     /// HTTP 接口组件

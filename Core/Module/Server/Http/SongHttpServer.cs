@@ -184,7 +184,7 @@ namespace SFramework.Core.Module.Server.Http
             response.StatusCode = (int)HttpStatusCode.OK;
             response.ContentType = "text/html; charset=utf-8";
 
-            StringBuilder htmlBuilder = new StringBuilder();
+            var htmlBuilder = new StringBuilder();
             htmlBuilder.Append("<!DOCTYPE html>");
             htmlBuilder.Append("<html><head><title>SongHttpServer</title></head>");
             htmlBuilder.Append("<body style='font-family: Arial, sans-serif; text-align: center; margin-top: 50px;'>");
