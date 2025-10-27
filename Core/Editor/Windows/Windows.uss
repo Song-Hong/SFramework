@@ -1,0 +1,189 @@
+.root {
+    flex-grow: 1;
+    background-color: rgb(56, 56, 56);
+    flex-direction: row;
+}
+
+.slider {
+    flex-grow: 1;
+    flex-shrink: 0;
+    width: 120px;
+    background-color: rgb(46, 46, 46);
+}
+
+.logo {
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+    font-size: 14px;
+    -unity-font-style: bold;
+    margin-top: 12px;
+    margin-bottom: 20px;
+}
+
+.item {
+    padding-top: 4px;
+    padding-right: 4px;
+    padding-bottom: 4px;
+    padding-left: 4px;
+    background-color: rgb(46, 46, 46);
+    color: rgb(180, 180, 180);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    font-size: 16px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.item:hover {
+    padding-top: 4px;
+    padding-right: 4px;
+    padding-bottom: 4px;
+    padding-left: 4px;
+    background-color: rgb(46, 46, 46);
+    color: rgb(255, 255, 255);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    font-size: 16px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.item_select {
+    padding-top: 4px;
+    padding-right: 4px;
+    padding-bottom: 4px;
+    padding-left: 4px;
+    background-color: rgb(31, 31, 31);
+    color: rgb(255, 255, 255);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    font-size: 16px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.content {
+    flex-grow: 1;
+    padding-top: 16px;
+    padding-right: 16px;
+    padding-bottom: 16px;
+    padding-left: 16px;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.content_items {
+    flex-grow: 1;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.packagesItem {
+    background-color: rgb(29, 29, 29);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    margin-top: 8px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    margin-left: 8px;
+    max-width: 100%;
+    width: 30%;
+    height: 80px;
+    flex-direction: row;
+}
+
+.packagesItemIcon {
+    width: 60px;
+    height: 60px;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.packagesItemName {
+    color: rgb(255, 255, 255);
+    margin-left: 10px;
+    margin-top: 8px;
+}
+
+.packagesItemVersion {
+    position: absolute;
+    margin-left: 80px;
+    margin-top: 26px;
+    -unity-font-style: normal;
+    color: rgb(156, 156, 156);
+    font-size: 10px;
+}
+
+.packagesItemDesc {
+    color: rgb(156, 156, 156);
+    margin-left: 80px;
+    margin-top: 40px;
+    position: absolute;
+    font-size: 10px;
+}
+
+.packagesItemInstall {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    padding-top: 6px;
+    padding-right: 6px;
+    padding-bottom: 6px;
+    padding-left: 6px;
+    font-size: 10px;
+    width: 50px;
+    background-color: rgb(180, 180, 180);
+    color: rgb(0, 0, 0);
+    -unity-font-style: normal;
+}
+
+.packagesItemUninstall {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    padding-top: 6px;
+    padding-right: 6px;
+    padding-bottom: 6px;
+    padding-left: 6px;
+    font-size: 10px;
+    width: 50px;
+    background-color: rgb(55, 55, 55);
+    color: rgb(118, 118, 118);
+    -unity-font-style: normal;
+}

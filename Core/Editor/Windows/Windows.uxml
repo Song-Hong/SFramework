@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/SFramework/Core/Editor/Windows/Windows.uss?fileID=7433441132597879392&amp;guid=ded5c022bf120467285c4cb1278ea96c&amp;type=3#Windows" />
+    <ui:VisualElement name="root" class="root">
+        <ui:VisualElement name="slider" class="slider" style="flex-grow: 0;">
+            <ui:Label tabindex="-1" text="SFramework" parse-escape-sequences="true" display-tooltip-when-elided="true" name="logo" class="logo" />
+            <ui:Button text="扩展包" parse-escape-sequences="true" display-tooltip-when-elided="true" name="packages" class="item" />
+            <ui:Button text="设置" parse-escape-sequences="true" display-tooltip-when-elided="true" name="setting" class="item" />
+        </ui:VisualElement>
+        <ui:ScrollView name="content" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden" class="content">
+            <ui:GroupBox name="content_items" class="content_items" />
+        </ui:ScrollView>
+    </ui:VisualElement>
+</ui:UXML>

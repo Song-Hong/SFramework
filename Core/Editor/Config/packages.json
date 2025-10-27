@@ -1,0 +1,25 @@
+{
+  "packages": [
+    {
+      "name": "SFNet",
+      "version": "0.0.1",
+      "description": "网络模块",
+      "url": "https://github.com/SFramework/SFrameworkNet.git",
+      "icon": "Assets/SFramework/Core/Editor/Config/Net.png"
+    },
+    {
+      "name": "SFTask",
+      "version": "0.0.1",
+      "description": "任务模块",
+      "url": "https://github.com/SFramework/SFrameworkTask.git",
+      "icon": "Assets/SFramework/Core/Editor/Config/Task.png"
+    },
+    {
+      "name": "SFDb",
+      "version": "0.0.1",
+      "description": "数据库模块",
+      "url": "https://github.com/SFramework/SFrameworkDatabase.git",
+      "icon": "Assets/SFramework/Core/Editor/Config/Db.png"
+    }
+  ]
+}
