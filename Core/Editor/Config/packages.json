@@ -20,6 +20,13 @@
       "description": "数据库模块",
       "url": "https://github.com/SFramework/SFrameworkDatabase.git",
       "icon": "Assets/SFramework/Core/Editor/Config/Db.png"
+    },
+    {
+      "name": "SFHardware",
+      "version": "0.0.1",
+      "description": "硬件模块",
+      "url": "https://github.com/SFramework/SFrameworkHardware.git",
+      "icon": "Assets/SFramework/Core/Editor/Config/Hardware.png"
     }
   ]
 }
