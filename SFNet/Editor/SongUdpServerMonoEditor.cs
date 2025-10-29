@@ -1,4 +1,5 @@
 using System;
+using SFramework.Core.SfUIElementExtends;
 using SFramework.Core.Support;
 using SFramework.SFNet.Mono;
 using UnityEditor;
@@ -187,121 +188,32 @@ namespace SFramework.SFNet.Editor
             portContainer.Add(portInput);
             
             // 是否打印消息
-             var logState = new VisualElement()
+            var logStateChoice = new SfTab();
+            logStateChoice.SetTitle("打印消息:");
+            logStateChoice.AddChoice("打印","不打印");
+            logStateChoice.ChooseBackground.style.marginLeft = 32;
+            _rootElement.Add(logStateChoice);
+            logStateChoice.OnChoiceChanged += choice => //添加变化事件
             {
-                style =
+                if (choice == "打印")
                 {
-                    flexDirection = FlexDirection.Row,
-                    alignItems = Align.Center,
+                    if (serverMono != null) serverMono.printLog = true;
+                    serializedObject.ApplyModifiedProperties();
+                }
+                else if (choice == "不打印")
+                {
+                    if (serverMono != null) serverMono.printLog = false;
+                    serializedObject.ApplyModifiedProperties();
                 }
             };
-            // 添加服务器状态标签
-            var logStateLabel = new Label("打印消息:")
+            if (serverMono.printLog)
             {
-                style =
-                {
-                    fontSize = 14,
-                    height = 26,
-                    color = Color.white,
-                    marginLeft = 5,
-                    marginTop = 10,
-                    alignSelf = Align.Center,
-                    unityTextAlign = TextAnchor.MiddleCenter,
-                }
-            };
-            // 服务器/客户端选择背景
-            var logStateBg = new VisualElement
+                logStateChoice.Select("打印");
+            }
+            else
             {
-                style =
-                {
-                    backgroundColor = SfColor.HexToColor("#242424"),
-                    marginLeft = 32,
-                    marginTop = 10,
-                    paddingLeft = 2,
-                    paddingRight = 2,
-                    paddingTop = 2,
-                    paddingBottom = 2,
-                    flexDirection = FlexDirection.Row,
-                    borderTopLeftRadius = 5,
-                    borderTopRightRadius = 5,
-                    borderBottomLeftRadius = 5,
-                    borderBottomRightRadius = 5,
-                    height = 26,
-                }
-            };
-
-            //服务器按钮
-            var logStateEnable = new Button
-            {
-                style =
-                {
-                    // backgroundColor = SfColor.HexToColor("#242424"), // 改为使用变量
-                    backgroundColor = activeColor, // 默认激活服务器
-                    color = activeTextColor,
-                    borderLeftWidth = 0,
-                    borderTopWidth = 0,
-                    borderRightWidth = 0,
-                    borderBottomWidth = 0,
-                },
-                text = "打印"
-            };
-            //客户端按钮
-            var logStateDisable = new Button
-            {
-                style =
-                {
-                    // backgroundColor = SfColor.HexToColor("#242424"), // 改为使用变量
-                    backgroundColor = inactiveColor, // 默认非激活
-                    color = inactiveTextColor,
-                    borderLeftWidth = 0,
-                    borderTopWidth = 0,
-                    borderRightWidth = 0,
-                    borderBottomWidth = 0,
-                },
-                text = "不打印"
-            };
-            
-            // --- 新增：注册点击事件 ---
-            logStateEnable.clicked += () =>
-            {
-                // 设置是否打印消息为 "激活"
-                logStateEnable.style.backgroundColor = activeColor;
-                // 设置是否打印消息为 "非激活"
-                logStateDisable.style.backgroundColor = inactiveColor;
-                // 设置是否打印消息按钮文本颜色为白色
-                logStateEnable.style.color = activeTextColor;
-                // 设置是否打印消息按钮文本颜色为灰色
-                logStateDisable.style.color = inactiveTextColor;
-
-                if (serverMono != null) serverMono.printLog = true;
-                serializedObject.ApplyModifiedProperties();
-            };
-            
-            logStateDisable.clicked += () =>
-            {
-                // 设置是否打印消息为 "非激活"
-                logStateEnable.style.backgroundColor = inactiveColor;
-                // 设置是否打印消息为 "激活"
-                logStateDisable.style.backgroundColor = activeColor;
-                // 设置是否打印消息按钮文本颜色为灰色
-                logStateEnable.style.color = inactiveTextColor;
-                // 设置是否打印消息按钮文本颜色为白色
-                logStateDisable.style.color = activeTextColor;
-                
-                if (serverMono != null) serverMono.printLog = false;
-                serializedObject.ApplyModifiedProperties();
-            };
-            // -------------------------
-
-            // 添加服务器/客户端选择按钮到背景
-            logStateBg.Add(logStateEnable);
-            logStateBg.Add(logStateDisable);
-            // 添加是否打印消息标签到根元素
-            logState.Add(logStateLabel);
-            // 添加是否打印消息选择背景到根元素
-            logState.Add(logStateBg);
-            // 添加是否打印消息到根元素
-            _rootElement.Add(logState);
+                logStateChoice.Select("不打印");
+            }
             
             return _rootElement;
         }

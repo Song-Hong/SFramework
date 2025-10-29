@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using SFramework.Core.SfUIElementExtends;
 using SFramework.Core.Support;
 using SFramework.SFHardware.Module;
 using SFramework.SFHardware.Mono;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 namespace SFramework.SFHardware.Editor
@@ -33,6 +36,10 @@ namespace SFramework.SFHardware.Editor
         /// 根元素
         /// </summary>
         private VisualElement _rootElement;
+        /// <summary>
+        /// 相机模块单例
+        /// </summary>
+        private SfCameraMono _sfCameraMono;
         
         private void OnEnable()
         {
@@ -67,7 +74,7 @@ namespace SFramework.SFHardware.Editor
             {
                 style =
                 {
-                    height = 240,
+                    // height = 240,
                     width = new StyleLength(StyleKeyword.Initial)
                 }
             };
@@ -84,23 +91,320 @@ namespace SFramework.SFHardware.Editor
             };
             _rootElement.Add(title);
             
+            // #region 测试UI
+            // // 保留 base.OnInspectorGUI() 以显示默认属性
+            // var container = new IMGUIContainer(() =>
+            // {
+            //     base.OnInspectorGUI();
+            // });
+            // _rootElement.Add(container);
+            // #endregion
             
+            // 添加相机模块单例
+            _sfCameraMono = target as SfCameraMono;
             
-            #region 测试UI
-            // 保留 base.OnInspectorGUI() 以显示默认属性
-            var container = new IMGUIContainer(() =>
+            // 导出设置选项
+            var exportTab = new SfTab();
+            exportTab.SetTitle("导出设置:");
+            exportTab.AddChoice("RawImage","RenderTexture");
+            exportTab.ChooseBackground.style.marginLeft = 56;
+            _rootElement.Add(exportTab);
+            exportTab.OnChoiceChanged += choice => //添加变化事件
             {
-                base.OnInspectorGUI();
-            });
-            _rootElement.Add(container);
-            #endregion
+                if (choice == "RawImage")
+                {
+                    ShowRawImageExport();
+                    RemoveTextureExport();
+                    if (_sfCameraMono != null) _sfCameraMono.exportType = SfCameraMono.ExportType.RawImage;
+                    serializedObject.ApplyModifiedProperties();
+                }
+                else if (choice == "RenderTexture")
+                {
+                    RemoveRawImageExport();
+                    ShowTextureExport();
+                    if (_sfCameraMono != null) _sfCameraMono.exportType = SfCameraMono.ExportType.RenderTexture;
+                    serializedObject.ApplyModifiedProperties();
+                }
+            };
+            switch (_sfCameraMono.exportType)
+            {
+                case SfCameraMono.ExportType.RawImage:
+                    exportTab.Select("RawImage");
+                    ShowRawImageExport();
+                    RemoveTextureExport();
+                    break;
+                case SfCameraMono.ExportType.RenderTexture:
+                    exportTab.Select("RenderTexture");
+                    RemoveRawImageExport();
+                    ShowTextureExport();
+                    break;
+            }
             
-            var visualElement = base.CreateInspectorGUI();
-            _rootElement.Add(visualElement);
+            
+            // 仅在编辑模式下显示相机视图
+            if(!Application.isPlaying)
+                CameraView();
+            
+            return _rootElement;
+        }
 
+        #region RawImage显示
+        /// <summary>
+        /// 镜像设置选项
+        /// </summary>
+        private SfTab mirrorTab;
+        /// <summary>
+        /// RawImage导出选项
+        /// </summary>
+        private ObjectField rawImageField;
+        
+        /// <summary>
+        /// 显示RawImage导出选项
+        /// </summary>
+        public void ShowRawImageExport()
+        {
+            if(mirrorTab!=null)
+                RemoveRawImageExport();
+            
+            // 添加RawImage导出选项
+            rawImageField = new ObjectField("RawImage:")
+            {
+                style =
+                {
+                    fontSize = 12,
+                    color = Color.white,
+                    height = 20,
+                    marginTop = 10
+                },
+                name = "rawImageField",
+                objectType = typeof(RawImage)
+            };
+            rawImageField.RegisterValueChangedCallback(e =>
+            {
+                if (_sfCameraMono != null) _sfCameraMono.image = e.newValue as RawImage;
+                serializedObject.ApplyModifiedProperties();
+            });
+            rawImageField.value = _sfCameraMono.image;
+            _rootElement.Add(rawImageField);
+            
+            // 添加镜像设置选项
+            mirrorTab = new SfTab
+            {
+                name = "mirrorTab"
+            };
+            mirrorTab.SetTitle("镜像设置:");
+            mirrorTab.AddChoice("镜像","不镜像");
+            mirrorTab.ChooseBackground.style.marginLeft = 56;
+            _rootElement.Add(mirrorTab);
+            mirrorTab.OnChoiceChanged += choice => //添加变化事件
+            {
+                if (choice == "镜像")
+                {
+                    if (_sfCameraMono != null) _sfCameraMono.isMirrored = true;
+                    serializedObject.ApplyModifiedProperties();
+                }
+                else if (choice == "不镜像")
+                {
+                    if (_sfCameraMono != null) _sfCameraMono.isMirrored = false;
+                    serializedObject.ApplyModifiedProperties();
+                }
+                UpdateMirrorSetting();
+            };
+            if (_sfCameraMono.isMirrored)
+            {
+                mirrorTab.Select("镜像");
+            }
+            else
+            {
+                mirrorTab.Select("不镜像");
+            }
+            if(cameraDisplayElement!=null)
+                cameraDisplayElement.BringToFront();
+        }
+        
+        /// <summary>
+        /// 移除RawImage导出选项
+        /// </summary>
+        public void RemoveRawImageExport()
+        {
+            if (mirrorTab != null)
+            {
+                _rootElement.Remove(mirrorTab);
+                mirrorTab = null;   
+            }
+            if (rawImageField != null)
+            {
+                _rootElement.Remove(rawImageField);
+                rawImageField = null;
+            }
+        }
+        #endregion
+
+        #region RenderTexture显示
+        /// <summary>
+        /// 镜像设置选项
+        /// </summary>
+        private SfTab autoCreateTab;
+        /// <summary>
+        /// Texture 导出选项
+        /// </summary>
+        private ObjectField textureField;
+        /// <summary>
+        /// 导出纹理大小
+        /// </summary>
+        private Vector2IntField textureSizeField;
+        /// <summary>
+        /// 显示Texture导出选项
+        /// </summary>
+        public void ShowTextureExport()
+        {
+            if (autoCreateTab != null)
+            {
+                RemoveTextureExport();
+            }
+            // 添加Texture导出选项
+            textureField = new ObjectField("RenderTexture:")
+            {
+                style =
+                {
+                    fontSize = 12,
+                    color = Color.white,
+                    height = 20,
+                    marginTop = 10
+                },
+                name = "textureField",
+                objectType = typeof(RenderTexture)
+            };
+            textureField.RegisterValueChangedCallback(e =>
+            {
+                if (_sfCameraMono != null) _sfCameraMono.texture = e.newValue as RenderTexture;
+                serializedObject.ApplyModifiedProperties();
+            });
+            textureField.value = _sfCameraMono.texture;
+            _rootElement.Add(textureField);
+            
+            // 添加自动创建选项
+            autoCreateTab = new SfTab
+            {
+                name = "autoCreateTab"
+            };
+            autoCreateTab.SetTitle("自动创建:");
+            autoCreateTab.AddChoice("自动创建","手动创建");
+            autoCreateTab.ChooseBackground.style.marginLeft = 56;
+            _rootElement.Add(autoCreateTab);
+            autoCreateTab.OnChoiceChanged += choice => //添加变化事件
+            {
+                if (choice == "自动创建")
+                {
+                    CreateTextureSize();
+                    if(cameraDisplayElement!=null)
+                        cameraDisplayElement.BringToFront();
+                    if (_sfCameraMono != null) _sfCameraMono.autoCreate = true;
+                    serializedObject.ApplyModifiedProperties();
+                }
+                else if (choice == "手动创建")
+                {
+                    RemoveTextureSize();
+                    if (_sfCameraMono != null) _sfCameraMono.autoCreate = false;
+                    serializedObject.ApplyModifiedProperties();
+                }
+            };
+            if (_sfCameraMono.autoCreate)
+            {
+                autoCreateTab.Select("自动创建");
+                CreateTextureSize();
+            }
+            else
+            {
+                autoCreateTab.Select("手动创建");
+                RemoveTextureSize();
+            }
+            
+            if(cameraDisplayElement!=null)
+                cameraDisplayElement.BringToFront();
+        }
+        
+        /// <summary>
+        /// 创建导出纹理大小选项
+        /// </summary>
+        public void CreateTextureSize()
+        {
+            if (textureField != null)
+                RemoveTextureSize();
+            
+            textureSizeField = new Vector2IntField("导出纹理大小:")
+            {
+                style =
+                {
+                    fontSize = 12,
+                    color = Color.white,
+                    height = 20,
+                    marginTop = 10
+                },
+                name = "textureSizeField",
+            };
+            textureSizeField.RegisterValueChangedCallback(e =>
+            {
+                if (_sfCameraMono != null) _sfCameraMono.textureSize = e.newValue;
+                serializedObject.ApplyModifiedProperties();
+            });
+            textureSizeField.value = _sfCameraMono.textureSize;
+            _rootElement.Add(textureSizeField);
+        }
+        
+        /// <summary>
+        /// 移除导出纹理大小选项
+        /// </summary>
+        public void RemoveTextureSize()
+        {
+            if (textureSizeField != null)
+            {
+                _rootElement.Remove(textureSizeField);
+                textureSizeField = null;
+            }
+        }
+        
+        /// <summary>
+        /// 移除Texture导出选项
+        /// </summary>
+        public void RemoveTextureExport()
+        {
+            if (autoCreateTab != null)
+            {
+                _rootElement.Remove(autoCreateTab);
+                autoCreateTab = null;
+            }
+            if (textureField != null)
+            {
+                _rootElement.Remove(textureField);
+                textureField = null;
+            }
+
+            if (textureSizeField != null)
+            {
+                _rootElement.Remove(textureSizeField);
+                textureSizeField = null;
+            }
+        }
+        #endregion
+        
+        #region 相机视图
+        /// <summary>
+        /// 相机视图显示元素
+        /// </summary>
+        private VisualElement cameraDisplayElement;
+        /// <summary>
+        /// 相机视图镜像选项
+        /// </summary>
+        private DropdownField cameraMirrorDropdownField;
+        /// <summary>
+        /// 相机视图
+        /// </summary>
+        private void CameraView()
+        {
             // 1. 创建一个 VisualElement 用于显示
             var height = 160;
-            var cameraDisplayElement = new VisualElement()
+            cameraDisplayElement = new VisualElement()
             {
                 name = "cameraDisplay",
                 style =
@@ -114,8 +418,8 @@ namespace SFramework.SFHardware.Editor
                     marginTop = 20,
                 }
             };
-            var sfCameraMono = target as SfCameraMono;
-            if (sfCameraMono != null && sfCameraMono.isMirrored)
+ 
+            if (_sfCameraMono != null && _sfCameraMono.isMirrored)
             {
                 cameraDisplayElement.transform.scale = new Vector3(-1, 1, 1);
             }
@@ -125,18 +429,17 @@ namespace SFramework.SFHardware.Editor
             _rootElement.Add(cameraDisplayElement);
             
             // 创建相机组件控制
-            var dropdownField = new DropdownField()
+            cameraMirrorDropdownField = new DropdownField()
             {
                 style =
                 {
-                    position = Position.Absolute,
-                    marginTop = 100,
+                    marginTop = 5,
                     alignSelf = Align.Center,
-                    backgroundColor = new Color(0.21f,0.21f,0.21f,0.3f)
+                    backgroundColor = new Color(0.21f,0.21f,0.21f,0.5f)
                 }
             };
             
-            foreach (var element in dropdownField.Children())
+            foreach (var element in cameraMirrorDropdownField.Children())
             {
                 element.style.backgroundColor = Color.clear;
                 element.style.borderLeftWidth = 0;
@@ -148,8 +451,8 @@ namespace SFramework.SFHardware.Editor
             
             var cameraNames = WebCamTexture.devices.Select(webCamDevice => webCamDevice.name).ToList();
             cameraNames.Add("关闭");
-            dropdownField.choices = cameraNames;
-            dropdownField.RegisterCallback<ChangeEvent<string>>(evt =>
+            cameraMirrorDropdownField.choices = cameraNames;
+            cameraMirrorDropdownField.RegisterCallback<ChangeEvent<string>>(evt =>
             {
                 if (evt.newValue == "关闭")
                 {
@@ -161,12 +464,35 @@ namespace SFramework.SFHardware.Editor
                 cameraDisplayElement.style.backgroundImage = new StyleBackground(Background.FromRenderTexture(_renderTexture));
                 StartCamera(evt.newValue);
             });
-            dropdownField.value = "关闭";
-            _rootElement.Add(dropdownField);
+            cameraMirrorDropdownField.value = "关闭";
+            cameraDisplayElement.Add(cameraMirrorDropdownField);
 
-            return _rootElement;
+            UpdateMirrorSetting();
         }
 
+        /// <summary>
+        /// 更新镜像设置
+        /// </summary>
+        private void UpdateMirrorSetting()
+        {
+            if(_sfCameraMono==null || cameraMirrorDropdownField==null||cameraDisplayElement==null) return;
+            
+            if (_sfCameraMono.isMirrored)
+            {
+                cameraDisplayElement.transform.scale = new Vector3(-1, 1, 1);
+                cameraMirrorDropdownField.transform.scale = new Vector3(-1, 1, 1);
+            }
+            else
+            {
+                cameraDisplayElement.transform.scale = new Vector3(1, 1, 1);
+                cameraMirrorDropdownField.transform.scale = new Vector3(1, 1, 1);
+            }
+        }
+        #endregion
+        
+        /// <summary>
+        /// 更新相机显示
+        /// </summary>
         private void UpdateCameraFeed()
         {
             // 检查 _webCamTexture 是否已初始化
