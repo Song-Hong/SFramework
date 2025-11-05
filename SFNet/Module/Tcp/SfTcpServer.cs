@@ -142,7 +142,7 @@ namespace SFramework.SFNet.Module.Tcp
                 }
                 catch (Exception e)
                 {
-                    
+                    Console.WriteLine(e);
                 }
             }
         }

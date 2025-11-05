@@ -1,0 +1,57 @@
+﻿using System;
+using SFramework.SFTask.Editor.View;
+using SFramework.SFTask.Module;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UIElements;
+
+namespace SFramework.SFTask.Editor.Window
+{
+    /// <summary>
+    /// 任务窗口
+    /// </summary>
+    public class SfTaskWindow:EditorWindow
+    {
+        /// <summary>
+        /// 任务图视图
+        /// </summary>
+        private static SfTaskWindow  taskWindow;
+        /// <summary>
+        /// 任务图视图
+        /// </summary>
+        private SfTaskGraphView graphView;
+        
+        /// <summary>
+        /// 打开任务窗口
+        /// </summary>
+        [MenuItem("SFramework/SfTaskWindow")]
+        public static void OpenWindow()
+        {
+            // 确保只有一个窗口实例
+            taskWindow = GetWindow<SfTaskWindow>();
+            taskWindow.titleContent = new GUIContent("SfTaskWindow");
+            taskWindow.Show();
+        }
+
+        /// <summary>
+        /// 初始化窗口内容
+        /// </summary>
+        private void OnEnable()
+        {
+            // 初始化任务图视图
+            graphView = new SfTaskGraphView();
+            var styleSheetPath = "Assets/SFramework/SFTask/Editor/Style/SfTask.uss"; // 请根据您的实际路径修改
+            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(styleSheetPath);
+            if (styleSheet != null)
+            {
+                graphView.styleSheets.Add(styleSheet);
+            }
+            else
+            {
+                Debug.LogError($"无法加载样式表: {styleSheetPath}");
+            }
+            // 将任务图视图添加到窗口的根元素中
+            rootVisualElement.Add(graphView);
+        }
+    }
+}

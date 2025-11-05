@@ -1,0 +1,7 @@
+﻿GridBackground {
+    --grid-background-color: #2D2D2D; /*背景颜色*/
+    --line-color: #383838; /*细网格线颜色*/
+    --thick-line-color: #383838; /*粗网格线颜色*/
+    --spacing: 40; /*网格线间距*/
+    --thick-lines: 0; 
+}

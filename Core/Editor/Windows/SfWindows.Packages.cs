@@ -74,6 +74,39 @@ namespace SFramework.Core.Editor.Windows
                 stateButton.text = "安装";
                 stateButton.AddToClassList("packagesItemInstall");
             }
+            stateButton.clicked += () =>
+            {
+                if (stateButton.text == "安装")
+                {
+                    var downloader = new ContentDownloader();
+                    var savePath = Application.dataPath + "/SFramework/" + itemData.name + ".unitypackage";
+                    
+                    var success = downloader.Download(itemData.url, savePath);
+
+                    if (success)
+                    {
+#if UNITY_EDITOR
+                        AssetDatabase.ImportPackage(savePath, true);
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError("下载失败，无法安装扩展包。");
+                    }
+                }
+                else
+                {
+                    var dirPath = Application.dataPath + "/SFramework/" + itemData.name;
+                    if(!Directory.Exists(dirPath))return;
+                    // 卸载扩展项
+                    Directory.Delete(dirPath, true);
+                    File.Delete(dirPath+".meta");
+#if UNITY_EDITOR
+                    AssetDatabase.Refresh();
+#endif
+                    OnClickButton(_packagesButton);
+                }
+            };
             item.Add(stateButton);
 
             return item;

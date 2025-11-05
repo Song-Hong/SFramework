@@ -2,31 +2,31 @@
   "packages": [
     {
       "name": "SFNet",
-      "version": "0.0.1",
+      "version": "1.0.0",
       "description": "网络模块",
-      "url": "https://github.com/SFramework/SFrameworkNet.git",
+      "url": "https://github.com/Song-Hong/SFramework/releases/download/v1.0.0/SFramework-SFNet.unitypackage",
       "icon": "Assets/SFramework/Core/Editor/Config/Net.png"
     },
     {
-      "name": "SFTask",
-      "version": "0.0.1",
-      "description": "任务模块",
-      "url": "https://github.com/SFramework/SFrameworkTask.git",
-      "icon": "Assets/SFramework/Core/Editor/Config/Task.png"
-    },
-    {
       "name": "SFDb",
-      "version": "0.0.1",
+      "version": "1.0.0",
       "description": "数据库模块",
-      "url": "https://github.com/SFramework/SFrameworkDatabase.git",
+      "url": "https://github.com/Song-Hong/SFramework/releases/download/v1.0.0/SFramework-SFDB.unitypackage",
       "icon": "Assets/SFramework/Core/Editor/Config/Db.png"
     },
     {
       "name": "SFHardware",
-      "version": "0.0.1",
+      "version": "1.0.0",
       "description": "硬件模块",
-      "url": "https://github.com/SFramework/SFrameworkHardware.git",
+      "url": "https://github.com/Song-Hong/SFramework/releases/download/v1.0.0/SFramework-SFHardware.unitypackage",
       "icon": "Assets/SFramework/Core/Editor/Config/Hardware.png"
+    },
+    {
+      "name": "SFTask",
+      "version": "1.0.0",
+      "description": "任务模块",
+      "url": "https://github.com/Song-Hong/SFramework/releases/download/v1.0.0/SFramework-SFTask.unitypackage",
+      "icon": "Assets/SFramework/Core/Editor/Config/Task.png"
     }
   ]
 }
