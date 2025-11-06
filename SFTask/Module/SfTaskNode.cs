@@ -13,9 +13,9 @@ namespace SFramework.SFTask.Module
     {
         #region 字段
         /// <summary>
-        /// 任务标题
+        /// 任务描述
         /// </summary>
-        public string title;
+        public string Description { get; private set; }
         
         /// <summary>
         /// 任务是否完成
@@ -31,17 +31,9 @@ namespace SFramework.SFTask.Module
         {
             
         }
-        
-        /// <summary>
-        /// 任务构造函数
-        /// </summary>
-        /// <param name="title">任务标题</param>
-        public SfTaskNode(string title)
-        {
-            this.title = title;
-        }
         #endregion
 
+        #region 公开方法
         /// <summary>
         /// 任务执行函数
         /// </summary>
@@ -50,5 +42,12 @@ namespace SFramework.SFTask.Module
             isComplete = true;
             return Task.FromResult(isComplete?1:0);
         }
+        
+        /// <summary>
+        /// 获取任务节点名称
+        /// </summary>
+        /// <returns></returns>
+        public virtual string GetTaskNodeName()=>GetType().Name;
+        #endregion
     }
 }
