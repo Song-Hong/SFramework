@@ -22,6 +22,11 @@ namespace SFramework.SFTask.Editor.Window
         private SfTaskGraphView graphView;
         
         /// <summary>
+        /// 任务文件图标路径
+        /// </summary>
+        private const string IconPath = "Assets/SFramework/SfTask/Editor/Data/TaskFile.png"; 
+        
+        /// <summary>
         /// 打开任务窗口
         /// </summary>
         [MenuItem("SFramework/SfTaskWindow")]
@@ -29,7 +34,8 @@ namespace SFramework.SFTask.Editor.Window
         {
             // 确保只有一个窗口实例
             taskWindow = GetWindow<SfTaskWindow>();
-            taskWindow.titleContent = new GUIContent("SfTaskWindow");
+            taskWindow.titleContent = 
+                new GUIContent("新任务", AssetDatabase.LoadAssetAtPath<Texture2D>(IconPath));
             taskWindow.Show();
         }
 
@@ -52,6 +58,15 @@ namespace SFramework.SFTask.Editor.Window
             }
             // 将任务图视图添加到窗口的根元素中
             rootVisualElement.Add(graphView);
+        }
+        
+        /// <summary>
+        /// 获取任务图视图
+        /// </summary>
+        /// <returns>任务图视图</returns>
+        public SfTaskGraphView GetGraphView()
+        {
+            return graphView;
         }
     }
 }

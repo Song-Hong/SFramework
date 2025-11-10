@@ -14,7 +14,7 @@ namespace SFramework.SFTask.Editor.View
         /// <summary>
         /// 节点数据库
         /// </summary>
-        private List<Tuple<string,List<Tuple<string,string>>>> _nodes = new List<Tuple<string,List<Tuple<string,string>>>> ();
+        public static List<Tuple<string,string,List<Tuple<string,string,string>>>> Nodes = new List<Tuple<string,string,List<Tuple<string,string,string>>>> ();
 
         /// <summary>
         /// 初始化数据库
@@ -29,9 +29,11 @@ namespace SFramework.SFTask.Editor.View
                 publicFields.RemoveAll(x => x.Item1 == "isComplete");
                 
                 //获取节点的名称
-                var createdInstance = System.Activator.CreateInstance(runtimeSubclass) as SfTaskNode;
-                if (createdInstance == null) continue;
-                _nodes.Add(new Tuple<string,List<Tuple<string,string>>>(createdInstance.GetTaskNodeName(),publicFields));
+                if (System.Activator.CreateInstance(runtimeSubclass) is not SfTaskNode createdInstance) continue;
+                Nodes.Add(new Tuple<string,string,List<Tuple<string,string,string>>>(
+                    createdInstance.GetTaskNodeName(), // 任务名
+                    createdInstance.GetType().FullName
+                    ,publicFields));
             }
         }
     }
