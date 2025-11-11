@@ -23,6 +23,6 @@ namespace SFramework.SFTask.Data
         /// <summary>
         /// 任务组件字段
         /// </summary>
-        public List<SfTaskComponentData> fields = new List<SfTaskComponentData>();
+        public List<SfTaskFieldData> fields = new List<SfTaskFieldData>();
     }
 }

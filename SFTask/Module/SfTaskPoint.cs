@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace SFramework.SFTask.Module
@@ -19,6 +20,7 @@ namespace SFramework.SFTask.Module
         /// <summary>
         /// 任务列表
         /// </summary>
+        [SerializeReference]
         public List<SfTaskNode> Tasks = new List<SfTaskNode>();
         
         /// <summary>

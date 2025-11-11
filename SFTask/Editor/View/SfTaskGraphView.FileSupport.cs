@@ -63,7 +63,7 @@ namespace SFramework.SFTask.Editor.View
                             foreach (var sfTaskNodeTaskView in sfTaskNodeTaskViews)
                             {
                                 var fields = sfTaskNodeTaskView.PublicFields.Select(publicField =>
-                                    new SfTaskComponentData()
+                                    new SfTaskFieldData()
                                     {
                                         fieldName = publicField.Item1,
                                         fieldType = publicField.Item2,
@@ -333,7 +333,6 @@ namespace SFramework.SFTask.Editor.View
             {
                 elementsToRemove.RemoveAt(0);
             }
-
             // 批量删除元素
             DeleteElements(elementsToRemove);
         }

@@ -6,7 +6,7 @@ namespace SFramework.SFTask.Data
     /// 任务组件数据类
     /// </summary>
     [Serializable]
-    public class SfTaskComponentData
+    public class SfTaskFieldData
     {
         /// <summary>
         /// 任务组件字段名称

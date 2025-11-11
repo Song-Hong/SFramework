@@ -26,7 +26,7 @@ namespace SFramework.SFTask.TaskPackages.SYLTasks
         /// <returns>返回任务执行结果</returns>
         public override async Task<int> Start()
         {
-            await Task.Delay(1000);
+            await Task.Delay(3000);
             Debug.Log(content);
             return await base.Start();
         }
