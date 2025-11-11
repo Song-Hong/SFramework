@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using SFramework.Core.Support;
+using SFramework.SFTask.Editor.View;
+using SFramework.SFTask.Editor.Window;
+using UnityEditor.Graphs;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -20,6 +23,7 @@ namespace SFramework.SFTask.Editor.NodeStyle
         // 允许在 UXML 中设置属性，例如 name, tab-index 等
         public new class UxmlTraits : VisualElement.UxmlTraits
         {
+            
         }
 
         /// <summary>
@@ -36,7 +40,7 @@ namespace SFramework.SFTask.Editor.NodeStyle
         /// 任务节点的公共字段
         /// </summary>
         public List<Tuple<string, string, string>> PublicFields = new List<Tuple<string, string, string>>();
-
+        
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -113,6 +117,9 @@ namespace SFramework.SFTask.Editor.NodeStyle
                     Add(control);
                 }
             }
+
+            // 创建删除按钮
+            CreateRemoveBtn();
         }
 
         /// <summary>
@@ -193,7 +200,7 @@ namespace SFramework.SFTask.Editor.NodeStyle
             }
             else if (fieldType.IsEnum) // 处理所有枚举类型
             {
-                var defaultEnumValue = (System.Enum)Activator.CreateInstance(fieldType);
+                var defaultEnumValue = (Enum)Activator.CreateInstance(fieldType);
                 var enumField = new EnumField(defaultEnumValue);
 
                 // 尝试从字符串设置枚举值
@@ -202,7 +209,7 @@ namespace SFramework.SFTask.Editor.NodeStyle
                     try
                     {
                         var parsedEnum = Enum.Parse(fieldType, fieldValue, true);
-                        enumField.value = (System.Enum)parsedEnum;
+                        enumField.value = (Enum)parsedEnum;
                     }
                     catch (ArgumentException)
                     {
@@ -269,6 +276,53 @@ namespace SFramework.SFTask.Editor.NodeStyle
             if (type != null) return type;
             type = Type.GetType($"UnityEngine.{typeName}, UnityEngine", false, true);
             return type ?? Type.GetType(typeName, false, true);
+        }
+
+        /// <summary>
+        /// 创建删除按钮
+        /// </summary>
+        private void CreateRemoveBtn()
+        {
+            var removeBtn = new Button
+            {
+                text = "",
+                style =
+                {
+                    fontSize = 12,
+                    color = Color.white,
+                    position = Position.Absolute,
+                    top = 2,
+                    right = 2,
+                    backgroundColor = Color.clear,
+                    borderLeftWidth = 0,
+                    borderRightWidth = 0,
+                    borderTopWidth = 0,
+                    borderBottomWidth = 0,
+                    marginTop = 2,
+                    marginRight = 2,
+                    marginBottom = 0,
+                    marginLeft = 0,
+                    paddingTop = 0,
+                    paddingRight = 0,
+                    paddingBottom = 0,
+                    paddingLeft = 0,
+                    backgroundImage = SfTaskWindow.CloseIcon
+                }
+            };
+            removeBtn.style.width = 10;
+            removeBtn.style.height = 10;
+            removeBtn.clicked += RemoveTaskNode;
+            Add(removeBtn);
+        }
+        
+        /// <summary>
+        /// 删除任务节点
+        /// </summary>
+        private void RemoveTaskNode()
+        {
+            var sfTaskNodePointEditor = GetFirstAncestorOfType<SfTaskNodePointEditor>();
+            if (sfTaskNodePointEditor != null)
+                sfTaskNodePointEditor.RemoveTaskNode(this);
         }
     }
 }

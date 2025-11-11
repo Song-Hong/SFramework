@@ -1,4 +1,6 @@
+using System.IO;
 using SFramework.Core.SfUIElementExtends;
+using SFramework.SFTask.Editor.Window;
 using SFramework.SFTask.Mono;
 using UnityEditor;
 using UnityEngine;
@@ -16,6 +18,11 @@ namespace SFramework.SFTask.Editor.Replace
         /// 根元素
         /// </summary>
         private VisualElement _rootElement;
+        
+        /// <summary>
+        /// 任务模块Mono单例图标路径
+        /// </summary>
+        private static string IconPath => "Assets/SFramework/SFTask/Editor/Data/TaskFile.png";
         
         /// <summary>
         /// 创建Inspector GUI
@@ -106,6 +113,55 @@ namespace SFramework.SFTask.Editor.Replace
             assetsPath.value = taskMono.assetsPath;
             _rootElement.Add(assetsPath);
             
+            // 编辑任务
+            var button = new Button
+            {
+                text = "编辑任务",
+                style =
+                {
+                    marginTop = 8,
+                    fontSize = 14,
+                    color = Color.white,
+                }
+            };
+            button.clicked += () =>
+            {
+                // 检查文件名是否为空
+                var path = taskMono.assetsPath;
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    Debug.LogError("文件名为空");
+                    return;
+                }
+                // 检查资源路径类型是否为Url
+                if (taskMono.assetsPathType == SfTaskMono.AssetsPathType.Url)
+                {
+                    Debug.LogError("网络资源不支持编辑");
+                    return;
+                }
+                //拼接字符串
+                var dirPath = taskMono.assetsPathType switch
+                {
+                    SfTaskMono.AssetsPathType.StreamingAssets => $"{Application.streamingAssetsPath}/",
+                    SfTaskMono.AssetsPathType.PersistentData => $"{Application.persistentDataPath}/",
+                    _ => ""
+                };
+                if(!path.EndsWith(".sftask"))
+                    path += ".sftask";
+                path = dirPath + path;
+                // 打开编辑期
+                var jsonText = File.ReadAllText(path);
+                var window = EditorWindow.GetWindow<SfTaskWindow>(false, "任务图编辑器");
+                window.titleContent = new GUIContent(
+                    Path.GetFileNameWithoutExtension(path), 
+                    AssetDatabase.LoadAssetAtPath<Texture2D>(IconPath));
+                if (window.GetGraphView() != null)
+                {
+                    window.GetGraphView().ImportTaskFile(jsonText,path);
+                }
+            };
+            _rootElement.Add(button);
+
             return _rootElement;
         }
 

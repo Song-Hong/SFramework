@@ -67,9 +67,6 @@ namespace SFramework.SFTask.Editor.View
                                     {
                                         fieldName = publicField.Item1,
                                         fieldType = publicField.Item2,
-                                        // 【修复】
-                                        // 1. 传入 sfTaskNodeTaskView (当前组件) 而不是 sfTaskPointNode (父节点)
-                                        // 2. 传入 publicField.Item2 (字段类型) 以便正确解析
                                         fieldValue = GetTaskFieldValue(sfTaskNodeTaskView, publicField.Item1,
                                             publicField.Item2),
                                     }).ToList();
@@ -323,16 +320,15 @@ namespace SFramework.SFTask.Editor.View
             // 强制重新对齐视口，以便新加载的节点可见
             FrameAll();
         }
-
+        
         // 辅助方法：清理图视图中的所有元素（除了 GridBackground）
         private void ClearGraphViewElements()
         {
-            // 获取所有元素，但不包括 GridBackground（通常是索引 0）
-            var elementsToRemove = graphElements.ToList();
-            if (elementsToRemove.Count > 0 && elementsToRemove[0] is GridBackground)
-            {
-                elementsToRemove.RemoveAt(0);
-            }
+            // 使用 LINQ 过滤所有元素，排除 GridBackground。
+            var elementsToRemove = graphElements
+                .Where(e => !e.GetType().Name.Contains("GridBackground"))
+                .ToList();
+    
             // 批量删除元素
             DeleteElements(elementsToRemove);
         }

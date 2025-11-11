@@ -30,6 +30,21 @@ namespace SFramework.SFTask.Editor.View
                 // 添加节点到图视图
                 AddElement(newPoint);
             });
+            // 添加粘贴为新的节点
+            evt.menu.AppendAction("粘贴为新的任务节点", _ => 
+            {
+                PasteFromClipboard(position);
+            }, (action) => // 状态检查器 (statusCallback)
+            {
+                if (IsTaskDataInClipboard())
+                {
+                    return DropdownMenuAction.Status.Normal;
+                }
+                else
+                {
+                    return DropdownMenuAction.Status.Disabled;
+                }
+            });
             evt.menu.AppendSeparator();
             //保存任务图
             evt.menu.AppendAction("保存", _ =>
@@ -39,7 +54,7 @@ namespace SFramework.SFTask.Editor.View
             });
             
             //导出为task
-            evt.menu.AppendAction("导出为task", _ =>
+            evt.menu.AppendAction("导出为sftask", _ =>
             {
                 ExportTaskFile();
             });

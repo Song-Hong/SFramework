@@ -4,6 +4,7 @@ using System.Linq;
 using SFramework.Core.SfUIElementExtends;
 using SFramework.Core.Support;
 using SFramework.SFTask.Editor.View;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -219,14 +220,31 @@ namespace SFramework.SFTask.Editor.NodeStyle
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
             if (evt.target is not Node) return;
-            // 复制和粘贴节点
+            // 获取 GraphView 实例
+            var graphView = this.GetFirstAncestorOfType<SfTaskGraphView>();
+
+            if (graphView == null) return; // 无法操作
+            // --- 复制节点 ---
             evt.menu.AppendAction("复制节点", _ =>
             {
-                // CopyNode();
+                // 调用 GraphView 中的复制逻辑
+                graphView.CopyToClipboard(this);
             });
-            evt.menu.AppendAction("粘贴节点", _ =>
+
+            // --- 粘贴节点 ---
+            evt.menu.AppendAction("粘贴任务数据", _ => 
             {
-                // PasteNode();
+                graphView.PasteDataToTargetNode(this); 
+            }, (action) => // 状态检查器 (statusCallback)
+            {
+                if (graphView.IsTaskDataInClipboard())
+                {
+                    return DropdownMenuAction.Status.Normal;
+                }
+                else
+                {
+                    return DropdownMenuAction.Status.Disabled;
+                }
             });
             evt.menu.AppendSeparator();
 
@@ -241,7 +259,33 @@ namespace SFramework.SFTask.Editor.NodeStyle
             evt.menu.AppendSeparator();
             evt.menu.AppendAction("删除节点", _ =>
             {
-                // DeleteNode();
+                // 找到 GraphView 的祖先节点
+                var graphView = this.GetFirstAncestorOfType<SfTaskGraphView>();
+                if (graphView == null)
+                {
+                    // 如果无法找到 GraphView，则无法清理连线
+                    parent.Remove(this);
+                    return;
+                }
+
+                // 2. 收集所有要删除的连线 (Edges)
+                var edgesToDelete = new List<Edge>();
+                // 遍历所有输入端口
+                foreach (var port in inputContainer.Children().OfType<Port>())
+                {
+                    edgesToDelete.AddRange(port.connections);
+                }
+
+                // 遍历所有输出端口
+                foreach (var port in outputContainer.Children().OfType<Port>())
+                {
+                    edgesToDelete.AddRange(port.connections);
+                }
+
+                // 转换节点本身为可删除的元素
+                var nodesToDelete = new List<GraphElement> { this };
+                // 使用 GraphView 的 DeleteElements 方法进行批量删除
+                graphView.DeleteElements(edgesToDelete.Distinct().Concat(nodesToDelete));
             });
         }
 
@@ -282,6 +326,17 @@ namespace SFramework.SFTask.Editor.NodeStyle
         }
 
         /// <summary>
+        /// 删除任务节点
+        /// </summary>
+        /// <param name="taskNode">任务节点</param>
+        public void RemoveTaskNode(SfTaskNodeTaskView taskNode)
+        {
+            _taskComponents.Remove(taskNode);
+            extensionContainer.Remove(taskNode);
+            RefreshExpandedState();
+        }
+
+        /// <summary>
         /// 获取任务容器元素
         /// </summary>
         /// <returns>任务容器元素列表</returns>
@@ -293,6 +348,7 @@ namespace SFramework.SFTask.Editor.NodeStyle
         #endregion
 
         #region 外部接口
+
         /// <summary>
         /// 获取任务类型
         /// </summary>
@@ -341,11 +397,11 @@ namespace SFramework.SFTask.Editor.NodeStyle
                     }
                     else if (inputControl is Vector3Field vector3Field)
                     {
-                        value = JsonUtility.ToJson(vector3Field.value); 
+                        value = JsonUtility.ToJson(vector3Field.value);
                     }
                     else if (inputControl is Vector2Field vector2Field)
                     {
-                        value = JsonUtility.ToJson(vector2Field.value); 
+                        value = JsonUtility.ToJson(vector2Field.value);
                     }
                     else if (inputControl is ColorField colorField)
                     {
@@ -353,20 +409,23 @@ namespace SFramework.SFTask.Editor.NodeStyle
                     }
                     else if (inputControl is EnumField enumField)
                     {
-                        value = enumField.value.ToString(); 
+                        value = enumField.value.ToString();
                     }
                     else if (inputControl is ObjectField objectField)
                     {
                         value = objectField.value != null ? objectField.value.name : "null";
                     }
+
                     if (value != null)
                     {
-                         return value;
+                        return value;
                     }
                 }
             }
+
             return null;
         }
+
         #endregion
     }
 }

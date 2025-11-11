@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IO;
 using SFramework.SFTask.Editor.View;
 using SFramework.SFTask.Module;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 
 namespace SFramework.SFTask.Editor.Window
@@ -25,6 +27,16 @@ namespace SFramework.SFTask.Editor.Window
         /// 任务文件图标路径
         /// </summary>
         private const string IconPath = "Assets/SFramework/SfTask/Editor/Data/TaskFile.png"; 
+        
+        /// <summary>
+        /// 关闭图标路径
+        /// </summary>
+        public const string CloseIconPath = "Assets/SFramework/SFTask/Editor/Data/Close.png";
+        
+        /// <summary>
+        /// 关闭图标
+        /// </summary>
+        public static Texture2D CloseIcon;
         
         /// <summary>
         /// 打开任务窗口
@@ -56,6 +68,9 @@ namespace SFramework.SFTask.Editor.Window
             {
                 Debug.LogError($"无法加载样式表: {styleSheetPath}");
             }
+            // 初始化关闭图标
+            if(File.Exists(CloseIconPath))
+                CloseIcon = AssetDatabase.LoadAssetAtPath<Texture2D>(CloseIconPath);
             // 将任务图视图添加到窗口的根元素中
             rootVisualElement.Add(graphView);
         }
