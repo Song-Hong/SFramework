@@ -1,0 +1,71 @@
+{
+    "tasks": [
+        {
+            "x": 95.0,
+            "y": 143.0,
+            "title": "开始节点",
+            "tasks": [],
+            "type": "StartNode"
+        },
+        {
+            "x": 394.0,
+            "y": 143.0,
+            "title": "新节点",
+            "tasks": [
+                {
+                    "taskName": "打印消息",
+                    "taskType": "SFramework.SFTask.TaskPackages.SYLTasks.SyLog",
+                    "fields": [
+                        {
+                            "fieldName": "content",
+                            "fieldType": "String",
+                            "fieldValue": "111"
+                        }
+                    ]
+                }
+            ],
+            "type": "Sequential"
+        },
+        {
+            "x": 671.0,
+            "y": 262.0,
+            "title": "新节点",
+            "tasks": [
+                {
+                    "taskName": "显示提示",
+                    "taskType": "SFramework.SFTask.TaskPackages.SYLTasks.SylShowTip",
+                    "fields": [
+                        {
+                            "fieldName": "TipContent",
+                            "fieldType": "String",
+                            "fieldValue": "1"
+                        }
+                    ]
+                },
+                {
+                    "taskName": "显示提示",
+                    "taskType": "SFramework.SFTask.TaskPackages.SYLTasks.SylShowTip",
+                    "fields": [
+                        {
+                            "fieldName": "TipContent",
+                            "fieldType": "String",
+                            "fieldValue": "2"
+                        }
+                    ]
+                },
+                {
+                    "taskName": "打印消息",
+                    "taskType": "SFramework.SFTask.TaskPackages.SYLTasks.SyLog",
+                    "fields": [
+                        {
+                            "fieldName": "content",
+                            "fieldType": "String",
+                            "fieldValue": "3"
+                        }
+                    ]
+                }
+            ],
+            "type": "Sequential"
+        }
+    ]
+}

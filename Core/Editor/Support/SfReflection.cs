@@ -130,14 +130,14 @@ namespace SFramework.Core.Editor.Support
                 else
                 {
                     // 无法获取实例字段的值 (因为 objInstance 为 null)
-                    fieldValue = "[无法获取值]";
+                    fieldValue = "";
                 }
 
                 // 4. 将值转换为字符串，然后添加到列表中
                 allFields.Add(new Tuple<string, string, string>(
                     field.Name,
                     field.FieldType.Name,
-                    fieldValue?.ToString() ?? "null" // 处理值为 null 的情况
+                    fieldValue?.ToString() ?? "" // 处理值为 null 的情况
                 ));
             }
 

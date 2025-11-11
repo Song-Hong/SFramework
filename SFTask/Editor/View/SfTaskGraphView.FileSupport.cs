@@ -17,10 +17,13 @@ namespace SFramework.SFTask.Editor.View
     /// </summary>
     public partial class SfTaskGraphView : GraphView
     {
+        // 任务图文件路径
+        public string FilePath = Application.streamingAssetsPath + "/SFTask/新任务.sftask";
+
         /// <summary>
         /// 导出任务图视图为任务文件
         /// </summary>
-        private void ExportTaskFile()
+        private void ExportTaskFile(string message = "已导出任务文件到")
         {
             //创建任务列表数据
             var data = new SfTaskListData();
@@ -39,70 +42,83 @@ namespace SFramework.SFTask.Editor.View
             var outputPort = startNode.outputContainer.Children()
                 .OfType<Port>()
                 .FirstOrDefault(p => p.portName == "任务开始");
-            var taskNode = GetConnectedNodes(outputPort).First();
-
-            while (taskNode != null)
+            try
             {
-                // 添加任务节点数据
-                if (taskNode is SfTaskNodePointEditor sfTaskPointNode)
-                {
-                    var sfTaskPointData = new SfTaskPointData()
-                    {
-                        x = sfTaskPointNode.GetPosition().x,
-                        y = sfTaskPointNode.GetPosition().y,
-                        title = sfTaskPointNode.title,
-                        type = sfTaskPointNode.GetTaskType(),
-                    };
-                    {
-                        var sfTaskNodeTaskViews = sfTaskPointNode.GetTaskComponents();
-                        foreach (var sfTaskNodeTaskView in sfTaskNodeTaskViews)
-                        {
-                            var fields = sfTaskNodeTaskView.PublicFields.Select(publicField => new SfTaskComponentData()
-                            {
-                                fieldName = publicField.Item1,
-                                fieldType = publicField.Item2,
-                                fieldValue = GetTaskFieldValue(sfTaskPointNode, publicField.Item1),
-                            }).ToList();
+                var taskNode = GetConnectedNodes(outputPort).First();
 
-                            sfTaskPointData.tasks.Add(new SfTaskData()
+                while (taskNode != null)
+                {
+                    // 添加任务节点数据
+                    if (taskNode is SfTaskNodePointEditor sfTaskPointNode)
+                    {
+                        var sfTaskPointData = new SfTaskPointData()
+                        {
+                            x = sfTaskPointNode.GetPosition().x,
+                            y = sfTaskPointNode.GetPosition().y,
+                            title = sfTaskPointNode.title,
+                            type = sfTaskPointNode.GetTaskType(),
+                        };
+                        {
+                            var sfTaskNodeTaskViews = sfTaskPointNode.GetTaskComponents();
+                            foreach (var sfTaskNodeTaskView in sfTaskNodeTaskViews)
                             {
-                                taskName = sfTaskNodeTaskView.TitleLabel.text,
-                                fields = fields,
-                                taskType = sfTaskNodeTaskView.TaskType,
-                            });
+                                var fields = sfTaskNodeTaskView.PublicFields.Select(publicField =>
+                                    new SfTaskComponentData()
+                                    {
+                                        fieldName = publicField.Item1,
+                                        fieldType = publicField.Item2,
+                                        // 【修复】
+                                        // 1. 传入 sfTaskNodeTaskView (当前组件) 而不是 sfTaskPointNode (父节点)
+                                        // 2. 传入 publicField.Item2 (字段类型) 以便正确解析
+                                        fieldValue = GetTaskFieldValue(sfTaskNodeTaskView, publicField.Item1,
+                                            publicField.Item2),
+                                    }).ToList();
+
+                                sfTaskPointData.tasks.Add(new SfTaskData()
+                                {
+                                    taskName = sfTaskNodeTaskView.TitleLabel.text,
+                                    fields = fields,
+                                    taskType = sfTaskNodeTaskView.TaskType,
+                                });
+                            }
                         }
+
+                        //添加任务节点
+                        data.tasks.Add(sfTaskPointData);
                     }
 
-                    //添加任务节点
-                    data.tasks.Add(sfTaskPointData);
-                }
-
-                //获取下一个任务节点
-                var taskOutputPort = taskNode.Query<Port>() // 1. 查询所有 Port 元素
-                    .Where(p => p.direction == Direction.Output) // 筛选出口端口
-                    .Where(p => p.portName == "任务完成") // 筛选端口名称 (假设名称是这个，而不是“任务结束”)
-                    .ToList() // 2. 【关键修复】将查询结果转换为 List<Port>
-                    .FirstOrDefault(); // 3. 安全地获取第一个匹配项
-                //获取下一个任务节点
-                taskNode = GetConnectedNodes(taskOutputPort).FirstOrDefault();
-                if (taskNode == null)
-                {
-                    break;
+                    //获取下一个任务节点
+                    var taskOutputPort = taskNode.Query<Port>() // 1. 查询所有 Port 元素
+                        .Where(p => p.direction == Direction.Output) // 筛选出口端口
+                        .Where(p => p.portName == "任务完成") // 筛选端口名称 (假设名称是这个，而不是“任务结束”)
+                        .ToList() // 2. 【关键修复】将查询结果转换为 List<Port>
+                        .FirstOrDefault(); // 3. 安全地获取第一个匹配项
+                    //获取下一个任务节点
+                    taskNode = GetConnectedNodes(taskOutputPort).FirstOrDefault();
+                    if (taskNode == null)
+                    {
+                        break;
+                    }
                 }
             }
-
-            // 导出任务数据为 JSON 字符串
-            var taskData = JsonUtility.ToJson(data, true);
-            var dirPath = Application.streamingAssetsPath + "/SFTask/";
-            if (!Directory.Exists(dirPath))
+            catch (Exception e)
             {
-                Directory.CreateDirectory(dirPath);
+                Console.Write(e.Message);
             }
+            finally
+            {
+                // 导出任务数据为 JSON 字符串
+                var taskData = JsonUtility.ToJson(data, true);
+                var directoryName = Path.GetDirectoryName(FilePath);
+                if (!Directory.Exists(directoryName))
+                {
+                    Directory.CreateDirectory(directoryName);
+                }
 
-            dirPath += "任务.sftask";
-            File.WriteAllText(dirPath, taskData);
-            Debug.Log($"已导出任务文件到: {dirPath}");
-            AssetDatabase.Refresh();
+                File.WriteAllText(FilePath, taskData);
+                Debug.Log($"{message}: {FilePath}");
+                AssetDatabase.Refresh();
+            }
         }
 
         /// <summary>
@@ -130,18 +146,90 @@ namespace SFramework.SFTask.Editor.View
         /// <param name="sfTaskNodePoint">任务节点编辑器</param>
         /// <param name="fieldName">字段名称</param>
         /// <returns>字段值</returns>
-        private string GetTaskFieldValue(SfTaskNodePointEditor sfTaskNodePoint, string fieldName)
+// 删掉这个旧的、有问题的函数
+        /// <summary>
+        /// 【已修复】获取【指定任务组件】的字段值
+        /// </summary>
+        /// <param name="taskView">要从中获取值的 SfTaskNodeTaskView 组件</param>
+        /// <param name="fieldName">字段名称 (也应该是 UI 控件的 name)</param>
+        /// <param name="fieldType">字段类型 (来自 publicField.Item2)</param>
+        /// <returns>字段值</returns>
+        private string GetTaskFieldValue(SFramework.SFTask.Editor.NodeStyle.SfTaskNodeTaskView taskView,
+            string fieldName, string fieldType)
         {
-            var fieldValue = sfTaskNodePoint.GetTaskComponent(fieldName);
-            return fieldValue ?? null;
+            // A. 在 taskView 内部查找 UI 控件
+            var uiElement = taskView.Q(name: fieldName);
+
+            if (uiElement == null)
+            {
+                Debug.LogWarning($"在 {taskView.TitleLabel.text} 中未找到字段 '{fieldName}' 对应的 UI 控件。");
+                return null;
+            }
+
+            // B. 根据 fieldType (或 UI 控件类型) 来安全地获取值
+            try
+            {
+                // 简单类型 (ToString)
+                if (uiElement is BaseField<string> stringField)
+                    return stringField.value;
+                if (uiElement is BaseField<int> intField)
+                    return intField.value.ToString();
+                if (uiElement is BaseField<float> floatField)
+                    return floatField.value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                if (uiElement is BaseField<bool> boolField)
+                    return boolField.value.ToString();
+
+                // JSON 序列化类型
+                if (uiElement is BaseField<Vector3> v3Field)
+                    return JsonUtility.ToJson(v3Field.value);
+                if (uiElement is BaseField<Vector2> v2Field)
+                    return JsonUtility.ToJson(v2Field.value);
+                if (uiElement is BaseField<Color> colorField)
+                    return JsonUtility.ToJson(colorField.value);
+
+                // 枚举类型 (ToString)
+                if (uiElement is BaseField<System.Enum> enumField)
+                    return enumField.value.ToString();
+
+                // GUID 序列化类型 (ObjectField)
+                if (uiElement is UnityEditor.UIElements.ObjectField objField)
+                {
+                    if (objField.value == null) return null;
+
+                    // 必须是资产 (Asset)，不能是场景对象
+                    if (AssetDatabase.Contains(objField.value))
+                    {
+                        string path = AssetDatabase.GetAssetPath(objField.value);
+                        return AssetDatabase.AssetPathToGUID(path); // ⬅️ 保存 GUID
+                    }
+
+                    Debug.LogWarning($"字段 '{fieldName}' 引用了一个场景对象，不支持序列化。");
+                    return null;
+                }
+
+                // 回退或未处理的类型
+                Debug.LogWarning($"GetTaskFieldValue: 未处理的 UI 控件类型 '{uiElement.GetType()}' (字段名: '{fieldName}')。");
+                return null;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"获取字段 '{fieldName}' ({fieldType}) 的值时出错: {e.Message}");
+                return null;
+            }
         }
 
         /// <summary>
         /// 从 JSON 文件导入任务图视图并还原页面
         /// </summary>
         /// <param name="jsonText">包含任务数据的 JSON 字符串</param>
-        public void ImportTaskFile(string jsonText)
+        /// <param name="filePath">任务文件路径</param>
+        public void ImportTaskFile(string jsonText, string filePath = "")
         {
+            if (!string.IsNullOrWhiteSpace(filePath))
+            {
+                FilePath = filePath;
+            }
+
             // 1. 反序列化 JSON 字符串
             SfTaskListData data;
             try
@@ -262,7 +350,7 @@ namespace SFramework.SFTask.Editor.View
                 .FirstOrDefault();
         }
 
-// 辅助方法：安全获取指定名称的入口端口
+        // 辅助方法：安全获取指定名称的入口端口
         private Port GetInputPortByName(Node node, string portName)
         {
             return node.Query<Port>()

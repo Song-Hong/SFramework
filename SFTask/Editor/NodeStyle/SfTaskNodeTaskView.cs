@@ -158,10 +158,10 @@ namespace SFramework.SFTask.Editor.NodeStyle
             {
                 var toggle = new Toggle
                 {
-                    value = bool.TryParse(fieldValue, out bool result) && result, // 解析布尔值
-                    text = fieldName
+                    value = bool.TryParse(fieldValue, out bool result) && result,
                 };
-                return toggle;
+                inputField = toggle;
+                label.text = fieldName + ":"; // 保持标签
             }
             else if (fieldType == typeof(Vector3))
             {
@@ -214,11 +214,25 @@ namespace SFramework.SFTask.Editor.NodeStyle
             }
             else if (typeof(UnityEngine.Object).IsAssignableFrom(fieldType))
             {
+                UnityEngine.Object initialValue = null;
+
+                // 尝试将 fieldValue (GUID) 解析为资产
+                if (!string.IsNullOrEmpty(fieldValue))
+                {
+                    // 1. 通过 GUID 获取资产路径
+                    string path = UnityEditor.AssetDatabase.GUIDToAssetPath(fieldValue);
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        // 2. 从路径加载资产
+                        initialValue = UnityEditor.AssetDatabase.LoadAssetAtPath(path, fieldType);
+                    }
+                }
+
                 var objectField = new ObjectField
                 {
-                    objectType = fieldType, // 关键：指定字段接受的对象类型
-                    allowSceneObjects = true, // 通常我们希望允许场景中的对象
-                    value = null
+                    objectType = fieldType,
+                    allowSceneObjects = false, // ‼️【重要】序列化不支持场景对象
+                    value = initialValue // ⬅️ 设置加载到的值
                 };
                 inputField = objectField;
             }

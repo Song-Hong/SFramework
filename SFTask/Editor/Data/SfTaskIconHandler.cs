@@ -99,7 +99,7 @@ namespace SFramework.SFTask.Editor.Data
                 // 假设 SfTaskWindow 有一个 GetGraphView() 方法
                 if (window.GetGraphView() != null)
                 {
-                    window.GetGraphView().ImportTaskFile(jsonText);
+                    window.GetGraphView().ImportTaskFile(jsonText,path);
                 }
                 
                 // 6. 返回 true 表示事件已处理，Unity 不会执行默认操作

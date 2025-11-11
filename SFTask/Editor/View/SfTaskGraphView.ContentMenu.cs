@@ -31,6 +31,13 @@ namespace SFramework.SFTask.Editor.View
                 AddElement(newPoint);
             });
             evt.menu.AppendSeparator();
+            //保存任务图
+            evt.menu.AppendAction("保存", _ =>
+            {
+                // SaveTaskFile();
+                ExportTaskFile("已保存文件");
+            });
+            
             //导出为task
             evt.menu.AppendAction("导出为task", _ =>
             {
