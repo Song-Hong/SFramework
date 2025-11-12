@@ -4,6 +4,7 @@ using SFramework.SFTask.Data;
 using UnityEngine;
 using System.Reflection;
 using System.Linq; // 用于简化 LINQ 操作
+using UnityEngine.SceneManagement;
 
 namespace SFramework.SFTask.Module
 {
@@ -83,7 +84,7 @@ namespace SFramework.SFTask.Module
                     continue;
                 }
 
-                var sfTaskNode = Activator.CreateInstance(type) as SfTaskNode;
+                var sfTaskNode = ScriptableObject.CreateInstance(type) as SfTaskNode;
                 if (sfTaskNode == null)
                 {
                     Debug.LogError($"[SFTaskParsing] 创建实例失败: {sfTaskNodeData.taskType}");
@@ -112,7 +113,7 @@ namespace SFramework.SFTask.Module
                 if (fieldInfo != null)
                 {
                     object value = ParseFieldValue(fieldData.fieldValue, fieldInfo.FieldType);
-                    fieldInfo.SetValue(node, value);
+                    if (value != null) fieldInfo.SetValue(node, value);
                     return;
                 }
 
@@ -122,7 +123,7 @@ namespace SFramework.SFTask.Module
                 if (propInfo != null && propInfo.CanWrite)
                 {
                     object value = ParseFieldValue(fieldData.fieldValue, propInfo.PropertyType);
-                    propInfo.SetValue(node, value);
+                    if (value != null) propInfo.SetValue(node, value);
                     return;
                 }
 
@@ -169,13 +170,33 @@ namespace SFramework.SFTask.Module
                 // --- 关键的运行时对象加载 (Resources.Load) ---
                 if (typeof(UnityEngine.Object).IsAssignableFrom(targetType))
                 {
+                    if (stringValue.StartsWith("scene-id://", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var id = stringValue.Substring("scene-id://".Length);
+                        var all = UnityEngine.Object.FindObjectsOfType<SFramework.SFTask.Module.SfUniqueId>(true);
+                        var hit = all.FirstOrDefault(x => x.Id == id);
+                        if (hit == null) return null;
+                        var go = hit.gameObject;
+                        if (targetType == typeof(GameObject)) return go;
+                        return go.GetComponent(targetType);
+                    }
+                    if (stringValue.StartsWith("scene://", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var rel = stringValue.Substring("scene://".Length);
+                        var go = GameObject.Find(rel);
+                        if (go == null)
+                        {
+                            go = FindGameObjectByPathIncludingInactive(rel);
+                        }
+                        if (go == null) return null;
+                        if (targetType == typeof(GameObject)) return go;
+                        return go.GetComponent(targetType);
+                    }
                     var loadedAsset = Resources.Load(stringValue, targetType);
                     if (loadedAsset == null)
                     {
-                        Debug.LogWarning(
-                            $"[SFTaskParsing] 无法从 Resources 加载: '{stringValue}' (目标类型: {targetType.Name})");
+                        Debug.LogWarning($"[SFTaskParsing] 无法从 Resources 加载: '{stringValue}' (目标类型: {targetType.Name})");
                     }
-
                     return loadedAsset;
                 }
 
@@ -189,6 +210,45 @@ namespace SFramework.SFTask.Module
                     $"[SFTaskParsing] ParseFieldValue 失败 (值: '{stringValue}', 目标类型: {targetType.Name}): {e.Message}");
                 return null;
             }
+        }
+
+        private static GameObject FindGameObjectByPathIncludingInactive(string path)
+        {
+            if (string.IsNullOrEmpty(path)) return null;
+            var parts = path.Split('/');
+            for (int si = 0; si < SceneManager.sceneCount; si++)
+            {
+                var scene = SceneManager.GetSceneAt(si);
+                if (!scene.isLoaded) continue;
+                var roots = scene.GetRootGameObjects();
+                foreach (var root in roots)
+                {
+                    if (!string.Equals(root.name, parts[0], StringComparison.Ordinal)) continue;
+                    var current = root.transform;
+                    bool matched = true;
+                    for (int i = 1; i < parts.Length; i++)
+                    {
+                        Transform next = null;
+                        for (int c = 0; c < current.childCount; c++)
+                        {
+                            var child = current.GetChild(c);
+                            if (string.Equals(child.name, parts[i], StringComparison.Ordinal))
+                            {
+                                next = child;
+                                break;
+                            }
+                        }
+                        if (next == null)
+                        {
+                            matched = false;
+                            break;
+                        }
+                        current = next;
+                    }
+                    if (matched) return current.gameObject;
+                }
+            }
+            return null;
         }
 
         /// <summary>

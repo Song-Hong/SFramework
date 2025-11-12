@@ -58,7 +58,7 @@ namespace SFramework.SFTask.Editor.Window
         {
             // 初始化任务图视图
             graphView = new SfTaskGraphView();
-            var styleSheetPath = "Assets/SFramework/SFTask/Editor/Style/SfTask.uss"; // 请根据您的实际路径修改
+            var styleSheetPath = "Assets/SFramework/SFTask/Editor/Style/SfTask.uss"; 
             var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(styleSheetPath);
             if (styleSheet != null)
             {

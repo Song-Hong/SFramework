@@ -8,6 +8,7 @@ using SFramework.SFTask.Module;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace SFramework.SFTask.Editor.View
 {
@@ -19,7 +20,7 @@ namespace SFramework.SFTask.Editor.View
         /// <summary>
         /// 节点数据库
         /// </summary>
-        public static List<Tuple<string,string,List<Tuple<string,string,string>>>> Nodes = new List<Tuple<string,string,List<Tuple<string,string,string>>>> ();
+        public static List<Tuple<string,string>> Nodes = new List<Tuple<string,string>> ();
         
         [Serializable]
         public class SingleTaskPointDataWrapper
@@ -35,16 +36,11 @@ namespace SFramework.SFTask.Editor.View
             // 初始化节点数据库
             foreach (var runtimeSubclass in SfReflection.GetRuntimeSubclasses<SfTaskNode>())
             {
-                //获取所有公开的字段
-                var publicFields = SfReflection.GetPublicFields(runtimeSubclass);
-                publicFields.RemoveAll(x => x.Item1 == "isComplete");
-                
-                //获取节点的名称
-                if (System.Activator.CreateInstance(runtimeSubclass) is not SfTaskNode createdInstance) continue;
-                Nodes.Add(new Tuple<string,string,List<Tuple<string,string,string>>>(
-                    createdInstance.GetTaskNodeName(), // 任务名
-                    createdInstance.GetType().FullName
-                    ,publicFields));
+                var createdInstance = ScriptableObject.CreateInstance(runtimeSubclass) as SfTaskNode;
+                if (createdInstance == null) continue;
+                Nodes.Add(new Tuple<string,string>(
+                    createdInstance.GetTaskNodeName(),
+                    createdInstance.GetType().FullName));
             }
         }
         
@@ -71,14 +67,24 @@ namespace SFramework.SFTask.Editor.View
                 var sfTaskNodeTaskViews = targetNode.GetTaskComponents();
                 foreach (var sfTaskNodeTaskView in sfTaskNodeTaskViews)
                 {
-                    var fields = sfTaskNodeTaskView.PublicFields.Select(publicField =>
-                        new SfTaskFieldData()
+                    List<SfTaskFieldData> fields = new List<SfTaskFieldData>();
+                    if (sfTaskNodeTaskView.SerializedTarget != null)
+                    {
+                        var it = sfTaskNodeTaskView.SerializedTarget.GetIterator();
+                        bool enterChildren = true;
+                        while (it.NextVisible(enterChildren))
                         {
-                            fieldName = publicField.Item1,
-                            fieldType = publicField.Item2,
-                            // 重新使用已有的 GetTaskFieldValue 方法获取当前 UI 控件的值
-                            fieldValue = GetTaskFieldValue(sfTaskNodeTaskView, publicField.Item1, publicField.Item2),
-                        }).ToList();
+                            if (it.propertyPath == "m_Script") { enterChildren = false; continue; }
+                            fields.Add(new SfTaskFieldData
+                            {
+                                fieldName = it.propertyPath,
+                                fieldType = it.propertyType.ToString(),
+                                fieldValue = SerializePropertyValue(it)
+                            });
+                            enterChildren = false;
+                        }
+                    }
+                    
 
                     sfTaskPointData.tasks.Add(new SfTaskData()
                     {
@@ -139,15 +145,18 @@ namespace SFramework.SFTask.Editor.View
             var newNode = new SfTaskNodePointEditor(pointData.title, new Vector2(pointData.x, pointData.y));
             foreach (var taskData in pointData.tasks)
             {
-                // 构造一个包含 JSON 值的 List<Tuple<string,string,string>>
-                var fieldsWithValues = taskData.fields.Select(f =>
-                    new Tuple<string, string, string>(f.fieldName, f.fieldType, f.fieldValue)
-                ).ToList();
+                var type = ResolveType(taskData.taskType);
+                if (type == null) continue;
+                var so = ScriptableObject.CreateInstance(type) as SFramework.SFTask.Module.SfTaskNode;
+                if (so == null) continue;
+                var serialized = new SerializedObject(so);
+                ApplyFieldsToSerializedObject(serialized, taskData.fields);
+                serialized.ApplyModifiedProperties();
 
-                // 假设 SfTaskNodeTaskView.Init 已被修改以接受字段值
                 var sfTaskNodeTaskView = new SfTaskNodeTaskView();
-                // 假设 taskData.taskName, taskData.taskType, fieldsWithValues 包含正确的数据
-                sfTaskNodeTaskView.Init(taskData.taskName, taskData.taskType, fieldsWithValues);
+                sfTaskNodeTaskView.TitleLabel.text = taskData.taskName;
+                sfTaskNodeTaskView.TaskType = taskData.taskType;
+                sfTaskNodeTaskView.Init(serialized);
 
                 newNode.TaskContainerAdd(sfTaskNodeTaskView);
             }
@@ -186,19 +195,19 @@ namespace SFramework.SFTask.Editor.View
             // 3. 遍历并创建新的任务组件 (SfTaskNodeTaskView)
             foreach (var taskData in wrapper.taskPointData.tasks)
             {
-                // 构造一个包含 JSON 值的 List<Tuple<string,string,string>>
-                var fieldsWithValues = taskData.fields.Select(f =>
-                    new Tuple<string, string, string>(f.fieldName, f.fieldType, f.fieldValue)
-                ).ToList();
+                var type = ResolveType(taskData.taskType);
+                if (type == null) continue;
+                var so = ScriptableObject.CreateInstance(type) as SFramework.SFTask.Module.SfTaskNode;
+                if (so == null) continue;
+                var serialized = new SerializedObject(so);
+                ApplyFieldsToSerializedObject(serialized, taskData.fields);
+                serialized.ApplyModifiedProperties();
 
-                // 创建新的任务组件视图
                 var sfTaskNodeTaskView = new SfTaskNodeTaskView();
-        
-                // 初始化新视图的值和类型
-                // 假设 Init 方法负责创建并设置 UI 控件的值
-                sfTaskNodeTaskView.Init(taskData.taskName, taskData.taskType, fieldsWithValues);
+                sfTaskNodeTaskView.TitleLabel.text = taskData.taskName;
+                sfTaskNodeTaskView.TaskType = taskData.taskType;
+                sfTaskNodeTaskView.Init(serialized);
 
-                // 4. 将新的任务组件添加到目标节点
                 targetNode.TaskContainerAdd(sfTaskNodeTaskView);
             }
         }
@@ -230,6 +239,156 @@ namespace SFramework.SFTask.Editor.View
                 // 解析失败，不是我们想要的数据
                 return false;
             }
+        }
+
+        private void ApplyFieldsToSerializedObject(SerializedObject so, List<SfTaskFieldData> fields)
+        {
+            if (fields == null) return;
+            foreach (var f in fields)
+            {
+                var p = so.FindProperty(f.fieldName);
+                if (p == null) continue;
+                try
+                {
+                    switch (p.propertyType)
+                    {
+                        case SerializedPropertyType.Integer:
+                            if (int.TryParse(f.fieldValue, out var iv)) p.intValue = iv; break;
+                        case SerializedPropertyType.Float:
+                            if (float.TryParse(f.fieldValue, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var fv)) p.floatValue = fv; break;
+                        case SerializedPropertyType.Boolean:
+                            if (bool.TryParse(f.fieldValue, out var bv)) p.boolValue = bv; break;
+                        case SerializedPropertyType.String:
+                            p.stringValue = f.fieldValue ?? string.Empty; break;
+                        case SerializedPropertyType.Enum:
+                            if (p.enumDisplayNames != null)
+                            {
+                                var idx = Array.IndexOf(p.enumDisplayNames, f.fieldValue);
+                                p.enumValueIndex = idx >= 0 ? idx : p.enumValueIndex;
+                            }
+                            break;
+                        case SerializedPropertyType.Vector2:
+                            p.vector2Value = JsonUtility.FromJson<Vector2>(f.fieldValue);
+                            break;
+                        case SerializedPropertyType.Vector3:
+                            p.vector3Value = JsonUtility.FromJson<Vector3>(f.fieldValue);
+                            break;
+                        case SerializedPropertyType.Color:
+                            p.colorValue = JsonUtility.FromJson<Color>(f.fieldValue);
+                            break;
+                        case SerializedPropertyType.ObjectReference:
+                            if (string.IsNullOrEmpty(f.fieldValue)) break;
+                            if (f.fieldValue.StartsWith("scene-id://", StringComparison.OrdinalIgnoreCase))
+                            {
+                                var id = f.fieldValue.Substring("scene-id://".Length);
+                                var all = UnityEngine.Object.FindObjectsOfType<SFramework.SFTask.Module.SfUniqueId>(true);
+                                var hit = all.FirstOrDefault(x => x.Id == id);
+                                if (hit != null)
+                                {
+                                    var typeName = p.type;
+                                    var go = hit.gameObject;
+                                    var t = System.Type.GetType(typeName);
+                                    if (t == typeof(UnityEngine.GameObject) || t == null)
+                                        p.objectReferenceValue = go;
+                                    else
+                                        p.objectReferenceValue = go.GetComponent(t);
+                                }
+                                break;
+                            }
+                            if (f.fieldValue.StartsWith("scene://", StringComparison.OrdinalIgnoreCase))
+                            {
+                                var rel = f.fieldValue.Substring("scene://".Length);
+                                var go = UnityEngine.GameObject.Find(rel);
+                                if (go == null)
+                                {
+                                    go = FindGameObjectByPathIncludingInactive(rel);
+                                }
+                                if (go != null)
+                                {
+                                    var typeName = p.type;
+                                    var t = System.Type.GetType(typeName);
+                                    if (t == typeof(UnityEngine.GameObject) || t == null)
+                                        p.objectReferenceValue = go;
+                                    else
+                                        p.objectReferenceValue = go.GetComponent(t);
+                                }
+                                break;
+                            }
+                            {
+                                var path = AssetDatabase.GUIDToAssetPath(f.fieldValue);
+                                if (string.IsNullOrEmpty(path))
+                                {
+                                    var res = UnityEngine.Resources.Load(f.fieldValue);
+                                    if (res != null) { p.objectReferenceValue = res; break; }
+                                }
+                                if (!string.IsNullOrEmpty(path))
+                                {
+                                    var obj = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path);
+                                    p.objectReferenceValue = obj;
+                                }
+                            }
+                            break;
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+        }
+
+        private static GameObject FindGameObjectByPathIncludingInactive(string path)
+        {
+            if (string.IsNullOrEmpty(path)) return null;
+            var parts = path.Split('/');
+            for (int si = 0; si < SceneManager.sceneCount; si++)
+            {
+                var scene = SceneManager.GetSceneAt(si);
+                if (!scene.isLoaded) continue;
+                var roots = scene.GetRootGameObjects();
+                foreach (var root in roots)
+                {
+                    if (!string.Equals(root.name, parts[0], StringComparison.Ordinal)) continue;
+                    var current = root.transform;
+                    bool matched = true;
+                    for (int i = 1; i < parts.Length; i++)
+                    {
+                        Transform next = null;
+                        for (int c = 0; c < current.childCount; c++)
+                        {
+                            var child = current.GetChild(c);
+                            if (string.Equals(child.name, parts[i], StringComparison.Ordinal))
+                            {
+                                next = child;
+                                break;
+                            }
+                        }
+                        if (next == null)
+                        {
+                            matched = false;
+                            break;
+                        }
+                        current = next;
+                    }
+                    if (matched) return current.gameObject;
+                }
+            }
+            return null;
+        }
+
+        private static Type ResolveType(string fullName)
+        {
+            var t = Type.GetType(fullName);
+            if (t != null) return t;
+            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
+                {
+                    t = asm.GetType(fullName, false, true);
+                    if (t != null) return t;
+                }
+                catch { }
+            }
+            return null;
         }
     }
 }

@@ -2,32 +2,29 @@
 using SFramework.SFTask.Module;
 using UnityEngine;
 
-namespace SFramework.SFTask.TaskPackages.SYLTasks
+namespace SFramework.SYL.Tasks
 {
-    /// <summary>
-    /// 日志任务
-    /// </summary>
-    public class SyLog:SfTaskNode,ISfTaskNodeHelper
+    public class SYLWait : SfTaskNode, ISfTaskNodeHelper
     {
         /// <summary>
         /// 获取任务节点名称
         /// </summary>
         /// <returns>任务节点名称</returns>
-        public override string GetTaskNodeName() => "打印消息";
-
+        public override string GetTaskNodeName() => "等待任务";
+        
         /// <summary>
-        /// 日志内容
+        /// 等待时间
         /// </summary>
-        public string content;
-
+        [Header("等待时间(秒)")]
+        public int waitTime = 1;
+        
         /// <summary>
         /// 任务执行
         /// </summary>
         /// <returns>返回任务执行结果</returns>
         public override async Task<int> Start()
         {
-            await Task.Delay(1000);
-            Debug.Log(content);
+            await Task.Delay(waitTime*1000);
             return await base.Start();
         }
     }

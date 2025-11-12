@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SFramework.Core.Support;
 using SFramework.SFTask.Editor.View;
 using SFramework.SFTask.Editor.Window;
+using UnityEditor;
 using UnityEditor.Graphs;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -36,10 +37,7 @@ namespace SFramework.SFTask.Editor.NodeStyle
         /// </summary>
         public string TaskType;
 
-        /// <summary>
-        /// 任务节点的公共字段
-        /// </summary>
-        public List<Tuple<string, string, string>> PublicFields = new List<Tuple<string, string, string>>();
+        public SerializedObject SerializedTarget { get; private set; }
         
         /// <summary>
         /// 构造函数
@@ -78,204 +76,80 @@ namespace SFramework.SFTask.Editor.NodeStyle
             Add(TitleLabel);
         }
 
-        /// <summary>
-        /// 初始化任务节点任务视图
-        /// </summary>
-        /// <param name="title">任务节点标题</param>
-        /// <param name="taskType">任务类型</param>
-        /// <param name="publicFields">任务节点的公共字段</param>
-        public void Init(string title, string taskType, List<Tuple<string, string, string>> publicFields)
+        public void Init(SerializedObject taskSerializedObject)
         {
-            // 设置标题
-            TitleLabel.text = title;
-            // 设置任务类型
-            TaskType = taskType;
-            // 保存公共字段
-            PublicFields = publicFields;
-            // 核心部分：遍历字段并创建输入控件
+            SerializedTarget = taskSerializedObject;
+            taskSerializedObject.Update();
+            var iterator = taskSerializedObject.GetIterator();
+            if (iterator.NextVisible(true))
+            {
+                do
+                {
+                    if (iterator.propertyPath == "m_Script") continue;
+                    var field = new PropertyField(iterator.Copy(), iterator.displayName);
+                    field.style.width = new StyleLength(Length.Percent(100));
+                    field.style.flexGrow = 1;
+                    field.style.marginBottom = 4;
+                    
+                    // 定义字段样式
+                    field.RegisterCallback<GeometryChangedEvent>(_ =>
+                    {
+                        // 字段容器
+                        var fieldContainer = field.Q<VisualElement>(name: null, className: "unity-property-field");
+                        if (fieldContainer != null)
+                        {
+                            fieldContainer.style.marginTop = 2;
+                            fieldContainer.style.marginBottom = 2;
+                        }
+                        // 字段注释容器
+                        var labelContainer = field.Q<VisualElement>(name: null, className: "unity-decorator-drawers-container");
+                        if (labelContainer != null)
+                        {
+                            labelContainer.style.visibility = Visibility.Hidden;
+                            labelContainer.style.height = 16;
+                            labelContainer.style.height = 0;
+                        }
+                        // 字段注释（Header），用于将其文本赋给字段标签
+                        var commentEl = field.Q<Label>(name: null, className: "unity-header-drawer__label");
+                        if (commentEl != null)
+                        {
+                            commentEl.style.visibility = Visibility.Hidden;
+                        }
+                        // 字段名
+                        var labelEl = field.Q<Label>(name: null, className: "unity-property-field__label");
+                        if (labelEl != null)
+                        {
+                            labelEl.style.color = Color.white;
+                            labelEl.style.minWidth = 0;
+                            labelEl.style.marginRight = 8;
+                            labelEl.style.marginTop = 1;
+                            // 若存在 Header 文本，则赋值给字段标签
+                            if (commentEl != null && !string.IsNullOrEmpty(commentEl.text))
+                            {
+                                labelEl.text = commentEl.text;
+                            }
+                        }
+                        //字段值
+                        var inputEl = field.Q<VisualElement>(name: null, className: "unity-base-field__input");
+                        if (inputEl != null)
+                        {
+                            inputEl.style.borderBottomWidth = 1;
+                            inputEl.style.borderTopWidth = 1;
+                            inputEl.style.borderLeftWidth = 1;
+                            inputEl.style.borderRightWidth = 1;
+                            inputEl.style.borderBottomLeftRadius = 3;
+                            inputEl.style.borderBottomRightRadius = 3;
+                            inputEl.style.borderTopLeftRadius = 3;
+                            inputEl.style.borderTopRightRadius = 3;
+                            inputEl.style.marginTop = 2;
+                        }
+                    });
+                    Add(field);
+                } while (iterator.NextVisible(false));
+            }
+            this.Bind(taskSerializedObject);
             
-            foreach (var publicField in publicFields)
-            {
-                var fieldName = publicField.Item1;
-                var fieldTypeName = publicField.Item2;
-                var fieldValue = publicField.Item3; // 💥 获取字段值
-
-                // 尝试获取字段的实际 Type
-                var fieldType = GetTypeFromTypeName(fieldTypeName);
-
-                // 如果获取类型失败，或者我们不支持该类型，则跳过
-                if (fieldType == null)
-                {
-                    continue;
-                }
-
-                // 💥 传入字段值
-                var control = CreateControlForType(fieldName, fieldType, fieldValue);
-
-                if (control != null)
-                {
-                    Add(control);
-                }
-            }
-
-            // 创建删除按钮
             CreateRemoveBtn();
-        }
-
-        /// <summary>
-        /// 创建根据类型创建对应的输入控件
-        /// </summary>
-        /// <param name="fieldName">字段名称</param>
-        /// <param name="fieldType">字段类型</param>
-        /// <param name="fieldValue">字段值</param>
-        /// <returns>返回创建的输入控件</returns>
-        private VisualElement CreateControlForType(string fieldName, Type fieldType, string fieldValue)
-        {
-            // 创建一个 Label 来显示字段名称
-            var label = new Label(fieldName + ":");
-            VisualElement inputField = null;
-
-            //筛选类型进行创建控件
-            if (fieldType == typeof(int))
-            {
-                var intField = new IntegerField
-                {
-                    // 尝试从字符串解析值
-                    value = int.TryParse(fieldValue, out int result) ? result : 0
-                };
-                inputField = intField;
-            }
-            else if (fieldType == typeof(float) || fieldType == typeof(double))
-            {
-                var floatField = new FloatField
-                {
-                    value = float.TryParse(fieldValue, out float result) ? result : 0f
-                };
-                inputField = floatField;
-            }
-            else if (fieldType == typeof(string))
-            {
-                var textField = new TextField
-                {
-                    value = fieldValue ?? "", // 使用值
-                };
-                inputField = textField;
-            }
-            else if (fieldType == typeof(bool))
-            {
-                var toggle = new Toggle
-                {
-                    value = bool.TryParse(fieldValue, out bool result) && result,
-                };
-                inputField = toggle;
-                label.text = fieldName + ":"; // 保持标签
-            }
-            else if (fieldType == typeof(Vector3))
-            {
-                // 对于 Vector3，您之前使用了 JsonUtility.ToJson 序列化，这里需要反序列化
-                var vector3Value = JsonUtility.FromJson<Vector3>(fieldValue);
-                var vector3Field = new Vector3Field
-                {
-                    value = vector3Value
-                };
-                inputField = vector3Field;
-            }
-            else if (fieldType == typeof(Vector2))
-            {
-                var vector2Value = JsonUtility.FromJson<Vector2>(fieldValue);
-                var vector2Field = new Vector2Field
-                {
-                    value = vector2Value
-                };
-                inputField = vector2Field;
-            }
-            else if (fieldType == typeof(Color))
-            {
-                var colorValue = JsonUtility.FromJson<Color>(fieldValue);
-                var colorField = new ColorField
-                {
-                    value = colorValue
-                };
-                inputField = colorField;
-            }
-            else if (fieldType.IsEnum) // 处理所有枚举类型
-            {
-                var defaultEnumValue = (Enum)Activator.CreateInstance(fieldType);
-                var enumField = new EnumField(defaultEnumValue);
-
-                // 尝试从字符串设置枚举值
-                if (!string.IsNullOrEmpty(fieldValue))
-                {
-                    try
-                    {
-                        var parsedEnum = Enum.Parse(fieldType, fieldValue, true);
-                        enumField.value = (Enum)parsedEnum;
-                    }
-                    catch (ArgumentException)
-                    {
-                        // 解析失败，使用默认值
-                    }
-                }
-
-                inputField = enumField;
-            }
-            else if (typeof(UnityEngine.Object).IsAssignableFrom(fieldType))
-            {
-                UnityEngine.Object initialValue = null;
-
-                // 尝试将 fieldValue (GUID) 解析为资产
-                if (!string.IsNullOrEmpty(fieldValue))
-                {
-                    // 1. 通过 GUID 获取资产路径
-                    string path = UnityEditor.AssetDatabase.GUIDToAssetPath(fieldValue);
-                    if (!string.IsNullOrEmpty(path))
-                    {
-                        // 2. 从路径加载资产
-                        initialValue = UnityEditor.AssetDatabase.LoadAssetAtPath(path, fieldType);
-                    }
-                }
-
-                var objectField = new ObjectField
-                {
-                    objectType = fieldType,
-                    allowSceneObjects = false, // ‼️【重要】序列化不支持场景对象
-                    value = initialValue // ⬅️ 设置加载到的值
-                };
-                inputField = objectField;
-            }
-
-            if (inputField == null) return null;
-            // 将 Label 放在输入框前面，形成常见的属性面板布局
-            var row = new VisualElement
-            {
-                style =
-                {
-                    flexDirection = FlexDirection.Row, // 水平排列
-                    alignItems = Align.Center
-                }
-            };
-
-            label.style.minWidth = 50; // 确保 Label 有足够的空间
-            inputField.style.flexGrow = 1; // 确保输入框占据剩余空间
-            inputField.style.flexShrink = 1;
-            inputField.name = fieldName;
-
-            row.Add(label);
-            row.Add(inputField);
-            return row;
-        }
-
-        /// <summary>
-        /// 将字段的字符串类型名称转换为 System.Type
-        /// </summary>
-        /// <param name="typeName"> 字段的字符串类型名称 </param>
-        /// <returns> 返回对应的 System.Type 类型 </returns>
-        private Type GetTypeFromTypeName(string typeName)
-        {
-            var type = Type.GetType($"System.{typeName}", false, true);
-            if (type != null) return type;
-            type = Type.GetType($"UnityEngine.{typeName}, UnityEngine", false, true);
-            return type ?? Type.GetType(typeName, false, true);
         }
 
         /// <summary>
@@ -323,6 +197,22 @@ namespace SFramework.SFTask.Editor.NodeStyle
             var sfTaskNodePointEditor = GetFirstAncestorOfType<SfTaskNodePointEditor>();
             if (sfTaskNodePointEditor != null)
                 sfTaskNodePointEditor.RemoveTaskNode(this);
+        }
+
+        private static Type ResolveType(string fullName)
+        {
+            var t = Type.GetType(fullName);
+            if (t != null) return t;
+            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
+                {
+                    t = asm.GetType(fullName, false, true);
+                    if (t != null) return t;
+                }
+                catch { }
+            }
+            return null;
         }
     }
 }

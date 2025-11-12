@@ -62,14 +62,23 @@ namespace SFramework.SFTask.Editor.View
                             var sfTaskNodeTaskViews = sfTaskPointNode.GetTaskComponents();
                             foreach (var sfTaskNodeTaskView in sfTaskNodeTaskViews)
                             {
-                                var fields = sfTaskNodeTaskView.PublicFields.Select(publicField =>
-                                    new SfTaskFieldData()
+                                List<SfTaskFieldData> fields = new List<SfTaskFieldData>();
+                                if (sfTaskNodeTaskView.SerializedTarget != null)
+                                {
+                                    var it = sfTaskNodeTaskView.SerializedTarget.GetIterator();
+                                    bool enterChildren = true;
+                                    while (it.NextVisible(enterChildren))
                                     {
-                                        fieldName = publicField.Item1,
-                                        fieldType = publicField.Item2,
-                                        fieldValue = GetTaskFieldValue(sfTaskNodeTaskView, publicField.Item1,
-                                            publicField.Item2),
-                                    }).ToList();
+                                        if (it.propertyPath == "m_Script") { enterChildren = false; continue; }
+                                        fields.Add(new SfTaskFieldData
+                                        {
+                                            fieldName = it.propertyPath,
+                                            fieldType = it.propertyType.ToString(),
+                                            fieldValue = SerializePropertyValue(it)
+                                        });
+                                        enterChildren = false;
+                                    }
+                                }
 
                                 sfTaskPointData.tasks.Add(new SfTaskData()
                                 {
@@ -137,81 +146,60 @@ namespace SFramework.SFTask.Editor.View
             return connectedNodes;
         }
 
-        /// <summary>
-        /// 获取任务节点的字段值
-        /// </summary>
-        /// <param name="sfTaskNodePoint">任务节点编辑器</param>
-        /// <param name="fieldName">字段名称</param>
-        /// <returns>字段值</returns>
-// 删掉这个旧的、有问题的函数
-        /// <summary>
-        /// 【已修复】获取【指定任务组件】的字段值
-        /// </summary>
-        /// <param name="taskView">要从中获取值的 SfTaskNodeTaskView 组件</param>
-        /// <param name="fieldName">字段名称 (也应该是 UI 控件的 name)</param>
-        /// <param name="fieldType">字段类型 (来自 publicField.Item2)</param>
-        /// <returns>字段值</returns>
-        private string GetTaskFieldValue(SFramework.SFTask.Editor.NodeStyle.SfTaskNodeTaskView taskView,
-            string fieldName, string fieldType)
+        
+
+        private string SerializePropertyValue(SerializedProperty p)
         {
-            // A. 在 taskView 内部查找 UI 控件
-            var uiElement = taskView.Q(name: fieldName);
-
-            if (uiElement == null)
+            switch (p.propertyType)
             {
-                Debug.LogWarning($"在 {taskView.TitleLabel.text} 中未找到字段 '{fieldName}' 对应的 UI 控件。");
-                return null;
-            }
-
-            // B. 根据 fieldType (或 UI 控件类型) 来安全地获取值
-            try
-            {
-                // 简单类型 (ToString)
-                if (uiElement is BaseField<string> stringField)
-                    return stringField.value;
-                if (uiElement is BaseField<int> intField)
-                    return intField.value.ToString();
-                if (uiElement is BaseField<float> floatField)
-                    return floatField.value.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                if (uiElement is BaseField<bool> boolField)
-                    return boolField.value.ToString();
-
-                // JSON 序列化类型
-                if (uiElement is BaseField<Vector3> v3Field)
-                    return JsonUtility.ToJson(v3Field.value);
-                if (uiElement is BaseField<Vector2> v2Field)
-                    return JsonUtility.ToJson(v2Field.value);
-                if (uiElement is BaseField<Color> colorField)
-                    return JsonUtility.ToJson(colorField.value);
-
-                // 枚举类型 (ToString)
-                if (uiElement is BaseField<System.Enum> enumField)
-                    return enumField.value.ToString();
-
-                // GUID 序列化类型 (ObjectField)
-                if (uiElement is UnityEditor.UIElements.ObjectField objField)
-                {
-                    if (objField.value == null) return null;
-
-                    // 必须是资产 (Asset)，不能是场景对象
-                    if (AssetDatabase.Contains(objField.value))
+                case SerializedPropertyType.Integer:
+                    return p.intValue.ToString();
+                case SerializedPropertyType.Float:
+                    return p.floatValue.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                case SerializedPropertyType.Boolean:
+                    return p.boolValue.ToString();
+                case SerializedPropertyType.String:
+                    return p.stringValue;
+                case SerializedPropertyType.Enum:
+                    return p.enumDisplayNames != null && p.enumDisplayNames.Length > 0 ? p.enumDisplayNames[p.enumValueIndex] : p.enumValueIndex.ToString();
+                case SerializedPropertyType.Vector2:
+                    return JsonUtility.ToJson(p.vector2Value);
+                case SerializedPropertyType.Vector3:
+                    return JsonUtility.ToJson(p.vector3Value);
+                case SerializedPropertyType.Color:
+                    return JsonUtility.ToJson(p.colorValue);
+                case SerializedPropertyType.ObjectReference:
+                    if (p.objectReferenceValue == null) return null;
+                    if (AssetDatabase.Contains(p.objectReferenceValue))
                     {
-                        string path = AssetDatabase.GetAssetPath(objField.value);
-                        return AssetDatabase.AssetPathToGUID(path); // ⬅️ 保存 GUID
+                        string fullPath = AssetDatabase.GetAssetPath(p.objectReferenceValue);
+                        int idx = fullPath.IndexOf("/Resources/", StringComparison.OrdinalIgnoreCase);
+                        if (idx >= 0)
+                        {
+                            string rel = fullPath.Substring(idx + "/Resources/".Length);
+                            string noExt = Path.ChangeExtension(rel, null);
+                            return noExt;
+                        }
+                        return null;
                     }
-
-                    Debug.LogWarning($"字段 '{fieldName}' 引用了一个场景对象，不支持序列化。");
+                    var obj = p.objectReferenceValue;
+                    GameObject go = null;
+                    if (obj is GameObject g) go = g;
+                    else if (obj is Component c) go = c.gameObject;
+                    if (go == null) return null;
+                    var uid = go.GetComponent<SFramework.SFTask.Module.SfUniqueId>();
+                    if (uid != null && !string.IsNullOrEmpty(uid.Id)) return "scene-id://" + uid.Id;
+                    List<string> names = new List<string>();
+                    var t = go.transform;
+                    while (t != null)
+                    {
+                        names.Insert(0, t.name);
+                        t = t.parent;
+                    }
+                    var path = string.Join("/", names);
+                    return "scene://" + path;
+                default:
                     return null;
-                }
-
-                // 回退或未处理的类型
-                Debug.LogWarning($"GetTaskFieldValue: 未处理的 UI 控件类型 '{uiElement.GetType()}' (字段名: '{fieldName}')。");
-                return null;
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"获取字段 '{fieldName}' ({fieldType}) 的值时出错: {e.Message}");
-                return null;
             }
         }
 
@@ -276,15 +264,18 @@ namespace SFramework.SFTask.Editor.View
 
                         foreach (var taskData in pointData.tasks)
                         {
-                            // 重新构造一个包含 JSON 值的 List<Tuple<string,string,string>>
-                            // 以便传递给 Init 方法，用于设置 UI 控件的初始值
-                            var fieldsWithValues = taskData.fields.Select(f =>
-                                new Tuple<string, string, string>(f.fieldName, f.fieldType, f.fieldValue)
-                            ).ToList();
+                            var type = ResolveType(taskData.taskType);
+                            if (type == null) continue;
+                            var so = ScriptableObject.CreateInstance(type) as SFramework.SFTask.Module.SfTaskNode;
+                            if (so == null) continue;
+                            var serialized = new SerializedObject(so);
+                            ApplyFieldsToSerializedObject(serialized, taskData.fields);
+                            serialized.ApplyModifiedProperties();
 
-                            // 假设 SfTaskNodeTaskView.Init 已被修改以接受字段值
                             var sfTaskNodeTaskView = new SfTaskNodeTaskView();
-                            sfTaskNodeTaskView.Init(taskData.taskName, taskData.taskType, fieldsWithValues);
+                            sfTaskNodeTaskView.TitleLabel.text = taskData.taskName;
+                            sfTaskNodeTaskView.TaskType = taskData.taskType;
+                            sfTaskNodeTaskView.Init(serialized);
 
                             sfTaskPointNode.TaskContainerAdd(sfTaskNodeTaskView);
                         }

@@ -1,10 +1,13 @@
+using System.Collections.Generic;
 using System.IO;
 using SFramework.Core.SfUIElementExtends;
 using SFramework.SFTask.Editor.Window;
 using SFramework.SFTask.Mono;
+using SFramework.SFTask.Module;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Linq;
 
 namespace SFramework.SFTask.Editor.Replace
 {
@@ -161,6 +164,73 @@ namespace SFramework.SFTask.Editor.Replace
                 }
             };
             _rootElement.Add(button);
+
+            // 任务点列表渲染
+            var tasksFoldout = new Foldout
+            {
+                text = "任务点列表",
+                value = true
+            };
+            tasksFoldout.style.marginTop = 8;
+
+            if (taskMono.tasks == null || taskMono.tasks.Count == 0)
+            {
+                tasksFoldout.Add(new Label("当前无任务点")
+                {
+                    style = { color = Color.white }
+                });
+            }
+            else
+            {
+                // 使用 ListView 展示任务点
+                var listView = new ListView(taskMono.tasks, 60,
+                    () =>
+                    {
+                        var row = new VisualElement();
+                        row.style.flexDirection = FlexDirection.Column;
+                        row.style.marginBottom = 6;
+
+                        var titleLabel = new Label();
+                        titleLabel.style.color = Color.white;
+                        titleLabel.style.fontSize = 14;
+                        titleLabel.name = "title";
+
+                        var typeLabel = new Label();
+                        typeLabel.style.color = new Color(0.8f, 0.8f, 0.8f);
+                        typeLabel.style.fontSize = 12;
+                        typeLabel.name = "type";
+
+                        var tasksLabel = new Label();
+                        tasksLabel.style.color = new Color(0.75f, 0.75f, 0.95f);
+                        tasksLabel.style.fontSize = 12;
+                        tasksLabel.name = "tasks";
+
+                        row.Add(titleLabel);
+                        row.Add(typeLabel);
+                        row.Add(tasksLabel);
+                        return row;
+                    },
+                    (element, i) =>
+                    {
+                        var point = taskMono.tasks[i];
+                        var titleLabel = element.Q<Label>("title");
+                        var typeLabel = element.Q<Label>("type");
+                        var tasksLabel = element.Q<Label>("tasks");
+
+                        titleLabel.text = $"[{i}] {point.title}";
+                        typeLabel.text = $"执行类型: {point.Type}";
+                        var names = (point.Tasks ?? new List<SfTaskNode>())
+                            .Select(t => t != null ? t.GetTaskNodeName() : "<null>")
+                            .ToList();
+                        tasksLabel.text = names.Count > 0
+                            ? $"包含任务: {string.Join(", ", names)}"
+                            : "包含任务: (空)";
+                    });
+                listView.selectionType = SelectionType.None;
+                tasksFoldout.Add(listView);
+            }
+
+            _rootElement.Add(tasksFoldout);
 
             return _rootElement;
         }

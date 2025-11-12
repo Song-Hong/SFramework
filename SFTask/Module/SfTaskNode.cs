@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using UnityEngine.Serialization;
+using UnityEngine;
 
 namespace SFramework.SFTask.Module
 {
     /// <summary>
     /// 任务
     /// </summary>
-    [Serializable]
-    public class SfTaskNode
+    public class SfTaskNode : ScriptableObject
     {
         #region 字段
         /// <summary>
@@ -20,17 +18,14 @@ namespace SFramework.SFTask.Module
         /// <summary>
         /// 任务是否完成
         /// </summary>
-        public bool isComplete;
+        [HideInInspector] public bool isComplete;
         #endregion
 
         #region 构造函数
         /// <summary>
         /// 任务构造函数
         /// </summary>
-        public SfTaskNode()
-        {
-            
-        }
+        public SfTaskNode() { }
         #endregion
 
         #region 公开方法

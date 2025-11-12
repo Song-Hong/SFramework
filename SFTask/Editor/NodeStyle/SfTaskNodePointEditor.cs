@@ -36,6 +36,11 @@ namespace SFramework.SFTask.Editor.NodeStyle
         /// 任务组件列表
         /// </summary>
         private List<SfTaskNodeTaskView> _taskComponents = new List<SfTaskNodeTaskView>();
+        
+        /// <summary>
+        /// 任务列表视图（支持拖拽排序）
+        /// </summary>
+        private ListView _taskListView;
 
         #region 构造函数
 
@@ -49,7 +54,7 @@ namespace SFramework.SFTask.Editor.NodeStyle
             //设置节点名称
             title = titleName;
             //设置默认宽度
-            style.width = 195;
+            style.width = 200;
 
             //创建标题标签
             _titleLabel = titleContainer.Q<Label>();
@@ -83,8 +88,43 @@ namespace SFramework.SFTask.Editor.NodeStyle
             extensionContainer.Add(_sfTab);
             extensionContainer.style.backgroundColor = SfColor.HexToColor("#2D2D2D");
             RefreshExpandedState();
+            
+            // 初始化任务列表视图（支持拖拽排序）
+            _taskListView = new ListView
+            {
+                selectionType = SelectionType.None,
+                virtualizationMethod = CollectionVirtualizationMethod.DynamicHeight,
+                reorderable = true
+            };
+            _taskListView.itemsSource = _taskComponents;
+            _taskListView.makeItem = () =>
+            {
+                var container = new VisualElement();
+                container.style.flexGrow = 1;
+                container.style.marginBottom = 6;
+                return container;
+            };
+            _taskListView.bindItem = (ve, i) =>
+            {
+                ve.Clear();
+                if (i < 0 || i >= _taskComponents.Count) return;
+                var view = _taskComponents[i];
+                // 确保不会重复挂载到多个父节点
+                if (view.parent != null)
+                {
+                    view.RemoveFromHierarchy();
+                }
+                ve.Add(view);
+            };
+            _taskListView.style.flexGrow = 1;
+            _taskListView.style.marginLeft = 4;
+            _taskListView.style.marginRight = 4;
+            _taskListView.style.marginTop = 6;
+            _taskListView.style.marginBottom = 6;
+            extensionContainer.Add(_taskListView);
+            RefreshExpandedState();
             //初始化节点位置
-            SetPosition(new Rect(mousePosition, new Vector2(160, 150)));
+            SetPosition(new Rect(mousePosition, new Vector2(360, 150)));
             //创建端口
             var controlFlowType = typeof(object); // 使用 object 允许连接任何类型，或用一个特定的标记类/结构体
             // 输入端口：用于控制流的进入点
@@ -251,7 +291,7 @@ namespace SFramework.SFTask.Editor.NodeStyle
             //创建右键选择菜单
             foreach (var node in SfTaskGraphView.Nodes)
             {
-                evt.menu.AppendAction("添加" + node.Item1, _ => { CreateTask(node.Item1, node.Item2, node.Item3); });
+                evt.menu.AppendAction("添加" + node.Item1, _ => { CreateTask(node.Item1, node.Item2); });
             }
             // base.BuildContextualMenu(evt);
 
@@ -298,16 +338,42 @@ namespace SFramework.SFTask.Editor.NodeStyle
         /// </summary>
         /// <param name="nodeName">节点名称</param>
         /// <param name="taskType">任务类型</param>
-        /// <param name="publicFields">公开字段 item1 名称 item2 类型</param>
-        private void CreateTask(string nodeName, string taskType, List<Tuple<string, string, string>> publicFields)
+        private void CreateTask(string nodeName, string taskType)
         {
-            // 创建一个容器来放置所有字段控件
             var sfTaskNodeTaskView = new SfTaskNodeTaskView();
-            sfTaskNodeTaskView.Init(nodeName, taskType, publicFields);
+            sfTaskNodeTaskView.TitleLabel.text = nodeName;
+            sfTaskNodeTaskView.TaskType = taskType;
+
+            var type = ResolveType(taskType);
+            if (type != null && typeof(SFramework.SFTask.Module.SfTaskNode).IsAssignableFrom(type))
+            {
+                var so = ScriptableObject.CreateInstance(type) as SFramework.SFTask.Module.SfTaskNode;
+                if (so != null)
+                {
+                    var serialized = new UnityEditor.SerializedObject(so);
+                    sfTaskNodeTaskView.Init(serialized);
+                }
+            }
 
             // 刷新节点,并加入节点扩展区域
             TaskContainerAdd(sfTaskNodeTaskView);
             RefreshExpandedState();
+        }
+
+        private static Type ResolveType(string fullName)
+        {
+            var t = Type.GetType(fullName);
+            if (t != null) return t;
+            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
+                {
+                    t = asm.GetType(fullName, false, true);
+                    if (t != null) return t;
+                }
+                catch { }
+            }
+            return null;
         }
 
         #endregion
@@ -321,7 +387,7 @@ namespace SFramework.SFTask.Editor.NodeStyle
         public void TaskContainerAdd(VisualElement element)
         {
             _taskComponents.Add(element as SfTaskNodeTaskView);
-            extensionContainer.Add(element);
+            _taskListView.Rebuild();
             RefreshExpandedState();
         }
 
@@ -332,7 +398,7 @@ namespace SFramework.SFTask.Editor.NodeStyle
         public void RemoveTaskNode(SfTaskNodeTaskView taskNode)
         {
             _taskComponents.Remove(taskNode);
-            extensionContainer.Remove(taskNode);
+            _taskListView.Rebuild();
             RefreshExpandedState();
         }
 
@@ -364,67 +430,7 @@ namespace SFramework.SFTask.Editor.NodeStyle
             };
         }
 
-        /// <summary>
-        /// 获取任务组件值
-        /// </summary>
-        /// <param name="fieldName">字段名称</param>
-        /// <returns>字段值</returns>
-        public string GetTaskComponent(string fieldName)
-        {
-            // 遍历节点上的所有任务组件视图
-            foreach (var taskView in _taskComponents)
-            {
-                var inputControl = taskView.Q<VisualElement>(fieldName);
-                // 如果找到了这个输入控件
-                if (inputControl != null)
-                {
-                    string value = null;
-                    if (inputControl is IntegerField intField)
-                    {
-                        value = intField.value.ToString();
-                    }
-                    else if (inputControl is FloatField floatField)
-                    {
-                        value = floatField.value.ToString();
-                    }
-                    else if (inputControl is TextField textField)
-                    {
-                        value = textField.value;
-                    }
-                    else if (inputControl is Toggle toggle)
-                    {
-                        value = toggle.value.ToString();
-                    }
-                    else if (inputControl is Vector3Field vector3Field)
-                    {
-                        value = JsonUtility.ToJson(vector3Field.value);
-                    }
-                    else if (inputControl is Vector2Field vector2Field)
-                    {
-                        value = JsonUtility.ToJson(vector2Field.value);
-                    }
-                    else if (inputControl is ColorField colorField)
-                    {
-                        value = JsonUtility.ToJson(colorField.value);
-                    }
-                    else if (inputControl is EnumField enumField)
-                    {
-                        value = enumField.value.ToString();
-                    }
-                    else if (inputControl is ObjectField objectField)
-                    {
-                        value = objectField.value != null ? objectField.value.name : "null";
-                    }
-
-                    if (value != null)
-                    {
-                        return value;
-                    }
-                }
-            }
-
-            return null;
-        }
+        
 
         #endregion
     }
