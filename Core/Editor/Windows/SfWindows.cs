@@ -12,7 +12,7 @@ namespace SFramework.Core.Editor.Windows
         /// <summary>
         /// 创建窗口
         /// </summary>
-        [MenuItem("SFramework/Windows")]
+        [MenuItem("SFramework/框架管理")]
         public static void ShowWindow()
         {
             var window = GetWindow<SfWindows>("SFramework Windows");

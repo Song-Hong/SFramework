@@ -68,7 +68,7 @@ namespace SFramework.SFTask.Mono
         /// <summary>
         /// 启动任务模块Mono单例
         /// </summary>
-        private async void Start()
+        private void Start()
         {
             if (!string.IsNullOrWhiteSpace(assetsPath))
             {

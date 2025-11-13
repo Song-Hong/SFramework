@@ -41,7 +41,7 @@ namespace SFramework.SFTask.Editor.Window
         /// <summary>
         /// 打开任务窗口
         /// </summary>
-        [MenuItem("SFramework/SfTaskWindow")]
+        [MenuItem("SFramework/任务编辑器")]
         public static void OpenWindow()
         {
             // 确保只有一个窗口实例

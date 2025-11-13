@@ -96,8 +96,9 @@ namespace SFramework.SFDb.Module
         /// <returns>SqliteDataReader对象</returns>
         public SqliteDataReader ExecuteQuery(string sqlQuery)
         {
-            _sqlCommand.CommandText = sqlQuery;
-            var sqlDataReader = _sqlCommand.ExecuteReader();
+            var sqlCommand = _sqlConnection.CreateCommand();
+            sqlCommand.CommandText = sqlQuery;
+            var sqlDataReader = sqlCommand.ExecuteReader();
             return sqlDataReader;
         }
 

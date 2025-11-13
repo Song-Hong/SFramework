@@ -1,0 +1,36 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/SFramework/SFDB/Editor/Window/SFDBWindow.uss?fileID=7433441132597879392&amp;guid=ca7834bea719d49a7acb7d0b951ba0a7&amp;type=3#SFDBWindow" />
+    <ui:VisualElement name="background" class="sfdb-background">
+        <ui:ScrollView name="TableContainer" class="sfdb-table_container">
+            <ui:Label tabindex="-1" text="SfDatabase" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Title" class="sfdb-table_title" />
+            <ui:Button text="创建表" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CreateTable" class="sfdb-table_create_btn" />
+        </ui:ScrollView>
+        <ui:VisualElement name="ContentContainer" class="sfdb-content_container">
+            <ui:ScrollView name="TableView" class="sfdb-content_table_view">
+                <ui:VisualElement name="TableViewArea" style="flex-grow: 1; min-width: 50px;">
+                    <ui:Button text="删除表格" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DeleteDBTable" style="position: absolute; top: 10px; right: 10px; color: rgb(255, 255, 255); background-color: rgb(56, 56, 56); border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0); border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; border-top-left-radius: 8px; border-top-right-radius: 8px; border-bottom-right-radius: 8px; border-bottom-left-radius: 8px; padding-top: 8px; padding-right: 8px; padding-bottom: 8px; padding-left: 8px;" />
+                    <ui:Button text="添加一行" parse-escape-sequences="true" display-tooltip-when-elided="true" name="AddNewLine" style="position: absolute; top: 55px; right: 10px; color: rgb(255, 255, 255); background-color: rgb(56, 56, 56); border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0); border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; border-top-left-radius: 8px; border-top-right-radius: 8px; border-bottom-right-radius: 8px; border-bottom-left-radius: 8px; padding-top: 8px; padding-right: 8px; padding-bottom: 8px; padding-left: 8px;" />
+                </ui:VisualElement>
+            </ui:ScrollView>
+            <ui:VisualElement name="CreateTableView" class="sfdb-content_table_create" style="flex-grow: 1;">
+                <ui:VisualElement name="TableNameArea" style="flex-grow: 0; flex-direction: row; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px; background-color: rgb(56, 56, 56); border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom-right-radius: 12px; border-bottom-left-radius: 12px; flex-shrink: 0; width: 200px; padding-top: 8px; padding-right: 8px; padding-bottom: 8px; padding-left: 8px;">
+                    <ui:Label tabindex="-1" text="表名" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TableName" style="color: rgb(255, 255, 255); -unity-text-align: middle-center; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 0; margin-right: 10px; margin-bottom: 0; margin-left: 10px; height: 26px; font-size: 14px;" />
+                    <ui:TextField picking-mode="Ignore" name="TableNameInput" style="background-color: rgba(0, 0, 0, 0); border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; flex-grow: 1; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; color: rgb(255, 255, 255); -unity-background-image-tint-color: rgb(255, 255, 255); height: 26px;" />
+                </ui:VisualElement>
+                <ui:VisualElement name="TableTitle" style="flex-grow: 0; flex-direction: row; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px; background-color: rgb(56, 56, 56); border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom-right-radius: 12px; border-bottom-left-radius: 12px; flex-shrink: 0; width: auto; padding-top: 8px; padding-right: 8px; padding-bottom: 8px; padding-left: 8px;">
+                    <ui:Label tabindex="-1" text="字段名" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Label" class="sfdb-content_table_create_line_item" />
+                    <ui:Label tabindex="-1" text="字段类型" parse-escape-sequences="true" display-tooltip-when-elided="true" class="sfdb-content_table_create_line_item" />
+                    <ui:Label tabindex="-1" text="是否可为空" parse-escape-sequences="true" display-tooltip-when-elided="true" class="sfdb-content_table_create_line_item" />
+                    <ui:Label tabindex="-1" text="是否为主键" parse-escape-sequences="true" display-tooltip-when-elided="true" class="sfdb-content_table_create_line_item" />
+                    <ui:Label tabindex="-1" text="是否自增" parse-escape-sequences="true" display-tooltip-when-elided="true" class="sfdb-content_table_create_line_item" />
+                </ui:VisualElement>
+                <ui:ScrollView>
+                    <ui:VisualElement name="CreateTableArea" style="flex-grow: 1;">
+                        <ui:Button text="添加字段" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CreateLine" style="position: relative; right: 10px; width: 80px; background-color: rgb(56, 56, 56); color: rgb(255, 255, 255); border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; border-top-left-radius: 8px; border-top-right-radius: 8px; border-bottom-right-radius: 8px; border-bottom-left-radius: 8px; margin-top: 8px; margin-right: 8px; margin-bottom: 8px; margin-left: 90%; padding-top: 8px; padding-right: 8px; padding-bottom: 8px; padding-left: 8px;" />
+                    </ui:VisualElement>
+                </ui:ScrollView>
+                <ui:Button text="创建表格" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CreateDBTable" style="position: absolute; top: 10px; right: 10px; color: rgb(255, 255, 255); background-color: rgb(56, 56, 56); border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0); border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; border-top-left-radius: 8px; border-top-right-radius: 8px; border-bottom-right-radius: 8px; border-bottom-left-radius: 8px; padding-top: 8px; padding-right: 8px; padding-bottom: 8px; padding-left: 8px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

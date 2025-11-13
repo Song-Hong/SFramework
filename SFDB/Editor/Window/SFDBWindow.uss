@@ -1,0 +1,250 @@
+.sfdb-background {
+    flex-grow: 1;
+    background-color: rgb(56, 56, 56);
+    flex-direction: row;
+}
+
+.sfdb-table_container {
+    width: 120px;
+}
+
+.sfdb-table_title {
+    margin-top: 8px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    margin-left: 8px;
+    padding-top: 8px;
+    padding-right: 0;
+    padding-bottom: 8px;
+    padding-left: 0;
+    color: rgb(255, 255, 255);
+    font-size: 16px;
+    -unity-text-align: middle-center;
+}
+
+.sfdb-table_item {
+    margin-top: 8px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    margin-left: 8px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    background-color: rgb(32, 32, 32);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    padding-top: 8px;
+    padding-right: 0;
+    padding-bottom: 8px;
+    padding-left: 0;
+    color: rgb(255, 255, 255);
+    font-size: 12px;
+}
+
+.sfdb-table_create_btn {
+    margin-top: 8px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    margin-left: 8px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    background-color: rgb(32, 32, 32);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    padding-top: 8px;
+    padding-right: 0;
+    padding-bottom: 8px;
+    padding-left: 0;
+    color: rgb(255, 255, 255);
+    font-size: 12px;
+}
+
+.sfdb-table_item_select {
+    margin-top: 7px;
+    margin-right: 7px;
+    margin-bottom: 7px;
+    margin-left: 7px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    background-color: rgb(32, 32, 32);
+    border-left-color: rgba(255, 255, 255, 0.67);
+    border-right-color: rgba(255, 255, 255, 0.67);
+    border-top-color: rgba(255, 255, 255, 0.67);
+    border-bottom-color: rgba(255, 255, 255, 0.67);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    padding-top: 8px;
+    padding-right: 0;
+    padding-bottom: 8px;
+    padding-left: 0;
+    color: rgb(255, 255, 255);
+    font-size: 12px;
+}
+
+.sfdb-table_create_btn_select {
+    margin-top: 7px;
+    margin-right: 7px;
+    margin-bottom: 7px;
+    margin-left: 7px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    background-color: rgb(32, 32, 32);
+    border-left-color: rgba(255, 255, 255, 0.67);
+    border-right-color: rgba(255, 255, 255, 0.67);
+    border-top-color: rgba(255, 255, 255, 0.67);
+    border-bottom-color: rgba(255, 255, 255, 0.67);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    padding-top: 8px;
+    padding-right: 0;
+    padding-bottom: 8px;
+    padding-left: 0;
+    color: rgb(255, 255, 255);
+    font-size: 12px;
+}
+
+.sfdb-content_container {
+    flex-grow: 1;
+}
+
+.sfdb-content_table_view {
+    flex-grow: 1;
+    background-color: rgb(32, 32, 32);
+    margin-top: 16px;
+    margin-right: 16px;
+    margin-bottom: 16px;
+    margin-left: 16px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.sfdb-content_table_view_title {
+    flex-direction: row;
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+    height: 35px;
+}
+
+.sfdb-content_table_view_title_item {
+    background-color: rgb(56, 56, 56);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    color: rgb(255, 255, 255);
+    width: 100px;
+}
+
+.sfdb-content_table_view_line {
+    flex-direction: row;
+    margin-top: 2px;
+    margin-right: 10px;
+    margin-left: 10px;
+    height: 35px;
+}
+
+.sfdb-content_table_view_line_item {
+    background-color: rgb(56, 56, 56);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    color: rgb(255, 255, 255);
+    width: 100px;
+}
+
+.sfdb-content_table_create {
+    flex-grow: 1;
+    background-color: rgb(32, 32, 32);
+    margin-top: 16px;
+    margin-right: 16px;
+    margin-bottom: 16px;
+    margin-left: 16px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.sfdb-content_table_create_line {
+    flex-direction: row;
+    margin-top: 3px;
+    margin-right: 10px;
+    margin-left: 10px;
+    height: 44px;
+    margin-bottom: 3px;
+    padding-top: 8px;
+    padding-right: 8px;
+    padding-bottom: 8px;
+    padding-left: 8px;
+    flex-shrink: 0;
+    background-color: rgb(56, 56, 56);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.sfdb-content_table_create_line_item {
+    flex-direction: row;
+    margin-top: 0;
+    margin-right: 4px;
+    margin-left: 4px;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    flex-shrink: 1;
+    background-color: rgba(56, 56, 56, 0);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    flex-grow: 1;
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    height: 26px;
+}
