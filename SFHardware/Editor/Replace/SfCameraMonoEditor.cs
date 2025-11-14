@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using SFramework.Core.SfUIElementExtends;
 using SFramework.Core.Support;
 using SFramework.SFHardware.Module;
@@ -12,7 +9,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
-namespace SFramework.SFHardware.Editor
+namespace SFramework.SFHardware.Editor.Replace
 {
     /// <summary>
     /// 相机模块单例样式

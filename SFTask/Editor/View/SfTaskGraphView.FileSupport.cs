@@ -259,8 +259,7 @@ namespace SFramework.SFTask.Editor.View
                     // --- B. 初始化任务组件和字段值 ---
                     if (newNode is SfTaskNodePointEditor sfTaskPointNode)
                     {
-                        // ⚠ 重要的：您可能需要在这里设置执行顺序 (Sequential/Parallel)
-                        // sfTaskPointNode.SetExecutionType(pointData.type); 
+                        sfTaskPointNode.SetExecutionType(pointData.type);
 
                         foreach (var taskData in pointData.tasks)
                         {
@@ -325,8 +324,6 @@ namespace SFramework.SFTask.Editor.View
         }
 
         // 文件：您添加这两个辅助方法的文件 (例如：SfTaskGraphView.ExportFile.cs 或 SfTaskGraphView.cs)
-
-        // 辅助方法：安全获取指定名称的出口端口
         private Port GetOutputPortByName(Node node, string portName)
         {
             return node.Query<Port>()

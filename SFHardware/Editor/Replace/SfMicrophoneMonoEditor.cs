@@ -1,13 +1,11 @@
-using System;
-using System.Linq;
-// 假设这些是您自定义的命名空间
-using SFramework.SFHardware.Module; 
+using SFramework.SFHardware.Module;
 using SFramework.SFHardware.Mono;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+// 假设这些是您自定义的命名空间
 
-namespace SFramework.SFHardware.Editor
+namespace SFramework.SFHardware.Editor.Replace
 {
     /// <summary>
     /// 麦克风模块单例编辑器

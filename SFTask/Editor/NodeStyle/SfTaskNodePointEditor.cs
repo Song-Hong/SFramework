@@ -84,6 +84,7 @@ namespace SFramework.SFTask.Editor.NodeStyle
             _sfTab.SetTitle("执行顺序:");
             _sfTab.AddChoice("顺序", "并行");
             _sfTab.TitleLabel.style.fontSize = 12;
+            // _sfTab.Select();
             //将顺序和并行选择添加到标题栏中
             extensionContainer.Add(_sfTab);
             extensionContainer.style.backgroundColor = SfColor.HexToColor("#2D2D2D");
@@ -291,7 +292,7 @@ namespace SFramework.SFTask.Editor.NodeStyle
             //创建右键选择菜单
             foreach (var node in SfTaskGraphView.Nodes)
             {
-                evt.menu.AppendAction("添加" + node.Item1, _ => { CreateTask(node.Item1, node.Item2); });
+                evt.menu.AppendAction("" + node.Item1, _ => { CreateTask(node.Item1, node.Item2); });
             }
             // base.BuildContextualMenu(evt);
 
@@ -430,7 +431,18 @@ namespace SFramework.SFTask.Editor.NodeStyle
             };
         }
 
-        
+        public void SetExecutionType(string type)
+        {
+            switch (type)
+            {
+                case "Parallel":
+                    _sfTab.Select("并行");
+                    break;
+                default:
+                    _sfTab.Select("顺序");
+                    break;
+            }
+        }
 
         #endregion
     }

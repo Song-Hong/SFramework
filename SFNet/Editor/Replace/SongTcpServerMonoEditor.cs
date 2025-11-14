@@ -1,12 +1,11 @@
 using SFramework.Core.SfUIElementExtends;
 using SFramework.Core.Support;
 using SFramework.SFNet.Mono;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace SFramework.SFNet.Editor
+namespace SFramework.SFNet.Editor.Replace
 {
     /// <summary>
     /// TCP服务器编辑器
