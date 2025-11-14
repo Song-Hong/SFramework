@@ -36,7 +36,7 @@ src="./Core/Editor/Config/Task.png"
 style="width: 40px; height: 40px;"
 />SfTask(任务流)
 
-![任务编辑器](./SFTask/Editor/Data/View.png)
+![任务编辑器](./SFTask/Editor/Data/view.png)
 
 开箱即用的任务编辑器,模块化任务配置,可视化任务配置,支持导出至文件,动态外部加载
 
