@@ -1,0 +1,26 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/SFramework/SFNet/Editor/Window/SFNetWindow.uss?fileID=7433441132597879392&amp;guid=709b38125280846c390f35f0507de883&amp;type=3#SFNetWindow" />
+    <ui:VisualElement name="background" class="sfnet-background">
+        <ui:ScrollView name="SliderContainer" class="sfnet-table_container">
+            <ui:Label tabindex="-1" text="SFNet" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Title" class="sfnet-table_title" />
+            <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" class="sfnet-net_item">
+                <ui:Label tabindex="-1" text="UDP" parse-escape-sequences="true" display-tooltip-when-elided="true" class="sfnet-net_item_title" />
+                <ui:TextField picking-mode="Ignore" value="192.168.1.197" class="sfnet-net_item_input" />
+                <ui:IntegerField value="42" class="sfnet-net_item_input" />
+                <ui:Button text="开启" parse-escape-sequences="true" display-tooltip-when-elided="true" class="sfnet-net_item_btn" />
+                <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="Close" class="sfnet-net_item_close" />
+            </ui:Button>
+            <ui:Button text="创建网络" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CreateItem" class="sfnet-net_item_create_item" />
+            <ui:VisualElement name="CreatePanel" class="sfnet-net_item_create_panel" style="flex-grow: 1; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;">
+                <ui:Button text="UDP" parse-escape-sequences="true" display-tooltip-when-elided="true" name="UdpItem" class="sfnet-net_item_create_panel_item" />
+                <ui:Button text="TCP" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TcpItem" class="sfnet-net_item_create_panel_item" />
+                <ui:Button text="取消" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CreateCancel" class="sfnet-net_item_create_panel_item" />
+            </ui:VisualElement>
+        </ui:ScrollView>
+        <ui:VisualElement name="ContentContainer" class="sfnet-content_container">
+            <ui:ScrollView name="ContentView" class="sfnet-content_content_view">
+                <ui:GroupBox name="ContentArea" />
+            </ui:ScrollView>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

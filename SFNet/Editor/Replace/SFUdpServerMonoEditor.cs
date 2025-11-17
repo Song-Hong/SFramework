@@ -11,7 +11,7 @@ namespace SFramework.SFNet.Editor.Replace
     /// UDP服务器编辑器
     /// </summary>
     [CustomEditor(typeof(SfUdpServerMono))]
-    public class SongUdpServerMonoEditor : UnityEditor.Editor
+    public class SfUdpServerMonoEditor : UnityEditor.Editor
     {
         /// <summary>
         /// 根元素

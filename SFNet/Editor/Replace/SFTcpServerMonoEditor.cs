@@ -11,7 +11,7 @@ namespace SFramework.SFNet.Editor.Replace
     /// TCP服务器编辑器
     /// </summary>
     [CustomEditor(typeof(SfTcpServerMono))]
-    public class SongTcpServerMonoEditor:UnityEditor.Editor
+    public class SfTcpServerMonoEditor:UnityEditor.Editor
     {
         /// <summary>
         /// 根元素
