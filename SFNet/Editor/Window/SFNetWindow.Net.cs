@@ -20,6 +20,14 @@ namespace SFramework.SFNet.Editor.Window
             = new Dictionary<Button, SfUDPServer>();
         
         /// <summary>
+        /// 服务器数据字典
+        /// 键：按钮
+        /// 值：IP地址、端口号、内容、时间,是否是自己发送的
+        /// </summary>
+        private Dictionary<Button,List<Tuple<string,int,string,string,bool>>> _sfServerData
+            = new Dictionary<Button, List<Tuple<string, int, string, string, bool>>>();
+        
+        /// <summary>
         /// 创建UDP网络
         /// </summary>
         /// <param name="ip">IP地址</param>
@@ -48,6 +56,11 @@ namespace SFramework.SFNet.Editor.Window
             // 选择按钮
             SelectButton(button);
             
+            // 接收IP端口事件
+            sfUDPServer.ReceivedIPPort+= (msgIp, msgPort, content) =>
+                SaveServerData(button,msgIp,msgPort,content);
+
+            
             return true;
         }
         
@@ -75,6 +88,28 @@ namespace SFramework.SFNet.Editor.Window
             {
                 sfUDPServer.Value.Disconnect();
             }
+        }
+
+        /// <summary>
+        /// 保存服务器数据
+        /// </summary>
+        /// <param name="btn"></param>
+        /// <param name="ip">IP地址</param>
+        /// <param name="port">端口号</param>
+        /// <param name="content">内容</param>
+        public void SaveServerData(Button btn,string ip,int port,string content)
+        {
+            // 添加服务器数据
+            if (!_sfServerData.ContainsKey(btn))
+            {
+                _sfServerData.Add(btn,new List<Tuple<string, int, string, string, bool>>());
+            }
+            _sfServerData[btn].Add(new Tuple<string, int, string, string, bool>(
+                ip,
+                port,
+                content,
+                DateTime.Now.ToString("HH:mm:ss"),
+                false));
         }
     }
 }

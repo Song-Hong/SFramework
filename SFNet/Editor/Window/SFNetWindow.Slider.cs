@@ -154,6 +154,7 @@ namespace SFramework.SFNet.Editor.Window
             button.AddToClassList("sfnet-net_item_select");
             _nowSelectItem = button;
             ShowContent(button);
+            LoadServerData(button);
         }
         
         /// <summary>

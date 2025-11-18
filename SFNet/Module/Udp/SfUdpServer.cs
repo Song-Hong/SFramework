@@ -304,6 +304,9 @@ namespace SFramework.SFNet.Module.Udp
         {
             if (!_isConnected) return;
 
+            //
+            ReceivedIPPort = null;
+            
             // 设置状态为未连接，这将使接收线程的循环条件变为false
             _isConnected = false;
 

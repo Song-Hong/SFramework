@@ -13,7 +13,7 @@
             <ui:Button text="创建网络" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CreateItem" class="sfnet-net_item_create_item" />
             <ui:VisualElement name="CreatePanel" class="sfnet-net_item_create_panel" style="flex-grow: 1; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;">
                 <ui:Button text="UDP" parse-escape-sequences="true" display-tooltip-when-elided="true" name="UdpItem" class="sfnet-net_item_create_panel_item" />
-                <ui:Button text="TCP" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TcpItem" class="sfnet-net_item_create_panel_item" />
+                <ui:Button text="TCP" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TcpItem" class="sfnet-net_item_create_panel_item" style="display: none;" />
                 <ui:Button text="取消" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CreateCancel" class="sfnet-net_item_create_panel_item" />
             </ui:VisualElement>
         </ui:ScrollView>
