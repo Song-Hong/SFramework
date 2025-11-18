@@ -403,6 +403,11 @@ namespace SFramework.SFDb.Editor.Window
                 CreateSelectTableBtn(tableName);
             }
             sqliteDataReader.Close();
+
+            var uQueryBuilder = _tableSelect.Query<VisualElement>().Class("sfdb-table_item");
+            if (uQueryBuilder.ToList().Count > 0) return;
+            _createTableBtn.AddToClassList("sfdb-table_create_btn_select");
+            ChangeToCreateTable();
         }
 
         /// <summary>
