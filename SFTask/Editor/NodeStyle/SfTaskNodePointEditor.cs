@@ -147,6 +147,9 @@ namespace SFramework.SFTask.Editor.NodeStyle
             _titleTextField.RegisterCallback<KeyDownEvent>(OnTitleKeyDown);
             // 当失去焦点时
             _titleTextField.RegisterCallback<FocusOutEvent>(OnTitleFocusOut);
+            // 当事件来源于任务列表（_taskListView）时，阻止事件继续冒泡到 GraphView/节点，
+            // 以免触发节点的拖拽或画布的滚动缩放，确保 ListView 内部的重排与滚动正常工作。
+            // 指针按下拦截
             RegisterCallback<PointerDownEvent>(evt =>
             {
                 var t = evt.target as VisualElement;
@@ -155,6 +158,7 @@ namespace SFramework.SFTask.Editor.NodeStyle
                     evt.StopPropagation();
                 }
             });
+            // 鼠标按下拦截
             RegisterCallback<MouseDownEvent>(evt =>
             {
                 var t = evt.target as VisualElement;
@@ -163,6 +167,7 @@ namespace SFramework.SFTask.Editor.NodeStyle
                     evt.StopPropagation();
                 }
             });
+            // 滚轮事件拦截
             RegisterCallback<WheelEvent>(evt =>
             {
                 var t = evt.target as VisualElement;
