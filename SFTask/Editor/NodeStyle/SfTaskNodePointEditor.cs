@@ -147,6 +147,30 @@ namespace SFramework.SFTask.Editor.NodeStyle
             _titleTextField.RegisterCallback<KeyDownEvent>(OnTitleKeyDown);
             // 当失去焦点时
             _titleTextField.RegisterCallback<FocusOutEvent>(OnTitleFocusOut);
+            RegisterCallback<PointerDownEvent>(evt =>
+            {
+                var t = evt.target as VisualElement;
+                if (t != null && t.GetFirstAncestorOfType<ListView>() == _taskListView)
+                {
+                    evt.StopPropagation();
+                }
+            });
+            RegisterCallback<MouseDownEvent>(evt =>
+            {
+                var t = evt.target as VisualElement;
+                if (t != null && t.GetFirstAncestorOfType<ListView>() == _taskListView)
+                {
+                    evt.StopPropagation();
+                }
+            });
+            RegisterCallback<WheelEvent>(evt =>
+            {
+                var t = evt.target as VisualElement;
+                if (t != null && t.GetFirstAncestorOfType<ListView>() == _taskListView)
+                {
+                    evt.StopPropagation();
+                }
+            });
         }
 
         #endregion
