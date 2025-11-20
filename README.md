@@ -6,9 +6,7 @@ SFramework For Unity
   style="width: 40px; height: 40px;"
 />SFNet(负责网络的通讯)
 
-![TCP](./SFNet/Editor/Data/TCPView.png)
-
-![TCP](./SFNet/Editor/Data/UDPView.png)
+![TCP](./SFNet/Editor/Data/NetView.png)
 
 包含TCP,UDP
 
