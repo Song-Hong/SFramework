@@ -2,7 +2,8 @@ using System;
 using System.Diagnostics;
 using System.Net.Sockets.Kcp.Simple;
 using System.Threading.Tasks;
-using UnityEngine; // 引入 UnityEngine 以使用 Debug.Log
+using UnityEngine;
+using Debug = UnityEngine.Debug; // 引入 UnityEngine 以使用 Debug.Log
 
 namespace SFramework.SFMultiple.Module
 {
@@ -55,7 +56,7 @@ namespace SFramework.SFMultiple.Module
                 try
                 {
                     byte[] res = await client.ReceiveAsync();
-            
+                    
                     // 收到应用数据后，触发回调
                     OnReceive?.Invoke(res);
 
