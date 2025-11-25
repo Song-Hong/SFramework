@@ -12,6 +12,12 @@
 /[Uu]ser[Ss]ettings/
 *.log
 
+# 忽略所有以 .meta 结尾的文件
+*.meta
+
+# 忽略mac 的文件夹项目
+**/.DS_Store
+
 # By default unity supports Blender asset imports, *.blend1 blender files do not need to be commited to version control.
 *.blend1
 *.blend1.meta
