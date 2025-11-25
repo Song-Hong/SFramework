@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>文件服务器</title>
+    <!-- 引入 Tailwind CSS CDN 以美化界面 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 确保 Inter 字体，并设置拖拽区域的样式 */
+        body { font-family: 'Inter', sans-serif; background-color: #f7f9fb; }
+        #dropZone {
+            border: 2px dashed #cbd5e1; /* border-slate-300 */
+            transition: all 0.2s;
+        }
+        #dropZone.drag-over {
+            border-color: #3b82f6; /* border-blue-500 */
+            background-color: #eff6ff; /* bg-blue-50 */
+        }
+        /* 隐藏原生的文件选择框，使用自定义样式 */
+        #fileInput {
+            display: none;
+        }
+        .file-upload-label {
+            cursor: pointer;
+            transition: background-color 0.15s;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+
+<div id="app" class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-2xl">
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-6 border-b-4 border-indigo-500 pb-2">
+        <span class="text-indigo-600">☁️</span> 简易文件服务器
+    </h1>
+
+    <!-- 消息提示区域 -->
+    <div id="message" class="mb-4 p-3 rounded-lg text-sm transition-all duration-300 hidden">
+        <small>等待操作...</small>
+    </div>
+
+    <!-- 上传区域 -->
+    <div id="uploadContainer" class="mb-8 p-4 border border-blue-300 rounded-xl bg-blue-50 shadow-inner">
+        <p class="text-gray-700 font-semibold mb-3">文件上传</p>
+
+        <!-- 文件选择和上传按钮 -->
+        <div class="flex items-center space-x-4">
+            <!-- 自定义文件选择按钮 -->
+            <label for="fileInput" class="file-upload-label flex-grow text-center py-2 px-4 rounded-full border-2 border-indigo-500 text-indigo-600 font-medium bg-white hover:bg-indigo-50 transition duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+                选择文件
+            </label>
+            <input id="fileInput" type="file" onchange="document.getElementById('fileSelectedName').textContent = this.files.length > 0 ? this.files[0].name : '未选择文件';"/>
+
+            <button onclick="uploadFile()" class="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 shadow-lg transition duration-150 transform hover:scale-105">
+                开始上传
+            </button>
+        </div>
+
+        <div id="fileSelectedName" class="mt-2 text-sm text-gray-500 text-center">未选择文件</div>
+
+        <!-- 拖拽区域 -->
+        <div id="dropZone" class="mt-6 p-10 text-center text-gray-500 rounded-lg cursor-pointer border-dashed border-2 border-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 014 4v2a1 1 0 01-1 1h-1a1 1 0 00-1 1v2a1 1 0 001 1h1a1 1 0 001-1v-2a1 1 0 011-1h-1a1 1 0 00-1-1h-1a1 1 0 01-1-1V9a1 1 0 00-1-1h-1a1 1 0 01-1-1v-2a1 1 0 00-1-1h-1a1 1 0 01-1-1V3a1 1 0 00-1-1h-1a1 1 0 01-1-1V1a1 1 0 00-1-1H7a1 1 0 01-1-1V1a1 1 0 00-1 1z" />
+            </svg>
+            <p class="font-medium">拖动文件到此处开始上传</p>
+        </div>
+    </div>
+
+    <!-- 文件列表标题和刷新按钮 -->
+    <h2 class="text-xl font-bold text-gray-700 mb-4 flex justify-between items-center">
+        文件列表 /
+        <span id="currentDirDisplay" class="font-mono text-base text-blue-600 truncate max-w-xs md:max-w-md">/</span>
+        <button onclick="loadList()" class="text-sm text-gray-500 hover:text-indigo-600 font-medium transition flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.564 1 1 0 11-1.996.353 5.002 5.002 0 00-8.257-2.361V11a1 1 0 11-2 0V3a1 1 0 011-1z" clip-rule="evenodd" />
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM15.34 9.172a1 1 0 010 1.656A5.002 5.002 0 0013 14a1 1 0 110 2 7.002 7.002 0 01-5.65-2.828 1 1 0 011.656-1.656A5.002 5.002 0 0013 12a1 1 0 112 0 7.002 7.002 0 01-5.65-2.828z" clip-rule="evenodd" />
+            </svg>
+            刷新列表
+        </button>
+    </h2>
+
+    <!-- 文件列表容器 -->
+    <div class="list space-y-2" id="list">
+        <p class="text-center text-gray-500 p-4 border border-gray-100 rounded-lg">正在加载...</p>
+    </div>
+</div>
+
+<script>
+    // 基础服务器路径，必须与 C# 代码中的路由前缀保持一致
+    const BASE_URL = '/file-server';
+
+    const msgElement = document.getElementById('message');
+    const listContainer = document.getElementById('list');
+    const dropZone = document.getElementById('dropZone');
+    const currentDirDisplay = document.getElementById('currentDirDisplay');
+
+    let currentDir = '';
+
+    /**
+     * 显示消息提示
+     * @param {string} t 消息内容
+     * @param {boolean} isError 是否为错误消息
+     */
+    const msg = (t, isError = false) => {
+        msgElement.innerHTML = `<small>${t}</small>`;
+        msgElement.classList.remove('hidden', 'bg-indigo-100', 'text-indigo-800', 'bg-red-100', 'text-red-800', 'bg-green-100', 'text-green-800');
+        if (isError) {
+            msgElement.classList.add('bg-red-100', 'text-red-800');
+        } else if (t.includes('成功')) {
+            msgElement.classList.add('bg-green-100', 'text-green-800');
+        } else {
+            msgElement.classList.add('bg-indigo-100', 'text-indigo-800');
+        }
+    };
+
+    // 1. 列表加载函数
+    async function loadList() {
+        msg('正在加载文件列表...');
+        // 客户端请求 URL: /file-server/list?dir=...
+        const dirPath = currentDir ? `?dir=${encodeURIComponent(currentDir)}` : '';
+        const url = `${BASE_URL}/list${dirPath}`;
+
+        try {
+            const res = await fetch(url);
+
+            if (!res.ok) {
+                // 如果服务器未实现 /list 路由，这里会返回 404 或 501
+                msg(`加载失败 (HTTP ${res.status}): 请确保服务器已实现 /file-server/list 路由。`, true);
+                listContainer.innerHTML = '<p class="text-center text-red-500 p-4 border border-red-200 rounded-lg">服务器文件列表功能未启用或路由错误。</p>';
+                return;
+            }
+
+            const data = await res.json();
+
+            // 假设服务器返回格式 { ok: true, entries: [...], currentDir: "" }
+            if (data.ok) {
+                renderEntries(data.entries || [], data.currentDir || '');
+                msg('文件列表已更新');
+            } else {
+                msg(`加载失败: ${data.message || '服务器返回错误'}`, true);
+            }
+        } catch (e) {
+            msg(`加载失败: 网络或C#服务器路由配置错误 (${e.message})`, true);
+        }
+    }
+
+    // 2. 文件上传函数 (修复为路径传参)
+    async function uploadFile(file = null) {
+        if (!file) {
+            const input = document.getElementById('fileInput');
+            if (!input.files || input.files.length === 0) {
+                msg('请选择文件或拖拽文件', true);
+                return;
+            }
+            file = input.files[0];
+        }
+
+        msg(`正在上传文件: ${file.name}...`);
+
+        // *** 关键修复：匹配 C# 服务器的 POST /file-server/upload_file/{fileName} 路由 ***
+        const fileName = encodeURIComponent(file.name);
+        const url = `${BASE_URL}/upload_file/${fileName}`;
+
+        try {
+            // C# 服务器要求文件名在 URL 路径中，请求体为文件内容
+            const res = await fetch(url, {
+                method: 'POST',
+                body: file // 直接将 File 对象作为请求体
+            });
+
+            if (!res.ok) {
+                const errorText = await res.text();
+                msg(`上传失败 (HTTP ${res.status}): ${errorText.substring(0, 100)}...`, true);
+                return;
+            }
+
+            // 假设服务器成功后返回 JSON { ok: true, file: "..." }
+            const textResponse = await res.text();
+            let data = { ok: false, message: textResponse || "上传失败" };
+            try {
+                data = JSON.parse(textResponse);
+            } catch {} // 忽略非 JSON 响应
+
+            if (data.ok || res.status === 200) { // C# 成功响应可能不是 JSON
+                msg(`上传成功: ${file.name}`);
+                document.getElementById('fileSelectedName').textContent = '未选择文件';
+                // 自动刷新列表
+                loadList();
+            } else {
+                msg(`上传失败: ${data.message || '服务器返回错误'}`, true);
+            }
+        } catch (e) {
+            msg(`上传失败: ${e.message}`, true);
+        }
+    }
+
+    // 3. 渲染列表条目
+    function renderEntries(entries, newCurrentDir) {
+        currentDir = newCurrentDir;
+        currentDirDisplay.textContent = currentDir ? `/${currentDir}` : '/';
+        listContainer.innerHTML = '';
+
+        // 添加返回上级目录的条目
+        if (currentDir) {
+            entries.unshift({ name: '..', dir: true, size: 0, rel: '..' });
+        }
+
+        if (entries.length === 0 && !currentDir) {
+            listContainer.innerHTML = '<p class="text-center text-gray-500 p-4 border border-gray-100 rounded-lg">当前目录为空。</p>';
+            return;
+        }
+
+        entries.forEach(it => {
+            const name = it.name;
+            // 相对路径用于 GET 和 DOWNLOAD 请求
+            const rel = (it.name === '..' && currentDir) ? it.rel : (currentDir ? `${currentDir}/${name}` : name);
+            const isUpDir = it.name === '..';
+
+            // 目录和文件图标
+            const icon = it.dir
+                ? (isUpDir ? '🔙' : '📁')
+                : '📄';
+            const bgColor = it.dir ? 'bg-gray-50 hover:bg-gray-100' : 'bg-white hover:bg-gray-50';
+
+            const div = document.createElement('div');
+            div.className = `flex items-center justify-between p-3 border border-gray-200 rounded-lg shadow-sm transition duration-100 ${bgColor}`;
+
+            // 文件/目录信息
+            let sizeInfo = '';
+            if (!it.dir && it.size !== undefined) {
+                // 格式化文件大小 (B, KB, MB)
+                sizeInfo = it.size > 1024 * 1024
+                    ? `${(it.size / (1024 * 1024)).toFixed(2)} MB`
+                    : it.size > 1024
+                        ? `${(it.size / 1024).toFixed(2)} KB`
+                        : `${it.size} B`;
+            }
+
+            div.innerHTML = `
+            <div class="flex items-center space-x-3 truncate flex-1 min-w-0">
+                <span class="text-lg">${icon}</span>
+                <span class="font-medium text-gray-700 truncate">${name}</span>
+            </div>
+            <div class="flex items-center space-x-4 ml-4">
+                <span class="text-xs text-gray-500 min-w-[70px] text-right">${sizeInfo}</span>
+            </div>
+        `;
+
+            // 操作按钮容器
+            const actions = document.createElement('div');
+            actions.className = 'flex space-x-2 min-w-[120px] justify-end';
+
+            if (it.dir) {
+                // 目录: 打开/返回
+                const openBtn = document.createElement('button');
+                openBtn.textContent = isUpDir ? '返回' : '打开';
+                openBtn.className = 'text-sm text-indigo-600 hover:text-indigo-800 font-medium py-1 px-2 rounded-lg';
+                openBtn.onclick = () => {
+                    if (isUpDir) {
+                        // 处理返回上级目录
+                        const parts = currentDir.split('/').filter(p => p.length > 0);
+                        parts.pop(); // 移除当前目录名
+                        currentDir = parts.join('/');
+                    } else {
+                        // 进入子目录
+                        currentDir = rel;
+                    }
+                    loadList();
+                };
+                actions.appendChild(openBtn);
+
+            } else {
+                // 文件: 详情, 下载
+
+                const detailBtn = document.createElement('button');
+                detailBtn.textContent = '详情';
+                detailBtn.className = 'text-sm text-green-600 hover:text-green-800 font-medium py-1 px-2 rounded-lg';
+                detailBtn.onclick = async () => {
+                    // 客户端请求 URL: /file-server/get?file=...
+                    const res = await fetch(`${BASE_URL}/get?file=${encodeURIComponent(rel)}`);
+
+                    if (!res.ok) {
+                        msg(`获取详情失败 (HTTP ${res.status}): 请确保服务器已实现 /file-server/get 路由。`, true);
+                        return;
+                    }
+
+                    const data = await res.json();
+                    if(data.ok) {
+                        alert(`文件详情\n\n名称: ${data.name}\n类型: ${data.ext}\n大小: ${data.size} bytes\n修改时间: ${data.lastModified || 'N/A'}`);
+                    } else {
+                        alert(`获取详情失败: ${data.message || '未知错误'}`);
+                    }
+                };
+                actions.appendChild(detailBtn);
+
+                const down = document.createElement('a');
+                down.textContent = '下载';
+                // 客户端请求 URL: /file-server/download?file=...
+                down.href = `${BASE_URL}/download?file=${encodeURIComponent(rel)}`;
+                down.className = 'text-sm text-blue-600 hover:text-blue-800 font-medium py-1 px-2 rounded-lg';
+                actions.appendChild(down);
+            }
+
+            div.appendChild(actions);
+            listContainer.appendChild(div);
+        });
+    }
+
+    // 4. 拖拽上传逻辑
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('drag-over');
+
+        if (e.dataTransfer.files.length > 0) {
+            // 仅处理第一个文件
+            uploadFile(e.dataTransfer.files[0]);
+        }
+    }
+
+    // 5. 初始化和事件绑定
+    function init() {
+        // 自动加载列表
+        loadList();
+
+        // 移除旧的 loadAll 按钮（服务器未实现）
+        const oldLoadAllBtn = document.querySelector('button[onclick="loadAll()"]');
+        if (oldLoadAllBtn) {
+            oldLoadAllBtn.parentElement.removeChild(oldLoadAllBtn);
+        }
+
+        // 绑定拖拽事件
+        dropZone.addEventListener('dragover', handleDragOver);
+        dropZone.addEventListener('dragleave', handleDragLeave);
+        dropZone.addEventListener('drop', handleDrop);
+
+        // 防止整个窗口拖拽时打开文件
+        document.body.addEventListener('dragover', e => e.preventDefault());
+        document.body.addEventListener('drop', e => e.preventDefault());
+    }
+
+    // 页面加载完成后自动初始化
+    window.onload = init;
+</script>
+</body>
+</html>

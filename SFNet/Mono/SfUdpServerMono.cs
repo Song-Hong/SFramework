@@ -14,7 +14,7 @@ namespace SFramework.SFNet.Mono
     public class SfUdpServerMono:SfMonoSingleton<SfUdpServerMono>
     {
         [Header("IP")] public string ip;
-        [Header("端口号")] public int port = 8888;
+        [Header("端口号")] public int port = 8787;
         [Header("打印消息日志")]public bool printLog = true;
         
         /// <summary>

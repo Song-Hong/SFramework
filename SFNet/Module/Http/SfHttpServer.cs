@@ -47,7 +47,6 @@ namespace SFramework.SFNet.Module.Http
         /// 参数2: HttpListenerResponse - 用于向客户端发送响应的对象
         /// </summary>
         public event Action<HttpListenerRequest, HttpListenerResponse> OnRequest;
-
         #endregion
 
         #region 构造函数与启动
