@@ -1,0 +1,7 @@
+<linker>
+    <assembly fullname="Assembly-CSharp">
+        <type fullname="SFramework.SYL.Tasks.*" preserve="all" />
+        <type fullname="SFramework.SFTask.Module.*" preserve="all" />
+        <type fullname="SFramework.SFTask.Data.*" preserve="all" />
+    </assembly>
+</linker>

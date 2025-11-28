@@ -91,10 +91,49 @@ namespace SFramework.SFHardware.Mono
             
             if (SfMicrophone.IsRecording())
             {
-                var clip = SfMicrophone.RecordingClip;
+                // 1. 获取设备名称
+                string deviceName = SfMicrophone.SelectedDevice;
+                
+                // 2. 获取当前录音指针的位置（这是关键！必须在 Stop 之前获取）
+                // 如果是手动录音且非循环，GetPosition 返回的是当前录了多少采样点
+                int position = Microphone.GetPosition(deviceName);
+                
+                // 3. 获取原始的长 Clip
+                var originalClip = SfMicrophone.RecordingClip;
+                
+                // 4. 停止录音
                 SfMicrophone.Stop();
-                OnRecodingFinished?.Invoke(clip);
+
+                // 5. 剪裁 AudioClip
+                AudioClip trimmedClip = TrimClip(originalClip, position);
+
+                // 6. 触发事件，传递剪裁后的 Clip
+                OnRecodingFinished?.Invoke(trimmedClip);
             }
+        }
+
+        /// <summary>
+        /// 辅助方法：剪裁 AudioClip
+        /// </summary>
+        private AudioClip TrimClip(AudioClip originalClip, int position)
+        {
+            // 如果 position <= 0，通常意味着录音刚开始或者循环了一整圈(但在非Loop模式下很少见)
+            // 为了安全，如果获取不到位置，就返回原片段，或者如果确实很短就返回空
+            if (position <= 0) 
+            {
+                return originalClip; 
+            }
+
+            // 创建一个新的 AudioClip，长度只有实际录制那么长
+            float[] soundData = new float[position * originalClip.channels];
+            originalClip.GetData(soundData, 0);
+
+            AudioClip newClip = AudioClip.Create(originalClip.name, position, originalClip.channels, originalClip.frequency, false);
+            newClip.SetData(soundData, 0);
+
+            Debug.Log($"[SfMicrophoneMono] 录音结束。原始长度: {originalClip.length:F2}s, 实际录制: {newClip.length:F2}s");
+
+            return newClip;
         }
         #endregion
         
