@@ -1,0 +1,20 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/SFramework/SFOffice/Editor/Window/OfficeView.uss?fileID=7433441132597879392&amp;guid=4ea4b7977e9924722999d1e84323aa2a&amp;type=3#OfficeView" />
+    <ui:VisualElement name="root" class="root" style="flex-grow: 1;">
+        <ui:VisualElement name="TopBar" class="top_bar">
+            <ui:VisualElement name="TopBarBtns" class="top_bar_btns">
+                <ui:VisualElement name="VisualElement" style="flex-direction: row; background-color: rgb(46, 46, 46); border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom-right-radius: 12px; border-bottom-left-radius: 12px; margin-right: 2px; margin-top: 2px; margin-bottom: 2px; margin-left: 2px;">
+                    <ui:VisualElement style="background-image: url(&quot;project://database/Assets/SFramework/SFOffice/Editor/Data/Excel.png?fileID=2800000&amp;guid=df24bfad64ccc44f991c84436f6261f7&amp;type=3#Excel&quot;); width: 26px; height: 26px; margin-left: 2px;" />
+                    <ui:Label tabindex="-1" text="Excel" parse-escape-sequences="true" display-tooltip-when-elided="true" style="color: rgb(255, 255, 255); -unity-text-align: middle-center; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 6px; padding-bottom: 0; padding-left: 0;" />
+                </ui:VisualElement>
+                <ui:VisualElement name="VisualElement" style="flex-direction: row; background-color: rgb(17, 17, 17); border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom-right-radius: 0; border-bottom-left-radius: 0; padding-top: 6px; padding-right: 6px; padding-bottom: 6px; padding-left: 6px;">
+                    <ui:Label tabindex="-1" text="开始" parse-escape-sequences="true" display-tooltip-when-elided="true" style="color: rgb(255, 255, 255); -unity-text-align: middle-center;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="TopBarContent" class="top_bar_content" style="flex-grow: 1;" />
+        </ui:VisualElement>
+        <ui:ScrollView name="Content" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden" class="content_area">
+            <ui:VisualElement name="Content" class="content" style="flex-grow: 1;" />
+        </ui:ScrollView>
+    </ui:VisualElement>
+</ui:UXML>

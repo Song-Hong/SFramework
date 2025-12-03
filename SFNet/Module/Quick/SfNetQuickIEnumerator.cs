@@ -146,7 +146,11 @@ namespace SFramework.SFNet.Module.Quick
             Action<string> onFailure, Hashtable headers, int timeout)
         {
             owner.StartCoroutine(SendRequest(
+                #if UNITY_2022_1_OR_NEWER
                 UnityWebRequest.PostWwwForm(url,body),
+                #else
+                    UnityWebRequest.Post(url, body),
+                #endif
                 (uwr) => onSuccess?.Invoke(JsonUtility.FromJson<T>(uwr.downloadHandler.text)),
                 onFailure, headers, timeout
             ));
@@ -165,7 +169,11 @@ namespace SFramework.SFNet.Module.Quick
         public static void PostSprite(MonoBehaviour owner,string url,string body,Action<Sprite> onSuccess,Action<string> onFailure,Hashtable headers = null, int timeout = 30)
         {
             owner.StartCoroutine(SendRequest(
-                UnityWebRequest.PostWwwForm(url, body),
+#if UNITY_2022_1_OR_NEWER
+                UnityWebRequest.PostWwwForm(url,body),
+#else
+                    UnityWebRequest.Post(url, body),
+#endif
                 (uwr) =>
                 {
                     var texture = DownloadHandlerTexture.GetContent(uwr);
@@ -190,7 +198,11 @@ namespace SFramework.SFNet.Module.Quick
         public static void PostTexture(MonoBehaviour owner,string url,string body,Action<Texture2D> onSuccess,Action<string> onFailure,Hashtable headers = null, int timeout = 30)
         {
             owner.StartCoroutine(SendRequest(
-                UnityWebRequest.PostWwwForm(url, body),
+#if UNITY_2022_1_OR_NEWER
+                UnityWebRequest.PostWwwForm(url,body),
+#else
+                    UnityWebRequest.Post(url, body),
+#endif
                 (uwr) =>DownloadHandlerTexture.GetContent(uwr),
                 onFailure, headers, timeout
             ));
@@ -209,7 +221,11 @@ namespace SFramework.SFNet.Module.Quick
         public static void PostString(MonoBehaviour owner, string url,string body, Action<string> onSuccess, Action<string> onFailure = null, Hashtable headers = null, int timeout = 30)
         {
             owner.StartCoroutine(SendRequest(
-                UnityWebRequest.PostWwwForm(url, body),
+#if UNITY_2022_1_OR_NEWER
+                UnityWebRequest.PostWwwForm(url,body),
+#else
+                    UnityWebRequest.Post(url, body),
+#endif
                 (uwr) => onSuccess?.Invoke(uwr.downloadHandler.text),
                 onFailure, headers, timeout
             ));
@@ -229,7 +245,11 @@ namespace SFramework.SFNet.Module.Quick
             Action<string> onFailure = null,Hashtable headers = null, int timeout = 30)
         {
             owner.StartCoroutine(SendRequest(
-                UnityWebRequest.PostWwwForm(url, body),
+#if UNITY_2022_1_OR_NEWER
+                UnityWebRequest.PostWwwForm(url,body),
+#else
+                    UnityWebRequest.Post(url, body),
+#endif
                 (uwr)=>onSuccess?.Invoke(uwr.downloadHandler.data),
                 onFailure, headers, timeout
                 ));
