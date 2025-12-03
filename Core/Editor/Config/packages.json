@@ -2,38 +2,52 @@
   "packages": [
     {
       "name": "SFNet",
-      "version": "1.0.0",
+      "version": "1.0.3",
       "description": "网络模块",
       "url": "https://github.com/Song-Hong/SFramework/releases/download/v1.0.2/SFramework-SFNet.unitypackage",
       "icon": "Assets/SFramework/Core/Editor/Config/Net.png"
     },
     {
-      "name": "SFDb",
-      "version": "1.0.0",
+      "name": "SFDatabase",
+      "version": "1.0.3",
       "description": "数据库模块",
-      "url": "https://github.com/Song-Hong/SFramework/releases/download/v1.0.2/SFramework-SFDB.unitypackage",
-      "icon": "Assets/SFramework/Core/Editor/Config/Db.png"
+      "url": "https://github.com/Song-Hong/SFramework/releases/download/v1.0.2/SFramework-SFDatabase.unitypackage",
+      "icon": "Assets/SFramework/Core/Editor/Config/Database.png"
     },
     {
       "name": "SFHardware",
-      "version": "1.0.0",
+      "version": "1.0.3",
       "description": "硬件模块",
       "url": "https://github.com/Song-Hong/SFramework/releases/download/v1.0.2/SFramework-SFHardware.unitypackage",
       "icon": "Assets/SFramework/Core/Editor/Config/Hardware.png"
     },
     {
       "name": "SFTask",
-      "version": "1.0.0",
+      "version": "1.0.3",
       "description": "任务模块",
       "url": "https://github.com/Song-Hong/SFramework/releases/download/v1.0.2/SFramework-SFTask.unitypackage",
       "icon": "Assets/SFramework/Core/Editor/Config/Task.png"
     },
     {
       "name": "SFMultiple",
-      "version": "1.0.0",
+      "version": "1.0.3",
       "description": "多人模块",
       "url": "https://github.com/Song-Hong/SFramework/releases/download/v1.0.2/SFramework-SFMultiple.unitypackage",
       "icon": "Assets/SFramework/Core/Editor/Config/Multiple.png"
+    },
+    {
+      "name": "SFState",
+      "version": "1.0.3",
+      "description": "状态模块",
+      "url": "https://github.com/Song-Hong/SFramework/releases/download/v1.0.2/SFramework-SFState.unitypackage",
+      "icon": "Assets/SFramework/Core/Editor/Config/State.png"
+    },
+    {
+      "name": "SFOffice",
+      "version": "1.0.3",
+      "description": "办公模块",
+      "url": "https://github.com/Song-Hong/SFramework/releases/download/v1.0.2/SFramework-SFOffice.unitypackage",
+      "icon": "Assets/SFramework/Core/Editor/Config/Office.png"
     }
   ]
 }

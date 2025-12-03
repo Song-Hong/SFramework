@@ -1,9 +1,9 @@
-using SFramework.SFDB.Mono;
+using SFramework.SFDatabase.Mono;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace SFramework.SFDb.Editor.Replace
+namespace SFramework.SFDatabase.Editor.Replace
 {
     /// <summary>
     /// 数据库模块Mono单例引用

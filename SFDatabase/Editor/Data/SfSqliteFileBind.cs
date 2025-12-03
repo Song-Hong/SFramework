@@ -1,9 +1,9 @@
 using System.IO;
-using SFramework.SFDb.Editor.Window;
+using SFramework.SFDatabase.Editor.Window;
 using UnityEditor;
 using UnityEngine;
 
-namespace SFramework.SFDb.Editor.Data
+namespace SFramework.SFDatabase.Editor.Data
 {
     /// <summary>
     /// 数据库文件绑定图标
@@ -14,7 +14,7 @@ namespace SFramework.SFDb.Editor.Data
         private static Texture2D s_Icon;
 
         // 图标路径保持不变
-        private static string IconPath => "Assets/SFramework/SFDB/Editor/Data/DatabaseData.png";
+        private static string IconPath => "Assets/SFramework/SFDatabase/Editor/Data/DatabaseData.png";
         
         // 静态构造函数，在 Unity 加载时运行一次
         static SfSqliteFileBind()

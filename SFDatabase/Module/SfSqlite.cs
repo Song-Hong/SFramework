@@ -5,7 +5,7 @@ using System.Data.Common;
 using Mono.Data.Sqlite;
 using UnityEngine;
 
-namespace SFramework.SFDb.Module
+namespace SFramework.SFDatabase.Module
 {
     public class SfSqlite
     {

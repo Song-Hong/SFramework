@@ -1,10 +1,15 @@
+using System;
 using System.IO;
 using UnityEngine;
-using System; // 添加 System 命名空间用于异常处理和 BitConverter
 
-namespace SFramework.SFHardware.Support
+// 添加 System 命名空间用于异常处理和 BitConverter
+
+namespace SFramework.UnityExtend.AudioSupport
 {
-    public class SfWav : ISfAudioSupport
+    /// <summary>
+    /// WAV 音频文件支持类
+    /// </summary>
+    public static class SfWav
     {
         // WAV 文件头的最小大小 (来自 SavWav)
         private const int HeaderSize = 44;
@@ -14,7 +19,7 @@ namespace SFramework.SFHardware.Support
         /// </summary>
         /// <param name="path">文件路径</param>
         /// <returns>加载的音频文件, 失败则返回 null</returns>
-        public AudioClip Load(string path)
+        public static AudioClip Load(string path)
         {
             if (!File.Exists(path))
             {
@@ -121,7 +126,7 @@ namespace SFramework.SFHardware.Support
         /// <param name="clip">要保存的 AudioClip</param>
         /// <param name="path">要保存的完整文件路径</param>
         /// <returns>是否保存成功</returns>
-        public bool Save(AudioClip clip, string path)
+        public static bool Save(AudioClip clip, string path)
         {
             if (clip == null)
             {
@@ -190,12 +195,89 @@ namespace SFramework.SFHardware.Support
 
             return true;
         }
+        
+        /// <summary>
+        /// 将 AudioClip 转换为完整的 WAV 文件字节数组（在内存中）
+        /// </summary>
+        public static byte[] ToBytes(AudioClip clip)
+        {
+            // 1. 获取 PCM 数据
+            int numSamples = clip.samples * clip.channels;
+            float[] sampleData = new float[numSamples];
+            clip.GetData(sampleData, 0);
+    
+            // 转换 float 为 Int16 bytes (Raw PCM)
+            byte[] rawPcmData = ConvertFloatToByte(sampleData);
 
+            // 2. 在内存中构建 WAV 文件
+            using (var memoryStream = new MemoryStream())
+            using (var writer = new BinaryWriter(memoryStream))
+            {
+                // 常量
+                int headerSize = 44;
+                int bitsPerSample = 16;
+        
+                // --- 写入 WAV 头 (逻辑同 WavSaver) ---
+        
+                // RIFF Chunk
+                writer.Write(System.Text.Encoding.ASCII.GetBytes("RIFF"));
+                writer.Write(headerSize - 8 + rawPcmData.Length); // ChunkSize
+                writer.Write(System.Text.Encoding.ASCII.GetBytes("WAVE"));
+
+                // fmt Chunk
+                writer.Write(System.Text.Encoding.ASCII.GetBytes("fmt "));
+                writer.Write(16); // Subchunk1Size
+                writer.Write((short)1); // AudioFormat (PCM)
+                writer.Write((short)clip.channels);
+                writer.Write(clip.frequency);
+        
+                // ByteRate
+                writer.Write(clip.frequency * clip.channels * (bitsPerSample / 8));
+                // BlockAlign
+                writer.Write((short)(clip.channels * (bitsPerSample / 8)));
+                writer.Write((short)bitsPerSample);
+
+                // data Chunk
+                writer.Write(System.Text.Encoding.ASCII.GetBytes("data"));
+                writer.Write(rawPcmData.Length);
+
+                // --- 写入 PCM 数据 ---
+                writer.Write(rawPcmData);
+
+                // 返回完整的字节数组
+                return memoryStream.ToArray();
+            }
+        }
+        
+        /// <summary>
+        /// 辅助方法：将浮点数数组转换为 16 位 PCM 格式的字节数组。
+        /// (与上一个回答中的方法相同)
+        /// </summary>
+        private static byte[] ConvertFloatToByte(float[] floatArray)
+        {
+            int numBytes = floatArray.Length * 2;
+            byte[] byteArray = new byte[numBytes];
+        
+            for (int i = 0; i < floatArray.Length; i++)
+            {
+                // 缩放到 Int16 范围
+                short int16 = (short)(floatArray[i] * short.MaxValue);
+            
+                // 将 Int16 转换为两个字节 (Little-Endian)
+                byte[] bytes = BitConverter.GetBytes(int16);
+
+                // 写入字节数组
+                byteArray[i * 2] = bytes[0];
+                byteArray[i * 2 + 1] = bytes[1];
+            }
+
+            return byteArray;
+        }
         #region WAV 写入辅助方法 (来自 SavWav)
 
         // (重构为使用 BinaryWriter)
         // 写入浮点数数组到文件流 (转换为 Int16)
-        private void ConvertAndWrite(BinaryWriter writer, float[] samples)
+        private static void ConvertAndWrite(BinaryWriter writer, float[] samples)
         {
             // WAV 文件的 PCM 数据通常是 16 位的，需要将 float [-1, 1] 转换为 short [-32768, 32767]
             var intData = new short[samples.Length];
@@ -223,7 +305,7 @@ namespace SFramework.SFHardware.Support
         /// </summary>
         /// <param name="writer">用于写入文件的 BinaryWriter</param>
         /// <param name="clip">要写入头信息的 AudioClip</param>
-        private void WriteHeader(BinaryWriter writer, AudioClip clip)
+        private static void WriteHeader(BinaryWriter writer, AudioClip clip)
         {
             var hz = clip.frequency;
             var channels = clip.channels;

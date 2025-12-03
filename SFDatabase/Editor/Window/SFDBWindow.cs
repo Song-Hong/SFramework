@@ -1,10 +1,9 @@
-using System;
-using SFramework.SFDb.Module;
+using SFramework.SFDatabase.Module;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace SFramework.SFDb.Editor.Window
+namespace SFramework.SFDatabase.Editor.Window
 {
     /// <summary>
     /// 数据库窗口
@@ -96,7 +95,7 @@ namespace SFramework.SFDb.Editor.Window
         /// </summary>
         private void CreateGUI()
         {
-            AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/SFramework/SFDB/Editor/Window/SFDBWindow.uxml").
+            AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/SFramework/SFDatabase/Editor/Window/SFDBWindow.uxml").
                 CloneTree(rootVisualElement);
             
             _content = rootVisualElement.Q<VisualElement>("ContentContainer"); // 内容容器

@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using Mono.Data.Sqlite;
 using SFramework.Core.Mono;
-using SFramework.SFDb.Module;
+using SFramework.SFDatabase.Module;
 using UnityEngine;
 
-namespace SFramework.SFDB.Mono
+namespace SFramework.SFDatabase.Mono
 {
     /// <summary>
     /// 数据库操作类,单例模式,在游戏开始后自动创建数据库连接

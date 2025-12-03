@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine.UIElements;
 
-namespace SFramework.SFDb.Editor.Window
+namespace SFramework.SFDatabase.Editor.Window
 {
     /// <summary>
     /// 数据库窗口-创建表格界面

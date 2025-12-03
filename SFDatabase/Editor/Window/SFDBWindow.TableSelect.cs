@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace SFramework.SFDb.Editor.Window
+namespace SFramework.SFDatabase.Editor.Window
 {
     /// <summary>
     /// 数据库窗口-表格选择视图
