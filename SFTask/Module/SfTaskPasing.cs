@@ -5,7 +5,6 @@ using UnityEngine;
 using System.Reflection;
 using System.Linq; // 用于简化 LINQ 操作
 using UnityEngine.SceneManagement;
-using UnityEngine.Events;
 
 namespace SFramework.SFTask.Module
 {
@@ -14,33 +13,6 @@ namespace SFramework.SFTask.Module
     /// </summary>
     public static class SfTaskParsing
     {
-        [Serializable]
-        private class UnityEventArgData
-        {
-            public string objectRef;
-            public string assemblyTypeName;
-            public int intValue;
-            public float floatValue;
-            public string stringValue;
-            public bool boolValue;
-        }
-
-        [Serializable]
-        private class UnityEventCallData
-        {
-            public string targetRef;
-            public string targetType;
-            public string methodName;
-            public int mode;
-            public UnityEventArgData arguments;
-            public int callState;
-        }
-
-        [Serializable]
-        private class UnityEventData
-        {
-            public List<UnityEventCallData> calls = new List<UnityEventCallData>();
-        }
         /// <summary>
         /// 解析任务字符串
         /// </summary>
@@ -195,51 +167,6 @@ namespace SFramework.SFTask.Module
                     return JsonUtility.FromJson(stringValue, targetType);
                 }
 
-                if (targetType == typeof(UnityEvent))
-                {
-                    UnityEventData data = null;
-                    try { data = JsonUtility.FromJson<UnityEventData>(stringValue); } catch { }
-                    var ev = new UnityEvent();
-                    if (data != null && data.calls != null)
-                    {
-                        foreach (var call in data.calls)
-                        {
-                            if (call == null) continue;
-                            if (call.callState == 0) continue;
-                            Type t = !string.IsNullOrEmpty(call.targetType) ? GetTypeFromAllAssemblies(call.targetType) : null;
-                            UnityEngine.Object targetObj = !string.IsNullOrEmpty(call.targetRef) ? ResolveObjectByRef(call.targetRef, t) : null;
-                            MethodInfo mi = t != null ? t.GetMethod(call.methodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic) : null;
-                            if (mi == null || targetObj == null) continue;
-                            object[] args = Array.Empty<object>();
-                            switch (call.mode)
-                            {
-                                case 2:
-                                    {
-                                        Type argType = call.arguments != null && !string.IsNullOrEmpty(call.arguments.assemblyTypeName) ? GetTypeFromAllAssemblies(call.arguments.assemblyTypeName) : typeof(UnityEngine.Object);
-                                        var objArg = call.arguments != null && !string.IsNullOrEmpty(call.arguments.objectRef) ? ResolveObjectByRef(call.arguments.objectRef, argType) : null;
-                                        args = new object[] { objArg };
-                                        break;
-                                    }
-                                case 3:
-                                    args = new object[] { call.arguments != null ? call.arguments.intValue : 0 };
-                                    break;
-                                case 4:
-                                    args = new object[] { call.arguments != null ? call.arguments.floatValue : 0f };
-                                    break;
-                                case 5:
-                                    args = new object[] { call.arguments != null ? call.arguments.stringValue : null };
-                                    break;
-                                case 6:
-                                    args = new object[] { call.arguments != null && call.arguments.boolValue };
-                                    break;
-                            }
-                            UnityAction action = () => { mi.Invoke(targetObj, args); };
-                            ev.AddListener(action);
-                        }
-                    }
-                    return ev;
-                }
-
                 // --- 关键的运行时对象加载 (Resources.Load) ---
                 if (typeof(UnityEngine.Object).IsAssignableFrom(targetType))
                 {
@@ -283,33 +210,6 @@ namespace SFramework.SFTask.Module
                     $"[SFTaskParsing] ParseFieldValue 失败 (值: '{stringValue}', 目标类型: {targetType.Name}): {e.Message}");
                 return null;
             }
-        }
-
-        private static UnityEngine.Object ResolveObjectByRef(string refStr, Type desiredType)
-        {
-            if (string.IsNullOrEmpty(refStr)) return null;
-            if (refStr.StartsWith("scene-id://", StringComparison.OrdinalIgnoreCase))
-            {
-                var id = refStr.Substring("scene-id://".Length);
-                var all = UnityEngine.Object.FindObjectsOfType<SFramework.SFTask.Module.SfUniqueId>(true);
-                var hit = all.FirstOrDefault(x => x.Id == id);
-                if (hit == null) return null;
-                var go = hit.gameObject;
-                if (desiredType == null || desiredType == typeof(GameObject)) return go;
-                return go.GetComponent(desiredType);
-            }
-            if (refStr.StartsWith("scene://", StringComparison.OrdinalIgnoreCase))
-            {
-                var rel = refStr.Substring("scene://".Length);
-                var go = GameObject.Find(rel);
-                if (go == null) go = FindGameObjectByPathIncludingInactive(rel);
-                if (go == null) return null;
-                if (desiredType == null || desiredType == typeof(GameObject)) return go;
-                return go.GetComponent(desiredType);
-            }
-            var typeToLoad = desiredType ?? typeof(UnityEngine.Object);
-            var loaded = Resources.Load(refStr, typeToLoad);
-            return loaded;
         }
 
         private static GameObject FindGameObjectByPathIncludingInactive(string path)

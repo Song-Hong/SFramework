@@ -146,65 +146,7 @@ namespace SFramework.SFTask.Editor.View
             return connectedNodes;
         }
 
-        [Serializable]
-        private class UnityEventArgData
-        {
-            public string objectRef;
-            public string assemblyTypeName;
-            public int intValue;
-            public float floatValue;
-            public string stringValue;
-            public bool boolValue;
-        }
-
-        [Serializable]
-        private class UnityEventCallData
-        {
-            public string targetRef;
-            public string targetType;
-            public string methodName;
-            public int mode;
-            public UnityEventArgData arguments;
-            public int callState;
-        }
-
-        [Serializable]
-        private class UnityEventData
-        {
-            public List<UnityEventCallData> calls = new List<UnityEventCallData>();
-        }
-
-        private string SerializeObjectReference(UnityEngine.Object obj)
-        {
-            if (obj == null) return null;
-            if (AssetDatabase.Contains(obj))
-            {
-                string fullPath = AssetDatabase.GetAssetPath(obj);
-                int idx = fullPath.IndexOf("/Resources/", StringComparison.OrdinalIgnoreCase);
-                if (idx >= 0)
-                {
-                    string rel = fullPath.Substring(idx + "/Resources/".Length);
-                    string noExt = Path.ChangeExtension(rel, null);
-                    return noExt;
-                }
-                return null;
-            }
-            GameObject go = null;
-            if (obj is GameObject g) go = g;
-            else if (obj is Component c) go = c.gameObject;
-            if (go == null) return null;
-            var uid = go.GetComponent<SFramework.SFTask.Module.SfUniqueId>();
-            if (uid != null && !string.IsNullOrEmpty(uid.Id)) return "scene-id://" + uid.Id;
-            List<string> names = new List<string>();
-            var t = go.transform;
-            while (t != null)
-            {
-                names.Insert(0, t.name);
-                t = t.parent;
-            }
-            var path = string.Join("/", names);
-            return "scene://" + path;
-        }
+        
 
         private string SerializePropertyValue(SerializedProperty p)
         {
@@ -227,59 +169,38 @@ namespace SFramework.SFTask.Editor.View
                 case SerializedPropertyType.Color:
                     return JsonUtility.ToJson(p.colorValue);
                 case SerializedPropertyType.ObjectReference:
-                    return SerializeObjectReference(p.objectReferenceValue);
-                case SerializedPropertyType.Generic:
-                    if (p.type == "UnityEvent")
+                    if (p.objectReferenceValue == null) return null;
+                    if (AssetDatabase.Contains(p.objectReferenceValue))
                     {
-                        var callsProp = p.FindPropertyRelative("m_PersistentCalls.m_Calls");
-                        var data = new UnityEventData();
-                        if (callsProp != null)
+                        string fullPath = AssetDatabase.GetAssetPath(p.objectReferenceValue);
+                        int idx = fullPath.IndexOf("/Resources/", StringComparison.OrdinalIgnoreCase);
+                        if (idx >= 0)
                         {
-                            for (int i = 0; i < callsProp.arraySize; i++)
-                            {
-                                var call = callsProp.GetArrayElementAtIndex(i);
-                                var targetProp = call.FindPropertyRelative("m_Target");
-                                var methodProp = call.FindPropertyRelative("m_MethodName");
-                                var modeProp = call.FindPropertyRelative("m_Mode");
-                                var argsProp = call.FindPropertyRelative("m_Arguments");
-                                var callStateProp = call.FindPropertyRelative("m_CallState");
-
-                                var arg = new UnityEventArgData();
-                                if (argsProp != null)
-                                {
-                                    var objArgProp = argsProp.FindPropertyRelative("m_ObjectArgument");
-                                    var objAsmProp = argsProp.FindPropertyRelative("m_ObjectArgumentAssemblyTypeName");
-                                    var intArgProp = argsProp.FindPropertyRelative("m_IntArgument");
-                                    var floatArgProp = argsProp.FindPropertyRelative("m_FloatArgument");
-                                    var stringArgProp = argsProp.FindPropertyRelative("m_StringArgument");
-                                    var boolArgProp = argsProp.FindPropertyRelative("m_BoolArgument");
-                                    arg.objectRef = objArgProp != null ? SerializeObjectReference(objArgProp.objectReferenceValue) : null;
-                                    arg.assemblyTypeName = objAsmProp != null ? objAsmProp.stringValue : null;
-                                    arg.intValue = intArgProp != null ? intArgProp.intValue : 0;
-                                    arg.floatValue = floatArgProp != null ? floatArgProp.floatValue : 0f;
-                                    arg.stringValue = stringArgProp != null ? stringArgProp.stringValue : null;
-                                    arg.boolValue = boolArgProp != null && boolArgProp.boolValue;
-                                }
-
-                                var callData = new UnityEventCallData
-                                {
-                                    targetRef = targetProp != null ? SerializeObjectReference(targetProp.objectReferenceValue) : null,
-                                    targetType = targetProp != null && targetProp.objectReferenceValue != null ? targetProp.objectReferenceValue.GetType().AssemblyQualifiedName : null,
-                                    methodName = methodProp != null ? methodProp.stringValue : null,
-                                    mode = modeProp != null ? modeProp.intValue : 0,
-                                    arguments = arg,
-                                    callState = callStateProp != null ? callStateProp.intValue : 0
-                                };
-                                data.calls.Add(callData);
-                            }
+                            string rel = fullPath.Substring(idx + "/Resources/".Length);
+                            string noExt = Path.ChangeExtension(rel, null);
+                            return noExt;
                         }
-                        return JsonUtility.ToJson(data);
+                        return null;
                     }
-                    break;
+                    var obj = p.objectReferenceValue;
+                    GameObject go = null;
+                    if (obj is GameObject g) go = g;
+                    else if (obj is Component c) go = c.gameObject;
+                    if (go == null) return null;
+                    var uid = go.GetComponent<SFramework.SFTask.Module.SfUniqueId>();
+                    if (uid != null && !string.IsNullOrEmpty(uid.Id)) return "scene-id://" + uid.Id;
+                    List<string> names = new List<string>();
+                    var t = go.transform;
+                    while (t != null)
+                    {
+                        names.Insert(0, t.name);
+                        t = t.parent;
+                    }
+                    var path = string.Join("/", names);
+                    return "scene://" + path;
                 default:
                     return null;
             }
-            return null;
         }
 
         /// <summary>
