@@ -1,11 +1,11 @@
 using UnityEngine;
 
-namespace SFramework.UnityExtend.AudioSupport
+namespace SFramework.Core.Extends.SfAudioSupport
 {
     /// <summary>
     /// 音频文件扩展方法
     /// </summary>
-    public static class AudioClipExtends
+    public static class SfAudioClipExtends
     {
         /// <summary>
         /// 将音频文件转换为字节数组

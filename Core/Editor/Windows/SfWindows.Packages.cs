@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using System.IO;
 using Unity.Content;
+using YamlDotNet.Serialization;
 
 namespace SFramework.Core.Editor.Windows
 {
@@ -16,10 +17,15 @@ namespace SFramework.Core.Editor.Windows
         /// </summary>
         public void InitPackages()
         {
+            // 读取扩展项配置文件
             var content = rootVisualElement.Q<GroupBox>("content_items");
             content.Clear();
-            var packages = File.ReadAllText(Application.dataPath + "/SFramework/Core/Editor/Config/packages.json");
-            var packagesDatas = JsonUtility.FromJson<PackagesDatas>(packages);
+            var packages = File.ReadAllText(Application.dataPath + "/SFramework/Core/Editor/Config/packages.yaml");
+            
+            // 1. 创建反序列化器
+            var deserializer = new DeserializerBuilder()
+                .Build();
+            var packagesDatas = deserializer.Deserialize<PackagesDatas>(packages);
             
             // 遍历扩展项列表
             foreach (var itemData in packagesDatas.packages)

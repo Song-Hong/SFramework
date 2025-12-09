@@ -2,9 +2,8 @@ using System;
 using System.IO;
 using UnityEngine;
 
-// 添加 System 命名空间用于异常处理和 BitConverter
 
-namespace SFramework.UnityExtend.AudioSupport
+namespace SFramework.Core.Extends.SfAudioSupport
 {
     /// <summary>
     /// WAV 音频文件支持类

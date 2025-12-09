@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine.Serialization;
+
 
 namespace SFramework.Core.Editor.Windows
 {
@@ -12,7 +14,7 @@ namespace SFramework.Core.Editor.Windows
         /// <summary>
         /// 扩展项列表
         /// </summary>
-        public PackagesData[] packages;
+        public List<PackagesData> packages = new List<PackagesData>();
     }
 
     [Serializable]
