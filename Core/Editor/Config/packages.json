@@ -29,13 +29,6 @@
       "icon": "Assets/SFramework/Core/Editor/Config/Task.png"
     },
     {
-      "name": "SFMultiple",
-      "version": "1.0.3",
-      "description": "多人模块",
-      "url": "https://github.com/Song-Hong/SFramework/releases/download/v1.0.2/SFramework-SFMultiple.unitypackage",
-      "icon": "Assets/SFramework/Core/Editor/Config/Multiple.png"
-    },
-    {
       "name": "SFState",
       "version": "1.0.3",
       "description": "状态模块",
