@@ -48,7 +48,7 @@ namespace SFramework.SFNet.Mono
             {
                 try
                 {
-                    _client = SfTcpClient.Connect(ip, port, (msg) =>
+                    _client = SfTcpClient.Start(ip, port, (msg) =>
                     {
                         if(printLog)
                             Debug.Log("接收到服务端消息:" + msg);
@@ -67,7 +67,7 @@ namespace SFramework.SFNet.Mono
             {
                 try
                 {
-                    _server = SfTcpServer.Connect(ip, port, (socket, msg) =>
+                    _server = SfTcpServer.Start(ip, port, (socket, msg) =>
                     {
                         mainThread.Post(_ =>
                         {
@@ -107,11 +107,11 @@ namespace SFramework.SFNet.Mono
         {
             if (serverState == ServerState.Client)
             {
-                _client?.Disconnect();
+                _client?.Stop();
             }
             else
             {
-                _server?.Disconnect();
+                _server?.Stop();
             }
         }
         

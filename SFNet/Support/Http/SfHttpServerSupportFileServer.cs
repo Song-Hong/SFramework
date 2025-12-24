@@ -12,7 +12,7 @@ namespace SFramework.SFNet.Support.Http
     /// <summary>
     /// HTTP服务器支持文件服务器
     /// </summary>
-    public class SfHttpServerSupportFileServer : SfHttpServerSupportBase
+    public class SfHttpServerSupportFileServer : SfHttpSupport
     {
         /// <summary>
         /// 文件服务器根目录路径
@@ -20,10 +20,7 @@ namespace SFramework.SFNet.Support.Http
         // 确保使用 StreamingAssetsPath 作为默认路径
         public string path = Application.streamingAssetsPath;
 
-        /// <summary>
-        /// 支持开始
-        /// </summary>
-        public override void SupportStart()
+        public override void Init(SfHttpServerMono mono)
         {
             // 当路径为空时 自动使用 StreamingAssets 目录
             if (string.IsNullOrWhiteSpace(path))
@@ -42,12 +39,7 @@ namespace SFramework.SFNet.Support.Http
             Debug.Log($"File Server Root: {path}");
             // 提示客户端访问 URL
             Debug.Log($"HTTP Client URL: http://{SfHttpServerMono.Instance.ip}:{SfHttpServerMono.Instance.port}/file-server");
-            SfHttpServerMono.Instance.OnRequest += HandleRequest;
-        }
-
-        private void Start()
-        {
-            SupportStart();
+            SfHttpServerMono.Instance.OnRequest += HandleRequest;   
         }
 
         /// <summary>
@@ -474,6 +466,8 @@ namespace SFramework.SFNet.Support.Http
                 _ => "application/octet-stream", 
             };
         }
+
+
     }
 
     // 注意：如果您的项目没有引用 System.Text.Json 或 Newtonsoft.Json，

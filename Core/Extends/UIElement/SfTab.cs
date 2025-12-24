@@ -4,7 +4,7 @@ using SFramework.Core.Support;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace SFramework.Core.SfUIElementExtends
+namespace SFramework.Core.Extends.UIElement
 {
     /// <summary>
     /// Tab切换UI

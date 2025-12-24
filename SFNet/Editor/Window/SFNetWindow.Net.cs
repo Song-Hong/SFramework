@@ -46,7 +46,7 @@ namespace SFramework.SFNet.Editor.Window
             }
             
             // 创建UDP服务器
-            var sfUDPServer = SfUDPServer.Connect(ip, port);
+            var sfUDPServer = SfUDPServer.Start(ip, port);
             if (sfUDPServer == null)
             {
                 return false;
@@ -73,7 +73,7 @@ namespace SFramework.SFNet.Editor.Window
         {
             if (_sfUDPServers.ContainsValue(sfUDPServer))
             {
-                sfUDPServer.Disconnect();
+                sfUDPServer.Stop();
                 return true;
             }
             return false;
@@ -86,7 +86,7 @@ namespace SFramework.SFNet.Editor.Window
         {
             foreach (var sfUDPServer in _sfUDPServers)
             {
-                sfUDPServer.Value.Disconnect();
+                sfUDPServer.Value.Stop();
             }
         }
 

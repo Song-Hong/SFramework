@@ -42,10 +42,10 @@ namespace SFramework.SFNet.Module.Tcp
         /// </summary>
         /// <param name="port">端口号</param>
         /// <param name="onReceived">接收到消息时</param>
-        public static SfTcpClient Connect(int port, Action<string> onReceived=null)
+        public static SfTcpClient Start(int port, Action<string> onReceived=null)
         {
             var ip = GetMainLocalIP();
-            var sfTcpClient = Connect(ip,port,onReceived);
+            var sfTcpClient = Start(ip,port,onReceived);
             return sfTcpClient;
         }
         
@@ -55,9 +55,9 @@ namespace SFramework.SFNet.Module.Tcp
         /// <param name="ip">IP地址</param>
         /// <param name="port">端口号</param>
         /// <param name="onReceived">接收到消息时</param>
-        public static SfTcpClient Connect(string ip, int port, Action<string> onReceived=null)
+        public static SfTcpClient Start(string ip, int port, Action<string> onReceived=null)
         {
-            var sfTcpClient = Connect(ip,port);
+            var sfTcpClient = Start(ip,port);
             if(onReceived!=null)
                 sfTcpClient.OnReceived += onReceived;
             return sfTcpClient;
@@ -68,7 +68,7 @@ namespace SFramework.SFNet.Module.Tcp
         /// </summary>
         /// <param name="ip">IP地址</param>
         /// <param name="port">端口号</param>
-        public static SfTcpClient Connect(string ip, int port)
+        public static SfTcpClient Start(string ip, int port)
         {
             //创建一个负责监听IP和端口号的Socket
             var songTcpClient = new SfTcpClient();
@@ -215,7 +215,7 @@ namespace SFramework.SFNet.Module.Tcp
         /// <summary>
         /// 断开连接
         /// </summary>
-        public void Disconnect()
+        public void Stop()
         {
             //关闭连接
             _socket.Shutdown(SocketShutdown.Both);

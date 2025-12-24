@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using SFramework.Core.Mono;
-using SFramework.SFNet.Extends;
 using SFramework.SFNet.Module.Udp;
+using SFramework.SFNet.Support.UDP;
 using UnityEngine;
 
 namespace SFramework.SFNet.Mono
@@ -42,7 +41,7 @@ namespace SFramework.SFNet.Mono
             var mainThread = SynchronizationContext.Current;
             try
             {
-                _server = SfUDPServer.Connect(ip, port, (clientIp,clientPort,msg) =>
+                _server = SfUDPServer.Start(ip, port, (clientIp,clientPort,msg) =>
                 {
                     if(printLog)
                         Debug.Log($"接收到{clientIp}:{clientPort}消息: {msg}");
@@ -57,9 +56,9 @@ namespace SFramework.SFNet.Mono
                 });
 
                 //获取并执行所有组件的初始化方法
-                foreach (var support in GetComponentsInChildren<ISfUDPSupport>())
+                foreach (var support in GetComponentsInChildren<SfUdpSupport>())
                 {
-                    support.Init(_server);
+                    support.Init(this);
                 }
             }
             catch (Exception e)
@@ -81,7 +80,7 @@ namespace SFramework.SFNet.Mono
         /// </summary>
         private void OnDestroy()
         {
-            _server?.Disconnect();
+            _server?.Stop();
         }
         
         /// <summary>

@@ -52,10 +52,10 @@ namespace SFramework.SFNet.Module.Tcp
         /// <param name="onReceived">接收到消息时</param>
         /// <param name="maxConnect">最大连接数</param>
         /// <returns></returns>
-        public static SfTcpServer Connect(int port, Action<Socket,string> onReceived=null,int maxConnect = 10)
+        public static SfTcpServer Start(int port, Action<Socket,string> onReceived=null,int maxConnect = 10)
         {
             var ip = GetMainLocalIP();
-            var sfTcpServer = Connect(ip,port,onReceived,maxConnect);
+            var sfTcpServer = Start(ip,port,onReceived,maxConnect);
             return sfTcpServer;
         }
         
@@ -67,9 +67,9 @@ namespace SFramework.SFNet.Module.Tcp
         /// <param name="onReceived">接收到消息时</param>
         /// <param name="maxConnect">最大连接数</param>
         /// <returns></returns>
-        public static SfTcpServer Connect(string ip, int port, Action<Socket,string> onReceived=null,int maxConnect = 10)
+        public static SfTcpServer Start(string ip, int port, Action<Socket,string> onReceived=null,int maxConnect = 10)
         {
-            var sfTcpServer = Connect(ip, port,maxConnect);
+            var sfTcpServer = Start(ip, port,maxConnect);
             if(onReceived!=null)
                 sfTcpServer.OnReceived += onReceived;
             return sfTcpServer;
@@ -82,7 +82,7 @@ namespace SFramework.SFNet.Module.Tcp
         /// <param name="port">端口号</param>
         /// <param name="maxConnect">最大连接数</param>
         /// <returns></returns>
-        public static SfTcpServer Connect(string ip,int port,int maxConnect = 10)
+        public static SfTcpServer Start(string ip,int port,int maxConnect = 10)
         {
             var server = new SfTcpServer
             {
@@ -312,7 +312,7 @@ namespace SFramework.SFNet.Module.Tcp
         /// <summary>
         /// 断开连接
         /// </summary>
-        public void Disconnect()
+        public void Stop()
         {
             _isConnected = false;
             //关闭监听

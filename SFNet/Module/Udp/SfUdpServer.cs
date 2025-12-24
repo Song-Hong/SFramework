@@ -58,10 +58,10 @@ namespace SFramework.SFNet.Module.Udp
         /// <param name="port">要绑定的端口号</param>
         /// <param name="onReceived">接收到消息时的回调函数</param>
         /// <returns>创建的服务实例</returns>
-        public static SfUDPServer Connect(int port, Action<string, int, string> onReceived = null)
+        public static SfUDPServer Start(int port, Action<string, int, string> onReceived = null)
         {
             var ip = GetMainLocalIP();
-            return Connect(ip, port, onReceived);
+            return Start(ip, port, onReceived);
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace SFramework.SFNet.Module.Udp
         /// <param name="port">要绑定的端口号</param>
         /// <param name="onReceived">接收到消息时的回调函数</param>
         /// <returns>创建的服务实例</returns>
-        public static SfUDPServer Connect(string ip, int port, Action<string, int, string> onReceived = null)
+        public static SfUDPServer Start(string ip, int port, Action<string, int, string> onReceived = null)
         {
             var server = new SfUDPServer();
             server.IP = ip;
@@ -112,7 +112,7 @@ namespace SFramework.SFNet.Module.Udp
             catch (Exception e)
             {
                 Debug.LogError($"UDP服务开启失败: {e.Message}");
-                server.Disconnect(); // 如果启动失败，确保资源被释放
+                server.Stop(); // 如果启动失败，确保资源被释放
                 return null;
             }
         }
@@ -300,7 +300,7 @@ namespace SFramework.SFNet.Module.Udp
         /// <summary>
         /// 断开连接并释放资源
         /// </summary>
-        public void Disconnect()
+        public void Stop()
         {
             if (!_isConnected) return;
 
