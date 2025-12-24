@@ -21,11 +21,11 @@ style="width: 40px; height: 40px;"
 包含 相机和麦克风模块,开箱即用的测试功能和调用
 
 <img
-src="./Core/Editor/Config/Db.png"
+src="./Core/Editor/Config/Database.png"
 style="width: 40px; height: 40px;"
 />SFDB(数据库的连接)
 
-![数据库编辑器](./SFDB/Editor/Data/View.png)
+![数据库编辑器](./SFDatabase/Editor/Data/View.png)
 
 可视化的数据库连接,动态编辑同步数据,同时包含开箱即用的sqlite数据库模块
 
