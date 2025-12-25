@@ -20,15 +20,17 @@ SFramework 是一个为 Unity 开发者设计的轻量化、模块化开发框�
 
 ---
 
-### 📷 SFHardware | 硬件交互
-> **功能描述：** 负责与物理硬件的交互，提供开箱即用的测试功能和 API 调用。
+### 📷 SFIO | IO 模块
+> **功能描述：** 综合性的 IO 模块，负责与物理硬件的交互、文件操作和音频处理，提供开箱即用的测试功能和 API 调用。
 
-* **相机模块**：支持快速调用摄像头进行画面采集。
-* **麦克风模块**：支持音频输入与测试。
+* **硬件交互**：相机模块支持快速调用摄像头进行画面采集；麦克风模块支持音频输入与测试。
+* **文件操作**：支持多平台文件读取（StreamingAssets、文本、JSON、图片、音频等）。
+* **串口通讯**：支持串口通信，包含自动主线程分发与协议解析。
+* **音频处理**：支持 WAV 文件的加载和保存。
 
 <p align="center">
-  <img src="./SFHardware/Editor/Data/CameraView.png" width="48%" />
-  <img src="./SFHardware/Editor/Data/MicrophoneView.png" width="48%" />
+  <img src="./SFIO/Editor/Data/CameraView.png" width="48%" />
+  <img src="./SFIO/Editor/Data/MicrophoneView.png" width="48%" />
 </p>
 
 ---
@@ -88,6 +90,14 @@ SFramework 是一个为 Unity 开发者设计的轻量化、模块化开发框�
 * **状态管理**：基于接口的状态机设计，易于扩展和维护。
 * **流程控制**：支持状态切换、更新和退出逻辑的完整生命周期管理。
 
+---
+
+### 🎨 SFUI | UI 模块
+> **功能描述：** 提供 Unity UI 相关的组件和工具，帮助开发者快速构建丰富的用户界面。
+
+* **序列帧动画**：支持 Sprite、Image 和 RawImage 渲染的序列帧动画组件。
+* **灵活控制**：支持播放范围、循环、帧率设置，支持运行时动态调整。
+
 <br />
 
 ## 🛠️ 模块索引 (Quick Link)
@@ -96,11 +106,10 @@ SFramework 是一个为 Unity 开发者设计的轻量化、模块化开发框�
 | :--- | :---: | :--- |
 | **SFArchitecture** | <img src="./Core/Editor/Config/Architecture.png" width="25" /> | ✅ 稳定 |
 | **SFDB** | <img src="./Core/Editor/Config/Database.png" width="25" /> | ✅ 稳定 |
-| **SFHardware** | <img src="./Core/Editor/Config/Hardware.png" width="25" /> | ✅ 稳定 |
+| **SFIO** | <img src="./Core/Editor/Config/IO.png" width="25" /> | ✅ 稳定 |
 | **SFMultiple** | <img src="./Core/Editor/Config/Multiple.png" width="25" /> | 🏗️ 迭代中 |
 | **SFNet** | <img src="./Core/Editor/Config/Net.png" width="25" /> | ✅ 稳定 |
 | **SFOffice** | <img src="./Core/Editor/Config/Office.png" width="25" /> | ✅ 稳定 |
 | **SFState** | <img src="./Core/Editor/Config/State.png" width="25" /> | ✅ 稳定 |
 | **SFTask** | <img src="./Core/Editor/Config/Task.png" width="25" /> | ✅ 稳定 |
-
----
+| **SFUI** | <img src="./Core/Editor/Config/UI.png" width="25" /> | ✅ 稳定 |
