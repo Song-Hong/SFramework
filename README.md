@@ -2,7 +2,8 @@
 
 <p align="left">
   <img src="https://img.shields.io/badge/Unity-2021.3+-blue.svg?style=flat-square&logo=unity" alt="Unity Version">
-  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Android%20%7C%20iOS-green.svg?style=flat-square" alt="Platform">
+  <img src="https://img.shields.io/badge/Platform-Mac%20%7C%20Windows%20%7C%20Linux%20%7C%20Android%20%7C%20Web-green.svg?style=flat-square" alt="Platform">
+  <img src="https://img.shields.io/badge/.NET-Framework-red.svg?style=flat-square&logo=.net" alt=".NET Framework">
 </p>
 
 SFramework 是一个为 Unity 开发者设计的轻量化、模块化开发框架，涵盖了从网络通讯到硬件交互的全方位解决方案。
