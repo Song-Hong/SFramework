@@ -1,55 +1,55 @@
 packages: 
   # 架构模块
   - name: SFArchitecture
-    version: 1.0.4
+    version: 1.0.5
     description: 架构模块
-    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.4/SFramework-SFArchitecture.unitypackage
+    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.5/SFramework-SFArchitecture.unitypackage
     icon: Assets/SFramework/Core/Editor/Config/Architecture.png
   # 数据库模块
   - name: SFDatabase
-    version: 1.0.4
+    version: 1.0.5
     description: 数据库模块
-    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.4/SFramework-SFDatabase.unitypackage
+    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.5/SFramework-SFDatabase.unitypackage
     icon: Assets/SFramework/Core/Editor/Config/Database.png
   # 硬件模块
   - name: SFIO
-    version: 1.0.4
+    version: 1.0.5  
     description: IO模块
-    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.4/SFramework-SFIO.unitypackage
+    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.5/SFramework-SFIO.unitypackage
     icon: Assets/SFramework/Core/Editor/Config/IO.png
   # 多人模块
   - name: SFMultiple
-    version: 1.0.4
+    version: 1.0.5
     description: 多人模块
-    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.4/SFramework-SFMultiple.unitypackage
+    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.5/SFramework-SFMultiple.unitypackage
     icon: Assets/SFramework/Core/Editor/Config/Multiple.png
   # 网络模块
   - name: SFNet 
-    version: 1.0.4
+    version: 1.0.5
     description: 网络模块
-    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.4/SFramework-SFNet.unitypackage
+    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.5/SFramework-SFNet.unitypackage
     icon: Assets/SFramework/Core/Editor/Config/Net.png
   # 办公模块
   - name: SFOffice
-    version: 1.0.4
+    version: 1.0.5
     description: 办公模块
-    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.4/SFramework-SFOffice.unitypackage
+    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.5/SFramework-SFOffice.unitypackage
     icon: Assets/SFramework/Core/Editor/Config/Office.png
   # 状态模块
   - name: SFState
-    version: 1.0.4
+    version: 1.0.5
     description: 状态模块
-    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.4/SFramework-SFState.unitypackage
+    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.5/SFramework-SFState.unitypackage
     icon: Assets/SFramework/Core/Editor/Config/State.png
   # 任务模块
   - name: SFTask
-    version: 1.0.4
+    version: 1.0.5
     description: 任务模块
-    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.4/SFramework-SFTask.unitypackage
+    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.5/SFramework-SFTask.unitypackage
     icon: Assets/SFramework/Core/Editor/Config/Task.png
   # UI模块
   - name: SFUI
-    version: 1.0.4
+    version: 1.0.5
     description: UI模块
-    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.4/SFramework-SFUI.unitypackage
+    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.5/SFramework-SFUI.unitypackage
     icon: Assets/SFramework/Core/Editor/Config/UI.png

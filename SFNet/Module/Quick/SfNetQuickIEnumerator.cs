@@ -21,7 +21,7 @@ namespace SFramework.SFNet.Module.Quick
         /// <param name="headers">自定义请求头。</param>
         /// <param name="timeout">请求超时时间（秒）。</param>
         /// <typeparam name="T">目标类型，必须是可序列化的。</typeparam>
-        public static void GetFromJson<T>(MonoBehaviour owner, string url, Action<T> onSuccess,
+        public  void GetFromJson<T>(MonoBehaviour owner, string url, Action<T> onSuccess,
             Action<string> onFailure, Hashtable headers, int timeout)
         {
             owner.StartCoroutine(SendRequest(
@@ -40,7 +40,7 @@ namespace SFramework.SFNet.Module.Quick
         /// <param name="onFailure">失败回调，返回错误信息。</param>
         /// <param name="headers">自定义请求头。</param>
         /// <param name="timeout">请求超时时间（秒）。</param>
-        public static void GetSprite(MonoBehaviour owner, string url, Action<Sprite> onSuccess, Action<string> onFailure = null, Hashtable headers = null, int timeout = 30)
+        public  void GetSprite(MonoBehaviour owner, string url, Action<Sprite> onSuccess, Action<string> onFailure = null, Hashtable headers = null, int timeout = 30)
         {
             owner.StartCoroutine(SendRequest(
                 UnityWebRequestTexture.GetTexture(url),
@@ -65,7 +65,7 @@ namespace SFramework.SFNet.Module.Quick
         /// <param name="onFailure">失败回调，返回错误信息。</param>
         /// <param name="headers">自定义请求头。</param>
         /// <param name="timeout">请求超时时间（秒）。</param>
-        public static void GetTexture(MonoBehaviour owner, string url, Action<Texture2D> onSuccess, Action<string> onFailure = null, Hashtable headers = null, int timeout = 30)
+        public  void GetTexture(MonoBehaviour owner, string url, Action<Texture2D> onSuccess, Action<string> onFailure = null, Hashtable headers = null, int timeout = 30)
         {
             owner.StartCoroutine(SendRequest(
                 UnityWebRequestTexture.GetTexture(url),
@@ -84,7 +84,7 @@ namespace SFramework.SFNet.Module.Quick
         /// <param name="onFailure">失败回调，返回错误信息。</param>
         /// <param name="headers">自定义请求头。</param>
         /// <param name="timeout">请求超时时间（秒）。</param>
-        public static void GetAudioClip(MonoBehaviour owner, string url, AudioType audioType, Action<AudioClip> onSuccess, Action<string> onFailure = null, Hashtable headers = null, int timeout = 30)
+        public  void GetAudioClip(MonoBehaviour owner, string url, AudioType audioType, Action<AudioClip> onSuccess, Action<string> onFailure = null, Hashtable headers = null, int timeout = 30)
         {
             owner.StartCoroutine(SendRequest(
                 UnityWebRequestMultimedia.GetAudioClip(url, audioType),
@@ -102,7 +102,7 @@ namespace SFramework.SFNet.Module.Quick
         /// <param name="onFailure">失败回调，返回错误信息。</param>
         /// <param name="headers">自定义请求头。</param>
         /// <param name="timeout">请求超时时间（秒）。</param>
-        public static void GetString(MonoBehaviour owner, string url, Action<string> onSuccess, Action<string> onFailure = null, Hashtable headers = null, int timeout = 30)
+        public  void GetString(MonoBehaviour owner, string url, Action<string> onSuccess, Action<string> onFailure = null, Hashtable headers = null, int timeout = 30)
         {
             owner.StartCoroutine(SendRequest(
                 UnityWebRequest.Get(url),
@@ -120,7 +120,7 @@ namespace SFramework.SFNet.Module.Quick
         /// <param name="onFailure">失败回调，返回错误信息</param>
         /// <param name="headers">自定义请求头</param>
         /// <param name="timeout">请求超时时间（秒）</param>
-        public static void GetData(MonoBehaviour owner, string url, Action<byte[]> onSuccess, Action<string> onFailure = null, Hashtable headers = null, int timeout = 30)
+        public  void GetData(MonoBehaviour owner, string url, Action<byte[]> onSuccess, Action<string> onFailure = null, Hashtable headers = null, int timeout = 30)
         {
             owner.StartCoroutine(SendRequest(
                 UnityWebRequest.Get(url),
@@ -142,7 +142,7 @@ namespace SFramework.SFNet.Module.Quick
         /// <param name="headers">自定义请求头。</param>
         /// <param name="timeout">请求超时时间（秒）。</param>
         /// <typeparam name="T">目标类型，必须是可序列化的。</typeparam>
-        public static void PostFromJson<T>(MonoBehaviour owner, string url,string body, Action<T> onSuccess,
+        public  void PostFromJson<T>(MonoBehaviour owner, string url,string body, Action<T> onSuccess,
             Action<string> onFailure, Hashtable headers, int timeout)
         {
             owner.StartCoroutine(SendRequest(
@@ -166,7 +166,7 @@ namespace SFramework.SFNet.Module.Quick
         /// <param name="onFailure">失败回调，返回错误信息</param>
         /// <param name="headers">自定义请求头</param>
         /// <param name="timeout">请求超时时间（秒）</param>
-        public static void PostSprite(MonoBehaviour owner,string url,string body,Action<Sprite> onSuccess,Action<string> onFailure,Hashtable headers = null, int timeout = 30)
+        public  void PostSprite(MonoBehaviour owner,string url,string body,Action<Sprite> onSuccess,Action<string> onFailure,Hashtable headers = null, int timeout = 30)
         {
             owner.StartCoroutine(SendRequest(
 #if UNITY_2022_1_OR_NEWER
@@ -195,7 +195,7 @@ namespace SFramework.SFNet.Module.Quick
         /// <param name="onFailure">失败回调，返回错误信息</param>
         /// <param name="headers">自定义请求头</param>
         /// <param name="timeout">请求超时时间（秒）</param>
-        public static void PostTexture(MonoBehaviour owner,string url,string body,Action<Texture2D> onSuccess,Action<string> onFailure,Hashtable headers = null, int timeout = 30)
+        public  void PostTexture(MonoBehaviour owner,string url,string body,Action<Texture2D> onSuccess,Action<string> onFailure,Hashtable headers = null, int timeout = 30)
         {
             owner.StartCoroutine(SendRequest(
 #if UNITY_2022_1_OR_NEWER
@@ -218,7 +218,7 @@ namespace SFramework.SFNet.Module.Quick
         /// <param name="onFailure">失败回调，返回错误信息。</param>
         /// <param name="headers">自定义请求头。</param>
         /// <param name="timeout">请求超时时间（秒）。</param>
-        public static void PostString(MonoBehaviour owner, string url,string body, Action<string> onSuccess, Action<string> onFailure = null, Hashtable headers = null, int timeout = 30)
+        public  void PostString(MonoBehaviour owner, string url,string body, Action<string> onSuccess, Action<string> onFailure = null, Hashtable headers = null, int timeout = 30)
         {
             owner.StartCoroutine(SendRequest(
 #if UNITY_2022_1_OR_NEWER
@@ -241,7 +241,7 @@ namespace SFramework.SFNet.Module.Quick
         /// <param name="onFailure">失败回调，返回错误信息</param>
         /// <param name="headers">自定义请求头</param>
         /// <param name="timeout">请求超时时间（秒）</param>
-        public static void PostData(MonoBehaviour owner, string url,string body,Action<byte[]> onSuccess,
+        public  void PostData(MonoBehaviour owner, string url,string body,Action<byte[]> onSuccess,
             Action<string> onFailure = null,Hashtable headers = null, int timeout = 30)
         {
             owner.StartCoroutine(SendRequest(
@@ -267,7 +267,7 @@ namespace SFramework.SFNet.Module.Quick
         /// <param name="onFailure">失败回调，返回错误信息</param>
         /// <param name="headers">自定义请求头</param>
         /// <param name="timeout">请求超时时间（秒）</param>
-        public static void PutString(MonoBehaviour owner, string url,string body,Action<string> onSuccess,
+        public  void PutString(MonoBehaviour owner, string url,string body,Action<string> onSuccess,
             Action<string> onFailure = null,Hashtable headers = null, int timeout = 30)
         {
             owner.StartCoroutine(SendRequest(
@@ -287,7 +287,7 @@ namespace SFramework.SFNet.Module.Quick
         /// <param name="onFailure">失败回调，返回错误信息</param>
         /// <param name="headers">自定义请求头</param>
         /// <param name="timeout">请求超时时间（秒）</param>
-        public static void PutData(MonoBehaviour owner, string url,byte[] body,Action<string> onSuccess,
+        public  void PutData(MonoBehaviour owner, string url,byte[] body,Action<string> onSuccess,
             Action<string> onFailure = null,Hashtable headers = null, int timeout = 30)
         {
             owner.StartCoroutine(SendRequest(
@@ -307,7 +307,7 @@ namespace SFramework.SFNet.Module.Quick
         /// <param name="onFailure">失败回调。</param>
         /// <param name="headers">自定义请求头。</param>
         /// <param name="timeout">超时时间（秒）。</param>
-        private static IEnumerator SendRequest(UnityWebRequest uwr, Action<UnityWebRequest> onSuccess, Action<string> onFailure, Hashtable headers, int timeout)
+        private  IEnumerator SendRequest(UnityWebRequest uwr, Action<UnityWebRequest> onSuccess, Action<string> onFailure, Hashtable headers, int timeout)
         {
             // 使用 using 语句确保 UnityWebRequest 在协程结束时被正确释放
             using (uwr)
