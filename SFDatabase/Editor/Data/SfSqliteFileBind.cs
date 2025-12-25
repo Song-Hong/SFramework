@@ -14,7 +14,7 @@ namespace SFramework.SFDatabase.Editor.Data
         private static Texture2D s_Icon;
 
         // 图标路径保持不变
-        private static string IconPath => "Assets/SFramework/SFDatabase/Editor/Data/DatabaseData.png";
+        private static string IconPath => "Assets/SFramework/SFDatabase/Editor/Data/Database.png";
         
         // 静态构造函数，在 Unity 加载时运行一次
         static SfSqliteFileBind()

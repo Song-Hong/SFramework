@@ -7,7 +7,7 @@ namespace SFramework.SFNet.Support.UDP
     /// <summary>
     /// UDP 支持接口
     /// </summary>
-    public abstract class SfUdpSupport:SfSupport<SfUdpServerMono>
+    public abstract class SfUdpSupport:SfSupport<SfUDPServer>
     {
         
     }

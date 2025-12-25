@@ -58,7 +58,7 @@ namespace SFramework.SFNet.Mono
                 //获取并执行所有组件的初始化方法
                 foreach (var support in GetComponentsInChildren<SfUdpSupport>())
                 {
-                    support.Init(this);
+                    support.Init(_server);
                 }
             }
             catch (Exception e)

@@ -12,11 +12,11 @@ packages:
     url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.4/SFramework-SFDatabase.unitypackage
     icon: Assets/SFramework/Core/Editor/Config/Database.png
   # 硬件模块
-  - name: SFHardware
+  - name: SFIO
     version: 1.0.4
-    description: 硬件模块
-    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.4/SFramework-SFHardware.unitypackage
-    icon: Assets/SFramework/Core/Editor/Config/Hardware.png
+    description: IO模块
+    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.4/SFramework-SFIO.unitypackage
+    icon: Assets/SFramework/Core/Editor/Config/IO.png
   # 多人模块
   - name: SFMultiple
     version: 1.0.4
@@ -47,3 +47,9 @@ packages:
     description: 任务模块
     url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.4/SFramework-SFTask.unitypackage
     icon: Assets/SFramework/Core/Editor/Config/Task.png
+  # UI模块
+  - name: SFUI
+    version: 1.0.4
+    description: UI模块
+    url: https://github.com/Song-Hong/SFramework/releases/download/v1.0.4/SFramework-SFUI.unitypackage
+    icon: Assets/SFramework/Core/Editor/Config/UI.png

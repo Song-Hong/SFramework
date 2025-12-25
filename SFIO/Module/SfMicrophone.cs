@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace SFramework.SFHardware.Module
+namespace SFramework.SFIo.Module
 {
     /// <summary>
     /// 麦克风模块

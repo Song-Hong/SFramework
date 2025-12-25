@@ -2,8 +2,7 @@ using System;
 using System.IO;
 using UnityEngine;
 
-
-namespace SFramework.Core.Extends.SfAudioSupport
+namespace SFramework.SFIo.Module
 {
     /// <summary>
     /// WAV 音频文件支持类

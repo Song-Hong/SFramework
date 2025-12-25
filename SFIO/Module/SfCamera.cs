@@ -4,7 +4,7 @@ using UnityEngine;
 
 // 用于简化设备查找
 
-namespace SFramework.SFHardware.Module
+namespace SFramework.SFIo.Module
 {
     /// <summary>
     /// 相机模块

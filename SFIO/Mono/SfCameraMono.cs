@@ -1,10 +1,9 @@
-using System;
 using SFramework.Core.Mono;
-using SFramework.SFHardware.Module;
+using SFramework.SFIo.Module;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace SFramework.SFHardware.Mono
+namespace SFramework.SFIo.Mono
 {
     /// <summary>
     /// 相机模块单例

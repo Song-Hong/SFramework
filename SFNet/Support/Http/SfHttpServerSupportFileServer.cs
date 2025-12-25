@@ -6,6 +6,7 @@ using SFramework.SFNet.Mono;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using SFramework.SFNet.Module.Http;
 
 namespace SFramework.SFNet.Support.Http
 {
@@ -20,7 +21,7 @@ namespace SFramework.SFNet.Support.Http
         // 确保使用 StreamingAssetsPath 作为默认路径
         public string path = Application.streamingAssetsPath;
 
-        public override void Init(SfHttpServerMono mono)
+        public override void Init(SfHttpServer mono)
         {
             // 当路径为空时 自动使用 StreamingAssets 目录
             if (string.IsNullOrWhiteSpace(path))

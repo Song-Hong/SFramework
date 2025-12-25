@@ -1,9 +1,9 @@
 using System;
 using SFramework.Core.Mono;
-using SFramework.SFHardware.Module;
+using SFramework.SFIo.Module;
 using UnityEngine;
 
-namespace SFramework.SFHardware.Mono
+namespace SFramework.SFIo.Mono
 {
     /// <summary>
     /// 麦克风模块单例

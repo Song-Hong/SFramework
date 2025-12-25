@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SFramework.Core.Extends.SfAudioSupport
+namespace SFramework.SFIo.Module
 {
     /// <summary>
     /// 音频文件扩展方法
