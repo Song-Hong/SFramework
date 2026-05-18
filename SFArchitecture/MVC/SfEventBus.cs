@@ -12,6 +12,9 @@ namespace SFramework.SFArchitecture.MVC
         // 存储事件类型（Type）到委托列表（List<Delegate>）的映射
         private static readonly Dictionary<Type, List<Delegate>> _eventDelegates = 
             new Dictionary<Type, List<Delegate>>();
+        
+        // 线程锁
+        private static readonly object _lock = new object();
 
         /// <summary>
         /// 订阅一个特定类型的事件。
@@ -22,15 +25,18 @@ namespace SFramework.SFArchitecture.MVC
         {
             Type eventType = typeof(TEvent);
 
-            if (!_eventDelegates.ContainsKey(eventType))
+            lock (_lock)
             {
-                _eventDelegates.Add(eventType, new List<Delegate>());
-            }
+                if (!_eventDelegates.ContainsKey(eventType))
+                {
+                    _eventDelegates.Add(eventType, new List<Delegate>());
+                }
 
-            // 防止重复订阅
-            if (!_eventDelegates[eventType].Contains(handler))
-            {
-                _eventDelegates[eventType].Add(handler);
+                // 防止重复订阅
+                if (!_eventDelegates[eventType].Contains(handler))
+                {
+                    _eventDelegates[eventType].Add(handler);
+                }
             }
         }
 
@@ -43,14 +49,17 @@ namespace SFramework.SFArchitecture.MVC
         {
             Type eventType = typeof(TEvent);
 
-            if (_eventDelegates.ContainsKey(eventType))
+            lock (_lock)
             {
-                _eventDelegates[eventType].Remove(handler);
-
-                // 如果列表为空，则移除该事件类型以节省内存
-                if (_eventDelegates[eventType].Count == 0)
+                if (_eventDelegates.ContainsKey(eventType))
                 {
-                    _eventDelegates.Remove(eventType);
+                    _eventDelegates[eventType].Remove(handler);
+
+                    // 如果列表为空，则移除该事件类型以节省内存
+                    if (_eventDelegates[eventType].Count == 0)
+                    {
+                        _eventDelegates.Remove(eventType);
+                    }
                 }
             }
         }
@@ -63,21 +72,22 @@ namespace SFramework.SFArchitecture.MVC
         public static void Publish<TEvent>(TEvent eventData)
         {
             Type eventType = typeof(TEvent);
+            List<Delegate> handlers;
 
-            if (_eventDelegates.ContainsKey(eventType))
+            lock (_lock)
             {
-                // 复制列表，以防在遍历时（即在处理事件时）发生取消订阅操作导致集合修改
-                List<Delegate> handlers = new List<Delegate>(_eventDelegates[eventType]);
-
-                foreach (Delegate handler in handlers)
+                if (!_eventDelegates.ContainsKey(eventType))
                 {
-                    // 安全地将通用委托转换为特定类型的 Action<TEvent> 并调用
-                    (handler as Action<TEvent>)?.Invoke(eventData);
+                    return;
                 }
+                // 复制列表，以防在遍历时（即在处理事件时）发生取消订阅操作导致集合修改
+                handlers = new List<Delegate>(_eventDelegates[eventType]);
             }
-            else
+
+            foreach (Delegate handler in handlers)
             {
-                // Debug.LogWarning($"EventBus: No subscribers found for event type {eventType.Name}");
+                // 安全地将通用委托转换为特定类型的 Action<TEvent> 并调用
+                (handler as Action<TEvent>)?.Invoke(eventData);
             }
         }
     }

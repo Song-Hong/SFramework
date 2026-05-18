@@ -269,6 +269,7 @@ namespace SFramework.SFDatabase.Module
             try
             {
                 var dbCommand = _sqlConnection.CreateCommand();
+                dbCommand.Transaction = trans;
 
                 foreach (var t in queryString)
                 {
@@ -281,7 +282,9 @@ namespace SFramework.SFDatabase.Module
             }
             catch (Exception e)
             {
-                Debug.Log(e);
+                trans.Rollback();
+                Debug.LogError($"事务执行失败，已回滚: {e.Message}");
+                effectRow = -1;
             }
             return effectRow;
         }

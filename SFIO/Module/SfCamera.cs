@@ -174,6 +174,8 @@ namespace SFramework.SFIo.Module
             }
 
             // 检查权限 (在移动端尤其重要)
+            // 注意：在编辑器中跳过权限检查，因为 Application.HasUserAuthorization 在编辑器中可能不准确
+#if !UNITY_EDITOR
             if (!Application.HasUserAuthorization(UserAuthorization.WebCam))
             {
                 Debug.LogWarning("SfCamera: 缺少摄像头权限。应用可能需要先请求权限。");
@@ -181,6 +183,7 @@ namespace SFramework.SFIo.Module
                 // 通常需要一个 MonoBehaviour 启动协程来处理。本模块不直接处理权限请求。
                 return false;
             }
+#endif
 
             try
             {

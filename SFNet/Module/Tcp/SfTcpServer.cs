@@ -29,11 +29,15 @@ namespace SFramework.SFNet.Module.Tcp
         /// <summary>
         /// 服务是否开启
         /// </summary>
-        private bool _isConnected = true;
+        private bool _isConnected;
         /// <summary>
         /// 客户端列表
         /// </summary>
         private List<Socket> _clients = new List<Socket>();
+        /// <summary>
+        /// 客户端列表锁
+        /// </summary>
+        private readonly object _clientsLock = new object();
         /// <summary>
         /// 接收到消息
         /// </summary>
@@ -128,7 +132,10 @@ namespace SFramework.SFNet.Module.Tcp
                 {
                     var clientSocket  = _socket.Accept();
                     Debug.Log("客户端连接成功！" + clientSocket.RemoteEndPoint);
-                    _clients.Add(clientSocket);
+                    lock (_clientsLock)
+                    {
+                        _clients.Add(clientSocket);
+                    }
                     var thread = new Thread(() =>
                     {
                         Received(clientSocket);
@@ -202,9 +209,12 @@ namespace SFramework.SFNet.Module.Tcp
         public void SendAll(string msg)
         {
             var buffer = Encoding.UTF8.GetBytes(msg);
-            foreach (var client in _clients)
+            lock (_clientsLock)
             {
-                client.Send(buffer);
+                foreach (var client in _clients)
+                {
+                    client.Send(buffer);
+                }
             }
         }
         
@@ -225,9 +235,12 @@ namespace SFramework.SFNet.Module.Tcp
         public void Send(int index, string msg)
         {
             var buffer = Encoding.UTF8.GetBytes(msg);
-            if(index<0||index>=_clients.Count) return;
-            var client = _clients[index];
-            client.Send(buffer);
+            lock (_clientsLock)
+            {
+                if(index<0||index>=_clients.Count) return;
+                var client = _clients[index];
+                client.Send(buffer);
+            }
         }
         #endregion
 
@@ -316,20 +329,35 @@ namespace SFramework.SFNet.Module.Tcp
         {
             _isConnected = false;
             //关闭监听
-            _socket.Close();
-            //断开全部客户端
-            foreach (var client in _clients)
+            if (_socket != null && _socket.Connected)
             {
-                client.Close();
+                _socket.Shutdown(SocketShutdown.Both);
+                _socket.Close();
             }
-            //反转
-            _threads.Reverse();
-            //关闭全部线程
+            //断开全部客户端
+            lock (_clientsLock)
+            {
+                foreach (var client in _clients)
+                {
+                    if (client != null && client.Connected)
+                    {
+                        client.Close();
+                    }
+                }
+                _clients.Clear();
+            }
+            //等待线程结束
             foreach (var thread in _threads)
             {
                 if(thread!=null&&thread.IsAlive)
-                    thread.Abort();
+                {
+                    if (!thread.Join(1000))
+                    {
+                        Debug.LogWarning($"TCP服务器: 线程 {thread.Name} 未能正常结束");
+                    }
+                }
             }
+            _threads.Clear();
         }
         #endregion
     }

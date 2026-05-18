@@ -46,6 +46,8 @@ namespace SFramework.SFArchitecture.MVC
 
         protected virtual void OnDestroy()
         {
+            if (model == null) return;
+            
             // 1. 取消内部订阅
             model.OnDataChanged -= OnModelDataChanged;
             if (view != null)

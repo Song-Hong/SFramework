@@ -17,11 +17,11 @@ namespace SFramework.Core.Mono
             {
                 if (_instance == null)
                 {
-                    lock (_lock)
+                    _instance = FindObjectOfType<T>();
+                    if (_instance == null)
                     {
-                        if (_instance == null)
+                        lock (_lock)
                         {
-                            _instance = FindObjectOfType<T>();
                             if (_instance == null)
                             {
                                 GameObject go = new GameObject(typeof(T).Name);

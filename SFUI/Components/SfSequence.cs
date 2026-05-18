@@ -41,7 +41,13 @@ namespace SFramework.SfUI.Components
             if (renderType == RenderType.SpriteRenderer && spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
             if (renderType == RenderType.RawImage && rawImage == null) rawImage = GetComponent<RawImage>();
 
-            // 初始化时将当前帧设为起始帧
+            // 初始化时将当前帧设为起始帧，并进行边界检查
+            int totalCount = GetTotalCount();
+            if (totalCount > 0)
+            {
+                startFrame = Mathf.Clamp(startFrame, 0, totalCount - 1);
+                endFrame = Mathf.Clamp(endFrame, startFrame, totalCount - 1);
+            }
             _currentIndex = startFrame;
             if (playOnAwake) Play();
         }

@@ -24,8 +24,23 @@ namespace SFramework.SFArchitecture.MVC
         private void Reset()
         {
 #if UNITY_EDITOR
-            var controllerTypeName = "Song.Controller." + this.GetType().Name.Replace("View", "Controller");
-            var controllerType = Type.GetType(controllerTypeName);
+            var viewTypeName = this.GetType().Name;
+            var controllerTypeName = viewTypeName.Replace("View", "Controller");
+            
+            var controllerType = System.Type.GetType(controllerTypeName);
+            if (controllerType == null)
+            {
+                var assembly = this.GetType().Assembly;
+                foreach (var type in assembly.GetTypes())
+                {
+                    if (type.Name == controllerTypeName)
+                    {
+                        controllerType = type;
+                        break;
+                    }
+                }
+            }
+            
             if (controllerType != null)
             {
                 var controllerComponent = GetComponent(controllerType);
