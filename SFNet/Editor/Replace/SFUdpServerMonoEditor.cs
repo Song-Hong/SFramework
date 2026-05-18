@@ -1,3 +1,4 @@
+using SFramework.Core.Editor.UIElementEditor;
 using SFramework.Core.Extends.UIElement;
 using SFramework.Core.Support;
 using SFramework.SFNet.Mono;
@@ -28,16 +29,17 @@ namespace SFramework.SFNet.Editor.Replace
             _rootElement = new VisualElement();
             
             // 添加标题
-            var title = new Label("SFrameworkUDP 服务器")
-            {
-                style =
-                {
-                    fontSize = 16,
-                    color = Color.white,
-                    alignSelf = Align.Center,
-                }
-            };
-            _rootElement.Add(title);
+            // var title = new Label("SFrameworkUDP 服务器")
+            // {
+            //     style =
+            //     {
+            //         fontSize = 16,
+            //         color = Color.white,
+            //         alignSelf = Align.Center,
+            //     }
+            // };
+            // _rootElement.Add(title);
+            _rootElement.Add(new SfTitleEditor("SFrameworkUDP 服务器"));
             
             // 
             var serverMono = target as SfUdpServerMono;
@@ -96,7 +98,7 @@ namespace SFramework.SFNet.Editor.Replace
                     borderBottomLeftRadius = 5,
                     borderBottomRightRadius = 5,
                 },
-                value = serverMono.ip
+                value = serverMono.serverData.ip
             };
 
             ipAddressInput.RegisterCallback<ChangeEvent<string>>(evt =>
@@ -105,7 +107,7 @@ namespace SFramework.SFNet.Editor.Replace
                 serializedObject.Update(); 
                 
                 // 2. 将新值赋给 SerializedProperty
-                serverMono.ip = evt.newValue;
+                serverMono.serverData.ip = evt.newValue;
         
                 // 3. 将更改应用到组件并注册撤销
                 serializedObject.ApplyModifiedProperties(); 
@@ -160,7 +162,7 @@ namespace SFramework.SFNet.Editor.Replace
                     borderBottomLeftRadius = 5,
                     borderBottomRightRadius = 5,
                 },
-                value = serverMono.port.ToString(),
+                value = serverMono.serverData.port.ToString(),
             };
             
             portInput.RegisterCallback<ChangeEvent<string>>(evt =>
@@ -171,11 +173,11 @@ namespace SFramework.SFNet.Editor.Replace
                 // 尝试解析输入值。如果输入为空，使用 0 作为默认值
                 if (int.TryParse(evt.newValue, out var newPortValue))
                 {
-                    serverMono.port = newPortValue;
+                    serverMono.serverData.port = newPortValue;
                 }
                 else
                 {
-                    portInput.value = serverMono.port.ToString();
+                    portInput.value = serverMono.serverData.port.ToString();
                 }
                 
                 // 2. 将新值赋给 SerializedProperty
@@ -184,6 +186,34 @@ namespace SFramework.SFNet.Editor.Replace
             });
             // 添加端口输入框到根元素
             portContainer.Add(portInput);
+            
+            // 是否自动开启
+            var autoStartChoice = new SfTab();
+            autoStartChoice.SetTitle("自动开启:");
+            autoStartChoice.AddChoice("是","否");
+            autoStartChoice.ChooseBackground.style.marginLeft = 32;
+            _rootElement.Add(autoStartChoice);
+            autoStartChoice.OnChoiceChanged += choice => //添加变化事件
+            {
+                if (choice == "是")
+                {
+                    if (serverMono != null) serverMono.serverData.autoStart = true;
+                    serializedObject.ApplyModifiedProperties();
+                }
+                else if (choice == "否")
+                {
+                    if (serverMono != null) serverMono.serverData.autoStart = false;
+                    serializedObject.ApplyModifiedProperties();
+                }
+            };
+            if (serverMono.serverData.autoStart)
+            {
+                autoStartChoice.Select("是");
+            }
+            else
+            {
+                autoStartChoice.Select("否");
+            }
             
             // 是否打印消息
             var logStateChoice = new SfTab();
@@ -195,16 +225,16 @@ namespace SFramework.SFNet.Editor.Replace
             {
                 if (choice == "打印")
                 {
-                    if (serverMono != null) serverMono.printLog = true;
+                    if (serverMono != null) serverMono.serverData.printLog = true;
                     serializedObject.ApplyModifiedProperties();
                 }
                 else if (choice == "不打印")
                 {
-                    if (serverMono != null) serverMono.printLog = false;
+                    if (serverMono != null) serverMono.serverData.printLog = false;
                     serializedObject.ApplyModifiedProperties();
                 }
             };
-            if (serverMono.printLog)
+            if (serverMono.serverData.printLog)
             {
                 logStateChoice.Select("打印");
             }

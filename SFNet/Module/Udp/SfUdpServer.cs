@@ -40,10 +40,6 @@ namespace SFramework.SFNet.Module.Udp
         /// 用于接收消息的后台线程
         /// </summary>
         private Thread _receiveThread;
-        /// <summary>
-        /// Unity主线程的同步上下文
-        /// </summary>
-        private SynchronizationContext _mainContext;
         #endregion
 
         #region 构造与连接
@@ -77,9 +73,6 @@ namespace SFramework.SFNet.Module.Udp
             server.IP = ip;
             server.Port = port;
             
-            // 获取Unity主线程的同步上下文，必须在主线程中调用
-            server._mainContext = SynchronizationContext.Current;
-
             try
             {
                 // 初始化Socket
@@ -141,11 +134,7 @@ namespace SFramework.SFNet.Module.Udp
                     var targetPort = ipEndPoint.Port;
                     var msg = Encoding.UTF8.GetString(bytes, 0, len);
 
-                    // 【关键】使用 SynchronizationContext 将事件的执行调度回 Unity 主线程
-                    _mainContext.Post(_ =>
-                    {
-                        ReceivedIPPort?.Invoke(targetIP, targetPort, msg);
-                    }, null);
+                    ReceivedIPPort?.Invoke(targetIP, targetPort, msg);
                 }
                 catch (SocketException ex)
                 {

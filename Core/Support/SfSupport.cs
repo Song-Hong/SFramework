@@ -10,7 +10,7 @@ namespace SFramework.Core.Support
         /// <summary>
         /// 初始化
         /// </summary>
-        /// <param name="mono">模块</param>
-        public abstract void Init(T mono);
+        /// <param name="server">模块</param>
+        public abstract void Init(T server);
     }
 }
