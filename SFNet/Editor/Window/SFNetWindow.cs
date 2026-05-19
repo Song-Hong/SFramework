@@ -36,6 +36,18 @@ namespace SFramework.SFNet.Editor.Window
         /// 内容区域
         /// </summary>
         private VisualElement _contentArea;
+        /// <summary>
+        /// 发送区域
+        /// </summary>
+        private VisualElement _sendArea;
+        /// <summary>
+        /// 发送输入框
+        /// </summary>
+        private TextField _sendInput;
+        /// <summary>
+        /// 发送按钮
+        /// </summary>
+        private Button _sendButton;
         
         /// <summary>
         /// 打开网络模块窗口
@@ -52,7 +64,6 @@ namespace SFramework.SFNet.Editor.Window
         /// </summary>
         private void CreateGUI()
         {
-            // 加载UXML文件
             AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/SFramework/SFNet/Editor/Window/SFNetWindow.uxml").
                 CloneTree(rootVisualElement);
             
@@ -63,17 +74,65 @@ namespace SFramework.SFNet.Editor.Window
             _tcpItemButton = rootVisualElement.Q<Button>("TcpItem");
             _createCancelButton = rootVisualElement.Q<Button>("CreateCancel");
             _contentArea = rootVisualElement.Q<GroupBox>("ContentArea");
+            
+            // 创建发送区域
+            CreateSendArea();
 
-            // 初始化左侧栏
             InitSlider();
         }
         
         /// <summary>
-        /// 窗口销毁时关闭所有UDP网络
+        /// 创建发送区域
+        /// </summary>
+        private void CreateSendArea()
+        {
+            _sendArea = new VisualElement();
+            _sendArea.style.flexDirection = FlexDirection.Row;
+            _sendArea.style.paddingTop = 8;
+            _sendArea.style.paddingBottom = 8;
+            _sendArea.style.paddingLeft = 8;
+            _sendArea.style.paddingRight = 8;
+            _sendArea.style.marginTop = 8;
+            _sendArea.style.display = DisplayStyle.None;
+            
+            _sendInput = new TextField();
+            _sendInput.style.flexGrow = 1;
+            _sendInput.style.marginRight = 8;
+            _sendInput.style.unityTextAlign = TextAnchor.MiddleLeft;
+            _sendArea.Add(_sendInput);
+            
+            _sendButton = new Button();
+            _sendButton.text = "发送";
+            _sendButton.style.minWidth = 60;
+            _sendButton.style.backgroundColor = SfColor.HexToColor("#4CAF50");
+            _sendButton.style.color = Color.white;
+            _sendButton.style.borderRadius = 6;
+            _sendButton.clicked += OnSendClicked;
+            _sendArea.Add(_sendButton);
+            
+            // 将发送区域添加到ContentView中
+            var contentView = rootVisualElement.Q<ScrollView>("ContentView");
+            if (contentView != null)
+            {
+                contentView.Add(_sendArea);
+            }
+        }
+        
+        /// <summary>
+        /// 发送按钮点击事件
+        /// </summary>
+        private void OnSendClicked()
+        {
+            HandleSend();
+        }
+        
+        /// <summary>
+        /// 窗口销毁时关闭所有网络
         /// </summary>
         private void OnDestroy()
         {
             CloseAllUDP();
+            CloseAllTCP();
         }
     }
 }

@@ -1,59 +1,130 @@
 using UnityEngine;
 using System.Text;
-using SFramework.SFMultiple.Module; // 引入 SfKcpServer 所在的命名空间
-using System.Threading; // 用于在日志中显示线程ID
+using System.Threading;
+using SFramework.SFMultiple.Module;
+using SFramework.SFMultiple.Data;
 
-public class KcpManager : MonoBehaviour
+namespace SFramework.SFMultiple.Mono
 {
-    [Tooltip("KCP 服务器监听的端口")]
-    public int Port = 40001;
-    [Tooltip("KCP Update 帧间隔 (毫秒)")]
-    public int FrameInterval = 10;
-
-    private SfKcpServer _kcpServer;
-
-    void Awake()
-    {
-        // 1. 实例化 KCP 服务器
-        _kcpServer = new SfKcpServer();
-
-        // 2. 核心步骤：设置接收消息的回调函数
-        _kcpServer.OnReceive = HandleReceivedMessage;
-        
-        // 打印初始化信息，确认 KcpManager 启动在主线程
-        Debug.Log($"KCP Server Manager Initialized (Main Thread: {Thread.CurrentThread.ManagedThreadId}). Listening on port {_kcpServer.port}.");
-    }
-
     /// <summary>
-    /// 处理从 KCP 接收到的字节数组。
-    /// 这个方法会被 SfKcpServer 在异步线程中调用。
+    /// KCP 管理器 (客户端示例)
     /// </summary>
-    /// <param name="data">接收到的字节数组</param>
-    private void HandleReceivedMessage(byte[] data)
+    public class KcpManager : MonoBehaviour
     {
-        // 线程信息：显示当前执行回调的线程
-        string threadInfo = $"({Thread.CurrentThread.ManagedThreadId})";
+        [Tooltip("服务器IP")]
+        public string ServerIp = "127.0.0.1";
+        [Tooltip("服务器端口")]
+        public int Port = 40001;
+        [Tooltip("玩家名称")]
+        public string PlayerName = "Player1";
+        
+        private SfKcpClient _kcpClient;
 
-        if (data == null || data.Length == 0)
+        void Awake()
         {
-            // 收到空数据包，可能是在特定条件下发生的 KCP 内部事件
-            Debug.LogWarning($"[KCP 消息回调 {threadInfo}] 收到空数据包，可能为 KCP 内部信号。");
-            return;
+            _kcpClient = new SfKcpClient();
+            _kcpClient.OnConnected += OnConnected;
+            _kcpClient.OnDisconnected += OnDisconnected;
+            _kcpClient.OnMessageReceived += HandleReceivedMessage;
+            
+            Debug.Log($"[KcpManager] 客户端初始化完成，准备连接 {ServerIp}:{Port}");
+        }
+
+        void Start()
+        {
+            _kcpClient.Connect(ServerIp, Port);
         }
         
-        // 将接收到的 UTF8 字节数组解码成字符串
-        string message = Encoding.UTF8.GetString(data);
+        void Update()
+        {
+            // 定期发送心跳
+            if (_kcpClient.IsConnected)
+            {
+                // 可以在这里处理心跳逻辑
+            }
+        }
 
-        // 3. 在 Unity Console 打印消息 (包含内容)
-        // 这一行负责打印消息内容！
-        Debug.Log($"[KCP 消息成功接收 {threadInfo}] 长度: {data.Length} bytes. 消息内容: {message}");
-    }
+        /// <summary>
+        /// 连接成功回调
+        /// </summary>
+        private void OnConnected()
+        {
+            Debug.Log($"[KcpManager] 连接成功，发送加入请求: {PlayerName}");
+            _kcpClient.SendJoinRequest(PlayerName);
+        }
+        
+        /// <summary>
+        /// 断开连接回调
+        /// </summary>
+        private void OnDisconnected()
+        {
+            Debug.Log("[KcpManager] 已断开连接");
+        }
 
-    /// <summary>
-    /// 在应用退出时打印服务器关闭信息
-    /// </summary>
-    void OnApplicationQuit()
-    {
-        Debug.Log("KCP Server Manager 正在关闭...");
+        /// <summary>
+        /// 处理接收到的消息
+        /// </summary>
+        private void HandleReceivedMessage(NetworkMessage message)
+        {
+            string threadInfo = $"(Thread: {Thread.CurrentThread.ManagedThreadId})";
+
+            switch (message.type)
+            {
+                case MessageType.PlayerJoin:
+                    var joinPlayer = SfMessageSerializer.DeserializePlayer(message.content);
+                    if (joinPlayer != null)
+                    {
+                        Debug.Log($"[KcpManager {threadInfo}] 玩家加入: {joinPlayer.playerName} (ID: {joinPlayer.playerId})");
+                    }
+                    break;
+                case MessageType.PlayerLeave:
+                    var leavePlayer = SfMessageSerializer.DeserializePlayer(message.content);
+                    if (leavePlayer != null)
+                    {
+                        Debug.Log($"[KcpManager {threadInfo}] 玩家离开: {leavePlayer.playerName}");
+                    }
+                    break;
+                case MessageType.Chat:
+                    Debug.Log($"[KcpManager {threadInfo}] 聊天消息 [ID:{message.senderId}]: {message.content}");
+                    break;
+                case MessageType.PlayerState:
+                    Debug.Log($"[KcpManager {threadInfo}] 状态同步 [ID:{message.senderId}]: {message.content}");
+                    break;
+                case MessageType.Heartbeat:
+                    // 心跳回复，不需要处理
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 发送聊天消息 (供外部调用)
+        /// </summary>
+        public void SendChat(string content)
+        {
+            if (_kcpClient != null && _kcpClient.IsConnected)
+            {
+                _kcpClient.SendChat(content);
+            }
+        }
+        
+        /// <summary>
+        /// 发送状态同步 (供外部调用)
+        /// </summary>
+        public void SendState(string stateJson)
+        {
+            if (_kcpClient != null && _kcpClient.IsConnected)
+            {
+                _kcpClient.SendState(stateJson);
+            }
+        }
+
+        void OnApplicationQuit()
+        {
+            if (_kcpClient != null)
+            {
+                _kcpClient.Disconnect();
+            }
+            Debug.Log("[KcpManager] 客户端已关闭");
+        }
     }
 }

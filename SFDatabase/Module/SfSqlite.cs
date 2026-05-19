@@ -269,7 +269,7 @@ namespace SFramework.SFDatabase.Module
             try
             {
                 var dbCommand = _sqlConnection.CreateCommand();
-                dbCommand.Transaction = trans;
+                dbCommand.Transaction = (SqliteTransaction)trans;
 
                 foreach (var t in queryString)
                 {
