@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SFramework.Core.Editor.Support;
+using SFramework.Core.Editor.UIElementEditor;
 using SFramework.SFState.Module;
 using SFramework.SFState.Mono;
 using UnityEditor;
@@ -35,17 +36,7 @@ namespace SFramework.SFState.Editor
             // 创建根节点
             var rootVisualElement = new VisualElement();
 
-            // 添加标题
-            var title = new Label("SFramework 流程模块")
-            {
-                style =
-                {
-                    fontSize = 16,
-                    color = Color.white,
-                    alignSelf = Align.Center,
-                }
-            };
-            rootVisualElement.Add(title);
+            rootVisualElement.Add(new SfTitleEditor("SFramework 流程模块"));
             
             // 获取所有的流程
             // 创建容器

@@ -1,0 +1,234 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c4f0fa5650ed4891928a505bd5d8daa, type: 3}
+  m_Name: SfAiSettings
+  m_EditorClassIdentifier: 
+  Providers:
+  - Id: c2d0b74e66f24a869db5d5be32389536
+    Name: Kimi
+    Kind: 1
+    BaseUrl: 
+    ApiKey: sk-SBVbYkMzGecAV6n9RByDP5FEfnU1nKoCIgXJTFgelUDdlbLj
+    Organization: 
+    Enabled: 1
+    TimeoutSeconds: 120
+    Status: 1
+    LatencyMs: -1
+    StatusMessage: OK
+  - Id: e8a43e50831545e78c710bb01d6ed6ce
+    Name: MiMo
+    Kind: 2
+    BaseUrl: 
+    ApiKey: sk-c4z20hcph46m32zhbsl1svq7tzs1dffpuy9mbjvvmxq5ws6q
+    Organization: 
+    Enabled: 1
+    TimeoutSeconds: 120
+    Status: 3
+    LatencyMs: -1
+    StatusMessage: "HTTP 401: {\n    \"error\": {\n        \"message\": \"Invalid
+      API Key\",\n        \"param\": \"Please provide valid API Key\",\n        \"code\":
+      \"401\",\n        \"type\": \"invalid_key\"\n    }\n}\n"
+  - Id: c33011fd5fd7493e8391534d50929ea6
+    Name: Qwen
+    Kind: 3
+    BaseUrl: 
+    ApiKey: sk-2872e046521549388ee40b207af6991f
+    Organization: 
+    Enabled: 1
+    TimeoutSeconds: 120
+    Status: 1
+    LatencyMs: -1
+    StatusMessage: OK
+  - Id: d52c4a14ad7f4011805a04886a18c854
+    Name: DeepSeek
+    Kind: 7
+    BaseUrl: 
+    ApiKey: sk-7d287afe9385417a9cc982e7d86a3b01
+    Organization: 
+    Enabled: 1
+    TimeoutSeconds: 120
+    Status: 1
+    LatencyMs: -1
+    StatusMessage: OK
+  Models:
+  - Id: d3f2728a09b040ada0ca2078f44572cf
+    ProviderId: c2d0b74e66f24a869db5d5be32389536
+    DisplayName: "kimi-k2.6 (\u601D\u8003\xB7\u56FE\xB7\u89C6\u9891\xB7256K)"
+    ModelId: kimi-k2.6
+    Enabled: 1
+    Tags: "\u601D\u8003,\u56FE,\u89C6\u9891"
+  - Id: de81c692a09a40439d444641568b998b
+    ProviderId: c2d0b74e66f24a869db5d5be32389536
+    DisplayName: "kimi-k2.5 (\u601D\u8003\xB7\u56FE\xB7\u89C6\u9891\xB7256K)"
+    ModelId: kimi-k2.5
+    Enabled: 1
+    Tags: "\u601D\u8003,\u56FE,\u89C6\u9891"
+  - Id: e003d61adbb74541b21c7cf70fca893a
+    ProviderId: c2d0b74e66f24a869db5d5be32389536
+    DisplayName: Kimi K2 Turbo
+    ModelId: kimi-k2-turbo-preview
+    Enabled: 0
+    Tags: 
+  - Id: 7737ed4757034527896d099b8b8a8eac
+    ProviderId: c2d0b74e66f24a869db5d5be32389536
+    DisplayName: moonshot-v1-128k (128K)
+    ModelId: moonshot-v1-128k
+    Enabled: 1
+    Tags: 
+  - Id: a6679ee67c1944578badec1f230f49c4
+    ProviderId: c2d0b74e66f24a869db5d5be32389536
+    DisplayName: "moonshot-v1-128k-vision-preview (\u56FE\xB7128K)"
+    ModelId: moonshot-v1-128k-vision-preview
+    Enabled: 1
+    Tags: "\u56FE"
+  - Id: e1502b1be6fb4e3fbe74d15402106a15
+    ProviderId: c2d0b74e66f24a869db5d5be32389536
+    DisplayName: moonshot-v1-32k (32K)
+    ModelId: moonshot-v1-32k
+    Enabled: 1
+    Tags: 
+  - Id: f5dd24c66e034109becf6908bcbe7270
+    ProviderId: c2d0b74e66f24a869db5d5be32389536
+    DisplayName: "moonshot-v1-32k-vision-preview (\u56FE\xB732K)"
+    ModelId: moonshot-v1-32k-vision-preview
+    Enabled: 1
+    Tags: "\u56FE"
+  - Id: c9ae7bb2add944279afe84d979ac4bbf
+    ProviderId: c2d0b74e66f24a869db5d5be32389536
+    DisplayName: moonshot-v1-8k (8K)
+    ModelId: moonshot-v1-8k
+    Enabled: 1
+    Tags: 
+  - Id: 04d2ba97ee3f4989a1a23259e94a64a7
+    ProviderId: c2d0b74e66f24a869db5d5be32389536
+    DisplayName: "moonshot-v1-8k-vision-preview (\u56FE\xB78K)"
+    ModelId: moonshot-v1-8k-vision-preview
+    Enabled: 1
+    Tags: "\u56FE"
+  - Id: 719fbd1b4cc84ec8a451ab4fb6170589
+    ProviderId: c2d0b74e66f24a869db5d5be32389536
+    DisplayName: moonshot-v1-auto (128K)
+    ModelId: moonshot-v1-auto
+    Enabled: 1
+    Tags: 
+  - Id: 481ff2476ee64703addf7f59bdde10d2
+    ProviderId: e8a43e50831545e78c710bb01d6ed6ce
+    DisplayName: MiMo V2.5 Pro
+    ModelId: mimo-v2.5-pro
+    Enabled: 1
+    Tags: 
+  - Id: af8d304a52374696bfd15b33678dbad4
+    ProviderId: e8a43e50831545e78c710bb01d6ed6ce
+    DisplayName: MiMo V2.5
+    ModelId: mimo-v2.5
+    Enabled: 1
+    Tags: 
+  - Id: f0616beacac34c46996ff5528081da8f
+    ProviderId: e8a43e50831545e78c710bb01d6ed6ce
+    DisplayName: MiMo V2 Flash
+    ModelId: mimo-v2-flash
+    Enabled: 1
+    Tags: 
+  - Id: 450a5b6ae3c44acd872d8bbb5aa5b982
+    ProviderId: c33011fd5fd7493e8391534d50929ea6
+    DisplayName: Qwen Max
+    ModelId: qwen-max
+    Enabled: 1
+    Tags: 
+  - Id: 2e5f19b04a184102bd5233de9001a969
+    ProviderId: c33011fd5fd7493e8391534d50929ea6
+    DisplayName: Qwen Plus
+    ModelId: qwen-plus
+    Enabled: 1
+    Tags: 
+  - Id: beea294ebd084a399388c38cb396712d
+    ProviderId: c33011fd5fd7493e8391534d50929ea6
+    DisplayName: Qwen Flash
+    ModelId: qwen-flash
+    Enabled: 1
+    Tags: 
+  - Id: a88bc9cb23a6400caf9f80669809ddfe
+    ProviderId: c33011fd5fd7493e8391534d50929ea6
+    DisplayName: Qwen Turbo
+    ModelId: qwen-turbo
+    Enabled: 1
+    Tags: 
+  - Id: 1961045b366344508796a089b50d9efd
+    ProviderId: c33011fd5fd7493e8391534d50929ea6
+    DisplayName: Qwen3.7 Max
+    ModelId: qwen3.7-max
+    Enabled: 1
+    Tags: 
+  - Id: 90b29d80ba82425dbcfc441f03a46728
+    ProviderId: c33011fd5fd7493e8391534d50929ea6
+    DisplayName: Qwen3.6 Plus
+    ModelId: qwen3.6-plus
+    Enabled: 1
+    Tags: 
+  - Id: 821c85bef35f4b299311f17827290c56
+    ProviderId: c33011fd5fd7493e8391534d50929ea6
+    DisplayName: Qwen3.6 Flash
+    ModelId: qwen3.6-flash
+    Enabled: 1
+    Tags: 
+  - Id: ec61985f01ef4960bd2db13a1813bbaf
+    ProviderId: c33011fd5fd7493e8391534d50929ea6
+    DisplayName: Qwen3.5 Plus
+    ModelId: qwen3.5-plus
+    Enabled: 1
+    Tags: 
+  - Id: 155d8de33db941ce8b71763d1e6c15be
+    ProviderId: c33011fd5fd7493e8391534d50929ea6
+    DisplayName: Qwen3.5 Flash
+    ModelId: qwen3.5-flash
+    Enabled: 1
+    Tags: 
+  - Id: f249d6e7e971432e950e98e04dccc80f
+    ProviderId: c33011fd5fd7493e8391534d50929ea6
+    DisplayName: Qwen3 Max
+    ModelId: qwen3-max
+    Enabled: 1
+    Tags: 
+  - Id: 23c0ebcf681343dbbb133d67c580c3a1
+    ProviderId: c33011fd5fd7493e8391534d50929ea6
+    DisplayName: Qwen Long
+    ModelId: qwen-long
+    Enabled: 1
+    Tags: 
+  - Id: 75aeb0501ca34da78d6653c69b9d20dd
+    ProviderId: d52c4a14ad7f4011805a04886a18c854
+    DisplayName: DeepSeek V4 Pro
+    ModelId: deepseek-v4-pro
+    Enabled: 1
+    Tags: 
+  - Id: 1b5735e2cc0448fb928a28a805a5e8cf
+    ProviderId: d52c4a14ad7f4011805a04886a18c854
+    DisplayName: DeepSeek V4 Flash
+    ModelId: deepseek-v4-flash
+    Enabled: 1
+    Tags: 
+  - Id: 91151cee73ba4de99a7e87d4cf954530
+    ProviderId: d52c4a14ad7f4011805a04886a18c854
+    DisplayName: "DeepSeek Chat (\u517C\u5BB9)"
+    ModelId: deepseek-chat
+    Enabled: 1
+    Tags: 
+  - Id: 0ea389c6e6da400c8a2d8c62ee192661
+    ProviderId: d52c4a14ad7f4011805a04886a18c854
+    DisplayName: "DeepSeek Reasoner (\u517C\u5BB9)"
+    ModelId: deepseek-reasoner
+    Enabled: 1
+    Tags: 
+  ActiveModelId: d3f2728a09b040ada0ca2078f44572cf
+  EnableAutoFallback: 1
+  SystemPrompt: 
+  Profiles: []

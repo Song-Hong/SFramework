@@ -1,3 +1,4 @@
+using SFramework.Core.Editor.UIElementEditor;
 using SFramework.SFIo.Module;
 using SFramework.SFIo.Mono;
 using UnityEditor;
@@ -62,17 +63,7 @@ namespace SFramework.SFIo.Editor.Replace
             // 初始化数据和麦克风实例
             InitializeData();
             
-            // 添加标题
-            var title = new Label("SFramework 麦克风模块")
-            {
-                style =
-                {
-                    fontSize = 16,
-                    color = Color.white,
-                    alignSelf = Align.Center,
-                }
-            };
-            _rootVisualElement.Add(title);
+            _rootVisualElement.Add(new SfTitleEditor("SFramework 麦克风模块"));
 
             // 当非运行状态时显示 麦克风测试工具
             if (!Application.isPlaying)

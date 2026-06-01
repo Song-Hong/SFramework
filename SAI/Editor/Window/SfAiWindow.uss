@@ -1,0 +1,177 @@
+.sfai-root {
+    flex-grow: 1;
+    flex-direction: row;
+    background-color: rgb(56, 56, 56);
+}
+
+/* ── 左侧参数区 ── */
+.sfai-params-panel {
+    width: 280px;
+    min-width: 240px;
+    max-width: 320px;
+    flex-shrink: 0;
+    flex-direction: column;
+    padding: 12px 14px;
+    background-color: rgb(45, 45, 45);
+    border-right-width: 1px;
+    border-right-color: rgb(30, 30, 30);
+}
+
+.sfai-params-title {
+    font-size: 13px;
+    color: rgb(160, 160, 160);
+    -unity-font-style: bold;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(60, 60, 60);
+}
+
+.sfai-param-row {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 10px;
+}
+
+.sfai-param-row-prompt {
+    flex-grow: 1;
+    min-height: 80px;
+}
+
+.sfai-param-label {
+    font-size: 12px;
+    color: rgb(200, 200, 200);
+    margin-bottom: 4px;
+}
+
+.sfai-param-control {
+    flex-grow: 0;
+}
+
+.sfai-refresh-models-btn {
+    height: 26px;
+    margin-bottom: 10px;
+    background-color: rgb(55, 95, 145);
+    color: white;
+    border-radius: 6px;
+}
+
+.sfai-system-prompt {
+    flex-grow: 1;
+    min-height: 72px;
+    background-color: rgb(38, 38, 38);
+    color: white;
+    border-radius: 6px;
+    white-space: normal;
+}
+
+.sfai-api-key {
+    background-color: rgb(38, 38, 38);
+    color: white;
+    border-radius: 6px;
+}
+
+.sfai-status {
+    margin-top: auto;
+    padding-top: 8px;
+    font-size: 11px;
+    color: rgb(130, 130, 130);
+    white-space: normal;
+}
+
+/* ── 右侧对话区 ── */
+.sfai-chat-area {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    flex-direction: column;
+    padding: 12px 16px;
+}
+
+.sfai-chat-title {
+    font-size: 13px;
+    color: rgb(160, 160, 160);
+    -unity-font-style: bold;
+    margin-bottom: 8px;
+}
+
+.sfai-message-scroll {
+    flex-grow: 1;
+    background-color: rgb(32, 32, 32);
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 8px;
+}
+
+.sfai-message-list {
+    flex-grow: 1;
+}
+
+.sfai-bubble {
+    margin-top: 6px;
+    margin-bottom: 6px;
+    padding: 10px;
+    border-radius: 8px;
+    max-width: 85%;
+    white-space: normal;
+}
+
+.sfai-bubble-user {
+    align-self: flex-end;
+    background-color: rgb(55, 95, 145);
+    color: white;
+}
+
+.sfai-bubble-assistant {
+    align-self: flex-start;
+    background-color: rgb(48, 48, 48);
+    color: rgb(230, 230, 230);
+    border-width: 1px;
+    border-color: rgb(70, 70, 70);
+}
+
+.sfai-bubble-assistant .unity-label {
+    color: rgb(230, 230, 230);
+}
+
+.sfai-bubble-system {
+    align-self: center;
+    background-color: rgb(60, 60, 40);
+    color: rgb(220, 220, 180);
+    font-size: 11px;
+}
+
+.sfai-bubble-title {
+    font-size: 10px;
+    color: rgb(160, 160, 160);
+    margin-bottom: 4px;
+}
+
+.sfai-input-bar {
+    flex-direction: row;
+    align-items: flex-end;
+    min-height: 72px;
+}
+
+.sfai-input {
+    flex-grow: 1;
+    min-height: 64px;
+    margin-right: 8px;
+    background-color: rgb(38, 38, 38);
+    color: white;
+    border-radius: 6px;
+}
+
+.sfai-send-btn {
+    width: 72px;
+    height: 36px;
+    background-color: rgb(70, 130, 200);
+    color: white;
+    border-radius: 6px;
+}
+
+.sfai-clear-btn {
+    align-self: flex-end;
+    margin-top: 6px;
+    height: 22px;
+}

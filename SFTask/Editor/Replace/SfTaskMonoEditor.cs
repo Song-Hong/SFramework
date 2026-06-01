@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Linq;
+using SFramework.Core.Editor.UIElementEditor;
 using SFramework.Core.Extends.UIElement;
 
 namespace SFramework.SFTask.Editor.Replace
@@ -36,17 +37,7 @@ namespace SFramework.SFTask.Editor.Replace
             // 创建根元素
             _rootElement = new VisualElement();
             
-            // 添加标题
-            var title = new Label("SFramework 任务模块")
-            {
-                style =
-                {
-                    fontSize = 16,
-                    color = Color.white,
-                    alignSelf = Align.Center,
-                }
-            };
-            _rootElement.Add(title);
+            _rootElement.Add(new SfTitleEditor("SFramework 任务模块"));
             
             // 添加任务模块Mono单例引用
             var taskMono = target as SfTaskMono;

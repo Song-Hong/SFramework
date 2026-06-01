@@ -1,0 +1,36 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="True">
+    <ui:VisualElement name="Root" class="sfai-root">
+        <ui:VisualElement name="ParamsPanel" class="sfai-params-panel">
+            <ui:Label text="参数设置" class="sfai-params-title" />
+            <ui:VisualElement class="sfai-param-row">
+                <ui:Label text="运营商" class="sfai-param-label" />
+                <ui:DropdownField name="ProviderDropdown" label="" class="sfai-param-control" />
+            </ui:VisualElement>
+            <ui:VisualElement class="sfai-param-row">
+                <ui:Label text="模型" class="sfai-param-label" />
+                <ui:DropdownField name="ModelDropdown" label="" class="sfai-param-control" />
+            </ui:VisualElement>
+            <ui:VisualElement class="sfai-param-row sfai-param-row-prompt">
+                <ui:Label text="系统提示词" class="sfai-param-label" />
+                <ui:TextField name="SystemPrompt" multiline="true" class="sfai-system-prompt" />
+            </ui:VisualElement>
+            <ui:VisualElement class="sfai-param-row">
+                <ui:Label text="API Key" class="sfai-param-label" />
+                <ui:TextField name="ApiKey" class="sfai-param-control sfai-api-key" />
+            </ui:VisualElement>
+            <ui:Button name="RefreshModelsButton" text="刷新模型列表" class="sfai-refresh-models-btn" />
+            <ui:Label name="StatusLabel" text="" class="sfai-status" />
+        </ui:VisualElement>
+        <ui:VisualElement name="ChatArea" class="sfai-chat-area">
+            <ui:Label text="对话" class="sfai-chat-title" />
+            <ui:ScrollView name="MessageScroll" class="sfai-message-scroll">
+                <ui:VisualElement name="MessageList" class="sfai-message-list" />
+            </ui:ScrollView>
+            <ui:VisualElement name="InputBar" class="sfai-input-bar">
+                <ui:TextField name="InputField" multiline="true" placeholder="输入消息，Enter 发送，Shift+Enter 换行" class="sfai-input" />
+                <ui:Button name="SendButton" text="发送" class="sfai-send-btn" />
+            </ui:VisualElement>
+            <ui:Button name="ClearButton" text="清空对话" class="sfai-clear-btn" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

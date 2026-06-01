@@ -23,16 +23,19 @@ namespace SFramework.SFNet.Editor.Window
         /// </summary>
         public void InitSlider()
         {
+            // 移除所有子项
             _sliderContainer.Query<VisualElement>().Class("sfnet-net_item").ForEach(item =>
             {
                 _sliderContainer.Remove(item);
             });
             
+            // 创建网络项按钮点击事件
             _createItemButton.clicked+=()=>
             {
                 _createPanel.style.display = DisplayStyle.Flex;
                 _createItemButton.style.display = DisplayStyle.None;
             };
+            // 创建UDP网络项按钮点击事件
             _udpItemButton.clicked+=()=>
             {
                 _createPanel.style.display = DisplayStyle.None;
@@ -40,6 +43,7 @@ namespace SFramework.SFNet.Editor.Window
                 
                 CreateNetItem("UDP");
             };
+            // 创建TCP网络项按钮点击事件
             _tcpItemButton.clicked+=()=>
             {
                 _createPanel.style.display = DisplayStyle.None;
@@ -47,17 +51,21 @@ namespace SFramework.SFNet.Editor.Window
                 
                 CreateNetItem("TCP");
             };
+            // 创建取消按钮点击事件
             _createCancelButton.clicked+=()=>
             {
+                // 隐藏创建网络项面板
                 _createPanel.style.display = DisplayStyle.None;
                 _createItemButton.style.display = DisplayStyle.Flex;
             };
+            // 隐藏创建网络项面板
             _createPanel.style.display = DisplayStyle.None;
         }
         
         /// <summary>
         /// 创建网络项
         /// </summary>
+        /// <param name="netType">网络类型</param>
         public void CreateNetItem(string netType)
         {
             var netPanel = new Button();
@@ -68,16 +76,19 @@ namespace SFramework.SFNet.Editor.Window
                 SelectButton(netPanel);
             };
 
+            // 创建标题
             var title = new Label();
             title.AddToClassList("sfnet-net_item_title");
             title.text = netType;
             netPanel.Add(title);
             
+            // 创建IP输入框
             var ip = new TextField();
             ip.AddToClassList("sfnet-net_item_input");
             ip.value = GetMainLocalIP();
             netPanel.Add(ip);
             
+            // 创建端口输入框
             var port = new IntegerField();
             port.AddToClassList("sfnet-net_item_input");
             netPanel.Add(port);
@@ -99,10 +110,7 @@ namespace SFramework.SFNet.Editor.Window
                     }
                     else if (netType == "TCP")
                     {
-                        if (CreateTCP(ip.value, port.value, netPanel))
-                        {
-                            state.text = "断开";
-                        }
+                        // CreateTCP(ip.value, port.value, netPanel);
                     }
                 }
                 else
@@ -116,27 +124,17 @@ namespace SFramework.SFNet.Editor.Window
                     }
                     else if (netType == "TCP")
                     {
-                        if (CloseTCP(netPanel))
-                        {
-                            state.text = "连接";
-                        }
+                        // CloseTCP(netPanel);
                     }
                 }
             };
             
+            // 创建关闭按钮
             var closeBtn = new Button();
             closeBtn.AddToClassList("sfnet-net_item_close");
             netPanel.Add(closeBtn);
             closeBtn.clicked+=()=>
             {
-                if (netType == "UDP" && _sfUDPServers.ContainsKey(netPanel))
-                {
-                    CloseUDP(_sfUDPServers[netPanel]);
-                }
-                else if (netType == "TCP" && _sfTCPServers.ContainsKey(netPanel))
-                {
-                    CloseTCP(netPanel);
-                }
                 _sliderContainer.Remove(netPanel);
             };
             
@@ -148,6 +146,7 @@ namespace SFramework.SFNet.Editor.Window
         /// <summary>
         /// 选择按钮
         /// </summary>
+        /// <param name="button">按钮</param>
         public void SelectButton(Button button)
         {
             DisBindEvents(_nowSelectItem);
@@ -156,12 +155,6 @@ namespace SFramework.SFNet.Editor.Window
             _nowSelectItem = button;
             ShowContent(button);
             LoadServerData(button);
-            
-            // 显示发送区域
-            if (_sendArea != null)
-            {
-                _sendArea.style.display = DisplayStyle.Flex;
-            }
         }
         
         /// <summary>
@@ -170,6 +163,7 @@ namespace SFramework.SFNet.Editor.Window
         public static string GetMainLocalIP() 
         {
             List<string> ips = GetLocalIPs();
+            // 优先返回 192.168.x.x 网段的地址
             foreach (var ip in ips)
             {
                 if (ip.StartsWith("192.168."))
@@ -177,6 +171,7 @@ namespace SFramework.SFNet.Editor.Window
                     return ip;
                 }
             }
+            // 否则返回第一个找到的地址
             return ips.Count > 0 ? ips[0] : "127.0.0.1";
         }
         

@@ -1,3 +1,4 @@
+using SFramework.Core.Editor.UIElementEditor;
 using SFramework.Core.Extends.UIElement;
 using SFramework.Core.Support;
 using SFramework.SFNet.Mono;
@@ -27,17 +28,7 @@ namespace SFramework.SFNet.Editor.Replace
             // 创建根元素
             _rootElement = new VisualElement();
             
-            // 添加标题
-            var title = new Label("SFrameworkHTTP 服务器")
-            {
-                style =
-                {
-                    fontSize = 16,
-                    color = Color.white,
-                    alignSelf = Align.Center,
-                }
-            };
-            _rootElement.Add(title);
+            _rootElement.Add(new SfTitleEditor("SFramework HTTP 服务器"));
             
             // 
             var serverMono = target as SfHttpServerMono;

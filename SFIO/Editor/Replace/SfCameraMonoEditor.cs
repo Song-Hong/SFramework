@@ -1,4 +1,5 @@
 using System.Linq;
+using SFramework.Core.Editor.UIElementEditor;
 using SFramework.Core.Extends.UIElement;
 using SFramework.Core.Support;
 using SFramework.SFIo.Module;
@@ -76,17 +77,7 @@ namespace SFramework.SFIo.Editor.Replace
                 }
             };
             
-            // 添加标题
-            var title = new Label("SFramework 相机模块")
-            {
-                style =
-                {
-                    fontSize = 16,
-                    color = Color.white,
-                    alignSelf = Align.Center,
-                }
-            };
-            _rootElement.Add(title);
+            _rootElement.Add(new SfTitleEditor("SFramework 相机模块"));
             
             // #region 测试UI
             // // 保留 base.OnInspectorGUI() 以显示默认属性
