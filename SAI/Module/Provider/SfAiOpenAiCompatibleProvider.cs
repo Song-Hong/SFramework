@@ -203,12 +203,30 @@ namespace SFramework.SAI.Module.Provider
 
             var messages = new JSONArray();
             if (!string.IsNullOrWhiteSpace(request.SystemPrompt))
-                messages.Add(MessageObject(SfAiRole.System, request.SystemPrompt));
+                messages.Add(MessageObject(SfAiMessage.System(request.SystemPrompt)));
 
             foreach (var msg in request.Messages)
-                messages.Add(MessageObject(msg.Role, msg.Content));
+                messages.Add(MessageObject(msg));
 
             root["messages"] = messages;
+
+            if (request.HasTools && !stream)
+            {
+                var tools = new JSONArray();
+                foreach (var tool in request.Tools)
+                {
+                    if (tool == null || string.IsNullOrWhiteSpace(tool.Name)) continue;
+                    tools.Add(ToolObject(tool));
+                }
+
+                if (tools.Count > 0)
+                {
+                    root["tools"] = tools;
+                    if (!string.IsNullOrWhiteSpace(request.ToolChoice))
+                        root["tool_choice"] = request.ToolChoice;
+                }
+            }
+
             return root.ToString();
         }
 
@@ -244,28 +262,106 @@ namespace SFramework.SAI.Module.Provider
             return url.IndexOf("moonshot", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
-        static JSONObject MessageObject(SfAiRole role, string content)
+        static JSONObject MessageObject(SfAiMessage message)
         {
             var obj = new JSONObject();
-            obj["role"] = role switch
+            obj["role"] = message.Role switch
             {
                 SfAiRole.System => "system",
                 SfAiRole.Assistant => "assistant",
+                SfAiRole.Tool => "tool",
                 _ => "user"
             };
-            obj["content"] = content ?? "";
+
+            if (message.Role == SfAiRole.Tool)
+            {
+                obj["tool_call_id"] = message.ToolCallId ?? "";
+                if (!string.IsNullOrWhiteSpace(message.Name))
+                    obj["name"] = message.Name;
+                obj["content"] = message.Content ?? "";
+                return obj;
+            }
+
+            if (message.Role == SfAiRole.Assistant && message.ToolCalls != null && message.ToolCalls.Count > 0)
+            {
+                if (!string.IsNullOrEmpty(message.Content))
+                    obj["content"] = message.Content;
+                else
+                    obj["content"] = JSONNull.CreateOrGet();
+
+                var toolCalls = new JSONArray();
+                foreach (var call in message.ToolCalls)
+                {
+                    var item = new JSONObject();
+                    item["id"] = call.Id ?? "";
+                    item["type"] = "function";
+                    var fn = new JSONObject();
+                    fn["name"] = call.Name ?? "";
+                    fn["arguments"] = string.IsNullOrWhiteSpace(call.ArgumentsJson) ? "{}" : call.ArgumentsJson;
+                    item["function"] = fn;
+                    toolCalls.Add(item);
+                }
+
+                obj["tool_calls"] = toolCalls;
+                return obj;
+            }
+
+            obj["content"] = message.Content ?? "";
+            return obj;
+        }
+
+        static JSONObject ToolObject(SfAiToolSpec tool)
+        {
+            var obj = new JSONObject();
+            obj["type"] = "function";
+            var fn = new JSONObject();
+            fn["name"] = tool.Name;
+            fn["description"] = tool.Description ?? "";
+            try
+            {
+                fn["parameters"] = JSON.Parse(
+                    string.IsNullOrWhiteSpace(tool.ParametersJson)
+                        ? "{\"type\":\"object\",\"properties\":{}}"
+                        : tool.ParametersJson);
+            }
+            catch
+            {
+                fn["parameters"] = JSON.Parse("{\"type\":\"object\",\"properties\":{}}");
+            }
+
+            obj["function"] = fn;
             return obj;
         }
 
         static SfAiChatResponse ParseResponse(string raw, string model)
         {
             var json = JSON.Parse(raw);
-            var content = json["choices"]?[0]?["message"]?["content"]?.Value ?? "";
+            var message = json["choices"]?[0]?["message"];
+            var content = message?["content"]?.Value ?? "";
+            var finishReason = json["choices"]?[0]?["finish_reason"]?.Value ?? "";
+            var toolCalls = new List<SfAiToolCall>();
+
+            var toolCallsNode = message?["tool_calls"];
+            if (toolCallsNode != null && toolCallsNode.IsArray)
+            {
+                foreach (JSONNode item in toolCallsNode.AsArray)
+                {
+                    toolCalls.Add(new SfAiToolCall
+                    {
+                        Id = item["id"]?.Value ?? "",
+                        Name = item["function"]?["name"]?.Value ?? "",
+                        ArgumentsJson = item["function"]?["arguments"]?.Value ?? "{}"
+                    });
+                }
+            }
+
             return new SfAiChatResponse
             {
                 Content = content,
                 Model = model,
-                RawJson = raw
+                RawJson = raw,
+                FinishReason = finishReason,
+                ToolCalls = toolCalls
             };
         }
     }

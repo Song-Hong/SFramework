@@ -52,7 +52,8 @@ namespace SFramework.SAI.Module
                     provider.Status = SfAiProviderStatus.Error;
                     provider.StatusMessage = e.Message;
 
-                    if (!settings.EnableAutoFallback)
+                    // 认证失败不应换其它运营商乱试
+                    if (!settings.EnableAutoFallback || IsAuthenticationError(e))
                         throw;
 
                     Debug.LogWarning($"[SfAiGateway] {provider.Name}/{model.DisplayName} 失败，尝试下一个: {e.Message}");
@@ -106,7 +107,7 @@ namespace SFramework.SAI.Module
                     provider.Status = SfAiProviderStatus.Error;
                     provider.StatusMessage = e.Message;
 
-                    if (!settings.EnableAutoFallback)
+                    if (!settings.EnableAutoFallback || IsAuthenticationError(e))
                         throw;
 
                     Debug.LogWarning($"[SfAiGateway] 流式 {provider.Name}/{model.DisplayName} 失败: {e.Message}");
@@ -114,6 +115,17 @@ namespace SFramework.SAI.Module
             }
 
             throw lastError ?? new Exception("所有模型流式调用均失败");
+        }
+
+        static bool IsAuthenticationError(Exception e)
+        {
+            var msg = e?.Message ?? "";
+            return msg.Contains("401") ||
+                   msg.IndexOf("invalid_api_key", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   msg.IndexOf("invalid_key", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   msg.IndexOf("invalid api key", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   msg.IndexOf("authentication", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   msg.IndexOf("认证失败", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         public static async Task<int> TestProviderLatencyAsync(SfAiProviderData provider, CancellationToken cancellationToken = default)

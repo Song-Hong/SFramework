@@ -1,0 +1,332 @@
+.sfai-quick-root {
+    flex-grow: 1;
+    flex-direction: column;
+    background-color: rgb(32, 32, 34);
+}
+
+.sfai-quick-topbar {
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: rgb(40, 40, 42);
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(28, 28, 30);
+    flex-shrink: 0;
+}
+
+.sfai-quick-title {
+    font-size: 13px;
+    -unity-font-style: bold;
+    color: rgb(220, 220, 220);
+    margin-right: 10px;
+}
+
+.sfai-quick-status {
+    font-size: 11px;
+    color: rgb(140, 140, 140);
+    flex-grow: 1;
+}
+
+.sfai-quick-topbar-btn {
+    height: 22px;
+    margin-left: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    background-color: rgb(55, 55, 58);
+    color: rgb(200, 200, 200);
+    border-radius: 4px;
+    border-width: 0;
+    font-size: 11px;
+}
+
+.sfai-quick-feed {
+    flex-grow: 1;
+    padding: 10px 12px;
+    min-height: 200px;
+}
+
+.sfai-quick-feed-inner {
+    flex-grow: 1;
+}
+
+.sfai-quick-bubble {
+    margin-bottom: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: rgb(50, 50, 54);
+}
+
+.sfai-quick-bubble-user {
+    background-color: rgb(45, 58, 78);
+    border-color: rgb(60, 80, 110);
+    align-self: stretch;
+}
+
+.sfai-quick-bubble-assistant {
+    background-color: rgb(42, 42, 46);
+}
+
+.sfai-quick-bubble-chain {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    border-left-width: 0;
+    padding-left: 2px;
+    padding-right: 4px;
+    margin-bottom: 8px;
+}
+
+.sfai-quick-bubble-tool {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    border-left-width: 0;
+    padding: 0;
+    margin-bottom: 0;
+}
+
+.sfai-quick-bubble-error {
+    background-color: rgb(55, 38, 38);
+    border-left-width: 3px;
+    border-left-color: rgb(200, 90, 90);
+}
+
+.sfai-quick-role {
+    font-size: 10px;
+    color: rgb(130, 150, 170);
+    -unity-font-style: bold;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+}
+
+.sfai-quick-role-tool {
+    color: rgb(140, 180, 120);
+}
+
+.sfai-quick-role-chain {
+    color: rgb(130, 160, 200);
+}
+
+.sfai-quick-body {
+    font-size: 12px;
+    color: rgb(210, 210, 210);
+    white-space: normal;
+}
+
+.sfai-quick-body-dim {
+    color: rgb(160, 160, 160);
+    font-size: 11px;
+}
+
+.sfai-quick-composer {
+    flex-direction: column;
+    flex-shrink: 0;
+    padding: 10px 12px 12px 12px;
+    background-color: rgb(40, 40, 42);
+    border-top-width: 1px;
+    border-top-color: rgb(28, 28, 30);
+}
+
+.sfai-quick-input {
+    flex-grow: 1;
+    min-height: 56px;
+    max-height: 120px;
+    width: 100%;
+    background-color: rgb(28, 28, 30);
+    color: rgb(230, 230, 230);
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: rgb(58, 58, 62);
+    padding: 6px;
+    margin-right: 0;
+    white-space: normal;
+}
+
+.sfai-quick-md-content {
+    flex-direction: column;
+    margin-top: 2px;
+}
+
+.sfai-md-table {
+    flex-direction: column;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    border-width: 1px;
+    border-color: rgb(60, 60, 66);
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: rgb(34, 34, 38);
+}
+
+.sfai-md-table-row {
+    flex-direction: row;
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(55, 55, 60);
+}
+
+.sfai-md-table-header {
+    background-color: rgb(44, 44, 50);
+}
+
+.sfai-md-table-cell {
+    flex-grow: 1;
+    flex-basis: 0;
+    padding: 6px 8px;
+    border-right-width: 1px;
+    border-right-color: rgb(55, 55, 60);
+    font-size: 11px;
+    color: rgb(200, 200, 205);
+    white-space: normal;
+}
+
+.sfai-md-table-cell-header {
+    -unity-font-style: bold;
+    color: rgb(220, 220, 225);
+}
+
+.sfai-md-code {
+    margin-top: 6px;
+    margin-bottom: 6px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background-color: rgb(28, 28, 32);
+    border-width: 1px;
+    border-color: rgb(55, 55, 60);
+}
+
+.sfai-md-code-lang {
+    font-size: 10px;
+    color: rgb(120, 120, 128);
+    margin-bottom: 4px;
+}
+
+.sfai-md-code-body {
+    font-size: 11px;
+    color: rgb(168, 216, 168);
+    white-space: normal;
+}
+
+.sfai-quick-hint {
+    font-size: 10px;
+    color: rgb(110, 110, 110);
+    margin-top: 6px;
+}
+
+.sfai-quick-settings {
+    flex-direction: column;
+    padding: 10px 12px 12px 12px;
+    background-color: rgb(36, 36, 38);
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(28, 28, 30);
+    display: none;
+    max-height: 320px;
+}
+
+.sfai-quick-settings-open {
+    display: flex;
+}
+
+.sfai-quick-settings-section {
+    font-size: 11px;
+    -unity-font-style: bold;
+    color: rgb(150, 160, 180);
+    margin-top: 4px;
+    margin-bottom: 6px;
+}
+
+.sfai-quick-settings-field {
+    margin-bottom: 6px;
+}
+
+.sfai-quick-settings-prompt {
+    min-height: 48px;
+    max-height: 80px;
+    white-space: normal;
+}
+
+.sfai-quick-chain-item {
+    flex-direction: row;
+    align-items: flex-start;
+    min-height: 34px;
+    margin-bottom: 0;
+}
+
+.sfai-quick-chain-left {
+    width: 28px;
+    min-width: 28px;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.sfai-quick-chain-circle {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    border-radius: 13px;
+    border-width: 1.5px;
+    border-color: rgb(140, 140, 150);
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(36, 36, 40);
+    overflow: hidden;
+}
+
+.sfai-quick-op-png {
+    width: 14px;
+    height: 14px;
+    min-width: 14px;
+    min-height: 14px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.sfai-quick-chain-text {
+    flex-grow: 1;
+    flex-direction: column;
+    padding-top: 3px;
+    padding-bottom: 12px;
+}
+
+.sfai-quick-chain-title {
+    font-size: 12px;
+    color: rgb(200, 200, 205);
+    margin-bottom: 2px;
+}
+
+.sfai-quick-chain-detail {
+    font-size: 11px;
+    color: rgb(130, 130, 138);
+    white-space: normal;
+}
+
+.sfai-quick-op-row {
+    flex-direction: row;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.sfai-quick-op-icon {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    border-radius: 12px;
+    margin-right: 8px;
+    padding: 4px;
+    align-items: center;
+    justify-content: center;
+}
+
+.sfai-quick-op-col {
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+.sfai-quick-op-title {
+    font-size: 12px;
+    color: rgb(210, 220, 210);
+    margin-bottom: 2px;
+}
+
+.sfai-quick-op-detail {
+    font-size: 11px;
+    color: rgb(170, 170, 170);
+    white-space: normal;
+}

@@ -4,6 +4,7 @@ namespace SFramework.SAI.Module.Data
     {
         System,
         User,
-        Assistant
+        Assistant,
+        Tool
     }
 }

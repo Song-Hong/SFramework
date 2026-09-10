@@ -10,6 +10,9 @@ namespace SFramework.SAI.Module.Data
         public string SystemPrompt;
         public float Temperature = 0.7f;
         public int MaxTokens = 4096;
+        public List<SfAiToolSpec> Tools = new List<SfAiToolSpec>();
+        /// <summary>auto / none / required</summary>
+        public string ToolChoice = "auto";
 
         public SfAiChatRequest AddUser(string content)
         {
@@ -22,5 +25,14 @@ namespace SFramework.SAI.Module.Data
             Messages.Add(SfAiMessage.Assistant(content));
             return this;
         }
+
+        public SfAiChatRequest AddMessage(SfAiMessage message)
+        {
+            if (message != null)
+                Messages.Add(message);
+            return this;
+        }
+
+        public bool HasTools => Tools != null && Tools.Count > 0;
     }
 }

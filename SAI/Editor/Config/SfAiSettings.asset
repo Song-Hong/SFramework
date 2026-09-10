@@ -21,22 +21,22 @@ MonoBehaviour:
     Organization: 
     Enabled: 1
     TimeoutSeconds: 120
-    Status: 1
+    Status: 3
     LatencyMs: -1
-    StatusMessage: OK
+    StatusMessage: "Kimi \u8BA4\u8BC1\u5931\u8D25\uFF1A\u5DF2\u5C1D\u8BD5 api.moonshot.cn
+      \u4E0E api.moonshot.ai\u3002\u8BF7\u786E\u8BA4 Key \u5728 platform.kimi.com
+      \u521B\u5EFA\u4E14\u672A\u8FC7\u671F\u3002"
   - Id: e8a43e50831545e78c710bb01d6ed6ce
     Name: MiMo
     Kind: 2
     BaseUrl: 
-    ApiKey: sk-c4z20hcph46m32zhbsl1svq7tzs1dffpuy9mbjvvmxq5ws6q
+    ApiKey: sk-cuw5lfmwd9hmjf5jmr53waui30luekdhl9t9kac92e0ktk0j
     Organization: 
     Enabled: 1
     TimeoutSeconds: 120
-    Status: 3
+    Status: 1
     LatencyMs: -1
-    StatusMessage: "HTTP 401: {\n    \"error\": {\n        \"message\": \"Invalid
-      API Key\",\n        \"param\": \"Please provide valid API Key\",\n        \"code\":
-      \"401\",\n        \"type\": \"invalid_key\"\n    }\n}\n"
+    StatusMessage: OK
   - Id: c33011fd5fd7493e8391534d50929ea6
     Name: Qwen
     Kind: 3
@@ -45,9 +45,10 @@ MonoBehaviour:
     Organization: 
     Enabled: 1
     TimeoutSeconds: 120
-    Status: 1
+    Status: 3
     LatencyMs: -1
-    StatusMessage: OK
+    StatusMessage: 'HTTP 401: {"error":{"message":"Incorrect API key provided. For
+      details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error","type":"invalid_request_error","param":null,"code":"invalid_api_key"},"request_id":"4b1d4f9c-f003-98c3-a4ba-4d8344185dcc"}'
   - Id: d52c4a14ad7f4011805a04886a18c854
     Name: DeepSeek
     Kind: 7
@@ -56,9 +57,10 @@ MonoBehaviour:
     Organization: 
     Enabled: 1
     TimeoutSeconds: 120
-    Status: 1
+    Status: 3
     LatencyMs: -1
-    StatusMessage: OK
+    StatusMessage: 'HTTP 401: {"error":{"message":"Authentication Fails, Your api
+      key: ****3b01 is invalid","type":"authentication_error","param":null,"code":"invalid_request_error"}}'
   Models:
   - Id: d3f2728a09b040ada0ca2078f44572cf
     ProviderId: c2d0b74e66f24a869db5d5be32389536
@@ -228,7 +230,7 @@ MonoBehaviour:
     ModelId: deepseek-reasoner
     Enabled: 1
     Tags: 
-  ActiveModelId: d3f2728a09b040ada0ca2078f44572cf
-  EnableAutoFallback: 1
+  ActiveModelId: af8d304a52374696bfd15b33678dbad4
+  EnableAutoFallback: 0
   SystemPrompt: 
   Profiles: []
